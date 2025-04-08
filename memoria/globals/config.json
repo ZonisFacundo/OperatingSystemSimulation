@@ -1,4 +1,12 @@
 {
-    "ip": "192.168.0.1",
-    "puerto": 8080
+    "port_memory": 8002,
+    "memory_size": 4096,
+    "page_size": 64,
+    "entries_per_page": 4,
+    "number_of_levels": 5,
+    "memory_delay": 1500,
+    "swapfile_path": "/home/utnso/swapfile.bin",
+    "swap_delay": 15000,
+    "log_level": "DEBUG",
+    "dump_path": "/home/utnso/dump_files/"
 }

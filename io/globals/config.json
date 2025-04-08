@@ -1,6 +1,6 @@
 {
-    "ip_kernel": "192.168.0.1",
-    "port_kernel": 8080,
-    "port_io": 8081,
-    "log_level": "EXAMPLE"
+    "ip_kernel": "127.0.0.1",
+    "port_kernel": 8001,
+    "port_io": 8003,
+    "log_level": "DEBUG"
 }

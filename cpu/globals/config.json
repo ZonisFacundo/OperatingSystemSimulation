@@ -1,4 +1,13 @@
 {
-    "ip": "192.168.0.1",
-    "puerto": 8080
+    "port_cpu": 8004,
+    "ip_memory": "127.0.0.1",
+    "port_memory": 8002,
+    "ip_kernel": "127.0.0.1",
+    "port_kernel": 8002,
+    "tlb_entries": 15,
+    "tlb_replacement": "TLB",
+    "cache_entries": 10,
+    "cache_replacement": "CLOCK",
+    "cache_delay": 10,
+    "log_level": "DEBUG"
 }
