@@ -1,8 +1,10 @@
 package globals
 
 type Config struct {
-	Ip     string `json:"ip"`
-	Puerto int    `json:"puerto"`
+	Ip_kernel   string `json:"ip_kernel"`
+	Port_io     int    `json:"port_io"`
+	Port_kernel int    `json:"port_kernel"`
+	Log_level   string `json:"log_level"`
 }
 
 var ClientConfig *Config
