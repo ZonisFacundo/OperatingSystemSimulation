@@ -1,8 +1,7 @@
 package main
 
 import (
-	"github.com/sisoputnfrba/tp-golang/utils/utilsKernel"
-	"encoding/json"
+	utilsClient "github.com/sisoputnfrba/tp-golang/utils/utilsKernel"
 )
 
 func main() {
