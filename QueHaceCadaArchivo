@@ -13,8 +13,11 @@ go.mod: vas a tener un path que basicamente actua de direccion del modulo, cuand
 
 packages: vas a tener package main o package otra cosa. los package main son lo principal, package otra cosa son helpers al main
             (funciones, variables, etc). como los importamos? vas al go.mod del modulo, copias el path que tenes ahi y pones 
-            import pathquecopiaste/package que queres, no podes importar archivos solos, tenes que importar packages, entonces
-            si queres importar los valores del global, haces import pathquecopiaste/global //eso es el nombre del package, NO DEL ARCHIVO
+            import pathquecopiaste/package que queres importar, no podes importar archivos solos, tenes que importar packages, entonces
+            si queres importar los valores del global, haces import pathquecopiaste/global //eso es el nombre del package, NO DEL ARCHIVO, en ese caso si tenes
+            40 archivos .go adentro del directorio globals, vas a importar esos 40 archivos, no solo globals.go
+            directorio con n archivos adentro de este directorio, los package de cada uno de los .go tienen que ser iguales al nombre del directorio, esto
+            no aplica para los principales (Cpu.go va a tener de package main porque es el principal, no un helper)
 
 
 
