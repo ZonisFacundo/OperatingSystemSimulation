@@ -4,6 +4,9 @@ import (
 	"io"
 	"log"
 	"os"
+
+	//"encoding/json"
+	"net/http"
 )
 
 func ConfigurarLogger() {
@@ -13,4 +16,10 @@ func ConfigurarLogger() {
 	}
 	mw := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(mw)
+}
+
+func ConexionRecibida(w http.ResponseWriter, r *http.Request) {
+
+	w.WriteHeader(http.StatusOK)
+
 }
