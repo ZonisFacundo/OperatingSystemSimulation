@@ -1,4 +1,4 @@
-package utilsClient
+package utilsKernel
 
 import (
 	"io"

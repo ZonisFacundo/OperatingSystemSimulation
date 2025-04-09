@@ -6,5 +6,5 @@ import (
 
 func main() {
 
-	utilsClient.ConfigurarLogger()
+	utilsIO.ConfigurarLogger()
 }

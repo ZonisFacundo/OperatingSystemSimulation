@@ -1,4 +1,4 @@
-package utilsClient
+package utilsCPU
 
 import (
 	"io"

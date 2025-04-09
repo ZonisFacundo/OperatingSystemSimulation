@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	utilsClient.ConfigurarLogger()
+	utilsCPU.ConfigurarLogger()
 }

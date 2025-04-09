@@ -1,4 +1,4 @@
-package utilsClient
+package utilsMemoria
 
 import (
 	"io"
