@@ -12,6 +12,6 @@ func main() {
 	   conexion entre IO (Client) con Kernel (Server)
 	   enviamos handshake con datos del modulo y esperamos respuesta
 	*/
-	utilsIO.HandshakeAKernel("pepe", "127.0.0.1", 8003)
+	utilsIO.HandshakeAKernel("pepe", "127.0.0.1", 8001)
 
 }

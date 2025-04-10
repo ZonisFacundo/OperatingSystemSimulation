@@ -20,6 +20,9 @@ packages: vas a tener package main o package otra cosa. los package main son lo 
             no aplica para los principales (Cpu.go va a tener de package main porque es el principal, no un helper)
 
 
+Tengo que conectar mi modulo con otro. AYUDA QUE HAGO?
+anda a los modulos IO y Kernel que ya tenes la estructura generica explicada, copias, pegas y modificas segun lo que te pida
+
 
 
 

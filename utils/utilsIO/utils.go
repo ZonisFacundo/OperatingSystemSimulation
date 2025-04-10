@@ -11,9 +11,13 @@ import (
 )
 
 type Handshakepaquete struct {
-	Nombre string `json:"name"`
-	Ip     string `json:"ip"`
+	Nombre string `json:"name"` //lo de name, ip, port es como va a construir el json la maquina cuando lo pasemos a json
+	Ip     string `json:"ip"`   // es fundamental ponerlo
 	Puerto int    `json:"port"`
+}
+
+type RespuestaHandshakeKernel struct { // aca va el formato que va a tener lo que esperas del server
+	Mensaje string `json:"message"`
 }
 
 func ConfigurarLogger() {
@@ -57,7 +61,18 @@ func HandshakeAKernel(nombre string, ip string, puerto int) {
 
 	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
 
-	respuesta, err := cliente.Do(req) //recibe la respuesta del server
+	respuestaJSON, err := cliente.Do(req) //recibe la respuesta del server
+	/* que tipo de dato tiene respuestaJSON?
+		type respuestaJSON struct {
+	    Status     string
+	    StatusCode int
+	    Header     Header
+	    Body       io.ReadCloser  // ← This is what you're accessing
+	    // ... other fields ...
+
+
+		ya definido por go de esa forma
+	*/
 
 	if err != nil {
 		fmt.Printf("error al recibir respuesta")
@@ -65,10 +80,30 @@ func HandshakeAKernel(nombre string, ip string, puerto int) {
 
 	}
 
-	if respuesta.StatusCode != http.StatusOK {
+	if respuestaJSON.StatusCode != http.StatusOK {
 
 		fmt.Printf("status de respuesta el server no fue la esperada")
 		return
 	}
+	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+
+	fmt.Printf("conexion establecida con exito \n")
+	//pasamos de JSON a formato bytes lo que nos paso el paquete
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	//pasamos la respuesta de JSON a formato paquete que nos mando el server
+
+	var respuesta RespuestaHandshakeKernel //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
+	if err != nil {
+		fmt.Printf("error al decodificar el JSON")
+		return
+	}
+	fmt.Printf("la respuesta del server fue: %s/n", respuesta.Mensaje)
+	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }

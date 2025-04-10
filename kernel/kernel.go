@@ -15,7 +15,7 @@ func main() {
 	   recibimos handshake de parte del IO con datos del modulo damos respuesta
 	*/
 
-	http.HandleFunc("POST /pathdelkernel", utilsKernel.ConexionRecibida)
+	http.HandleFunc("POST /handshake", utilsKernel.ConexionRecibida)
 	fmt.Printf("servidor corriendo")
 	http.ListenAndServe(":8001", nil)
 
