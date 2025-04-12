@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/sisoputnfrba/tp-golang/utils/utilsKernel"
 	//"encoding/json"
-	"fmt"
 	"net/http"
+	"log"
 )
 
 func main() {
@@ -16,7 +16,7 @@ func main() {
 	*/
 
 	http.HandleFunc("POST /handshake", utilsKernel.ConexionRecibida)
-	fmt.Printf("servidor corriendo")
+	log.Printf("servidor corriendo")
 	http.ListenAndServe(":8001", nil)
 
 }
