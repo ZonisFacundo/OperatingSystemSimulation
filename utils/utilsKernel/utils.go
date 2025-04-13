@@ -1,33 +1,42 @@
 package utilsKernel
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
-	"os"
-
-	//"encoding/json"
 	"net/http"
+	"os"
 )
 
-type Handshakepaquete struct {
+type HandshakepaqueteIO struct {
 	Nombre string `json:"name"`
 	Ip     string `json:"ip"`
 	Puerto int    `json:"port"`
 }
-
 
 type HandshakepaqueteCPU struct {
 	Ip     string `json:"ip"`
 	Puerto int    `json:"port"`
 }
 
+type HandshakepaqueteKERNEL struct {
+	Ip     string `json:"ip"`
+	Puerto int    `json:"port"`
+}
 type respuestaalIO struct {
 	Mensaje string `json:"message"`
 }
 
-
 type respuestaalCPU struct {
+	Mensaje string `json:"message"`
+}
+type PaqueteRecibidoKERNEL struct {
+	Mensaje string `json:"message"`
+}
+
+type PaqueteEnviadoKERNEL struct {
 	Mensaje string `json:"message"`
 }
 
@@ -40,9 +49,9 @@ func ConfigurarLogger() {
 	log.SetOutput(mw)
 }
 
-func ConexionRecibidaIO(w http.ResponseWriter, r *http.Request) {
+func RetornoClienteIOServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 
-	var request Handshakepaquete
+	var request HandshakepaqueteIO
 
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
 	if err != nil {
@@ -51,11 +60,11 @@ func ConexionRecibidaIO(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("el cliente nos mando esto: \n nombre: %s  \n puerto: %d \n IP: %s \n", request.Nombre, request.Puerto, request.Ip)
+	log.Printf("El cliente nos mando esto: \n nombre: %s  \n puerto: %d \n IP: %s \n", request.Nombre, request.Puerto, request.Ip)
 
 	//Respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaIO respuestaalIO
-	respuestaIO.Mensaje = "me pinto mandarle un string al cliente"
+	respuestaIO.Mensaje = "Se envio un string al Kernel."
 	respuestaJSON, err := json.Marshal(respuestaIO)
 	if err != nil {
 		return
@@ -66,7 +75,7 @@ func ConexionRecibidaIO(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func ConexionRecibidaCPU(w http.ResponseWriter, r *http.Request) {
+func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 
 	var request HandshakepaqueteCPU
 
@@ -77,11 +86,11 @@ func ConexionRecibidaCPU(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf(request.Ip, request.Puerto)
+	fmt.Printf(request.Ip, request.Puerto)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCPU respuestaalCPU
-	respuestaCPU.Mensaje = "me pinto mandarle un string al cliente CPU"
+	respuestaCPU.Mensaje = "Se envio un string al CPU."
 	respuestaJSON, err := json.Marshal(respuestaCPU)
 	if err != nil {
 		return
@@ -92,3 +101,75 @@ func ConexionRecibidaCPU(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// conexion kernel --> CPU lado del cliente (kernel)
+func PeticionClienteKERNELServidorIO(ip string, puerto int) {
+
+	var paquete PaqueteEnviadoKERNEL
+	paquete.Mensaje = "mensaje enviado a kernel desde io"
+
+	PaqueteFormatoJson, err := json.Marshal(paquete)
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al convertir a json.")
+		return
+	}
+	cliente := http.Client{} //crea un "cliente"
+
+	url := fmt.Sprintf("http://%s:%d/KERNELIO", ip, puerto) //url del server
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al generar la peticion al server.\n")
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
+
+	respuestaJSON, err := cliente.Do(req) //recibe la respuesta del server
+	/* que tipo de dato tiene respuestaJSON?
+		type respuestaJSON struct {
+	    Status     string
+	    StatusCode int
+	    Header     Header
+	    Body       io.ReadCloser  // ← This is what you're accessing
+	    // ... other fields ...
+
+
+		ya definido por go de esa forma
+	*/
+
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+
+	}
+
+	if respuestaJSON.StatusCode != http.StatusOK {
+
+		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		return
+	}
+	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+
+	log.Printf("Conexion establecida con exito \n")
+	//pasamos de JSON a formato bytes lo que nos paso el paquete
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	//pasamos la respuesta de JSON a formato paquete que nos mando el server
+
+	var respuesta PaqueteRecibidoKERNEL    //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
+	if err != nil {
+		log.Printf("Error al decodificar el JSON.\n")
+		return
+	}
+	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
+
+}

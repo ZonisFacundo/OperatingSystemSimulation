@@ -1,15 +1,16 @@
 package main
 
 import (
-	"github.com/sisoputnfrba/tp-golang/utils/utilsMemoria"
-	"net/http"
 	"log"
+	"net/http"
+
+	"github.com/sisoputnfrba/tp-golang/utils/utilsMemoria"
 )
 
 func main() {
 	utilsMemoria.ConfigurarLogger()
 
-	http.HandleFunc("POST /handshake", utilsMemoria.ConexionRecibidaCPU)
-	log.Printf("servidor corriendo, peticion CPU")
+	http.HandleFunc("POST /handshake", utilsMemoria.RetornoClienteCPUServidorMEMORIA)
+	log.Printf("Servidor corriendo, peticion CPU.\n")
 	http.ListenAndServe(":8002", nil)
 }
