@@ -44,7 +44,7 @@ func HandshakeAKernel(nombre string, ip string, puerto int) {
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
 		//aca tiene que haber un logger
-		fmt.Printf("error al convertir a json")
+		log.Printf("error al convertir a json")
 		return
 	}
 	cliente := http.Client{} //crea un "cliente"
@@ -55,7 +55,7 @@ func HandshakeAKernel(nombre string, ip string, puerto int) {
 
 	if err != nil {
 		//aca tiene que haber un logger
-		fmt.Printf("error al generar la peticion al server")
+		log.Printf("error al generar la peticion al server")
 		return
 	}
 
