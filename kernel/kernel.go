@@ -23,7 +23,8 @@ func main() {
 		log.Printf("Servidor corriendo.\n")
 		http.ListenAndServe(":8001", nil)
 	*/
-	utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003)
+	//utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003)
+	utilsKernel.PeticionClienteKERNELServidorMemoria("codigo", 25, "127.0.0.1", 8002)
 	//va andar cuando implementemos hilos
 
 }
