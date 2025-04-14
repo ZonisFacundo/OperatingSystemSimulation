@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 )
 
 type HandshakepaqueteCPU struct {
@@ -37,9 +39,6 @@ func ConfigurarLogger() {
 func PeticionCLienteCPUServidorMEMORIA(instruccion string, ip string, puerto int) {
 
 	var paquete HandshakepaqueteMemoria
-	paquete.Instruccion = instruccion
-	paquete.Ip = ip
-	paquete.Puerto = puerto
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -48,7 +47,7 @@ func PeticionCLienteCPUServidorMEMORIA(instruccion string, ip string, puerto int
 	}
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/CPUMEMORIA", paquete.Ip, paquete.Puerto)
+	url := fmt.Sprintf("http://%s:%d/CPUMEMORIA", globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
@@ -108,6 +107,7 @@ func PeticionCLienteCPUServidorMEMORIA(instruccion string, ip string, puerto int
 func PeticionClienteCPUServidorKERNEL(ip string, puerto int) {
 
 	var paquete HandshakepaqueteCPU
+
 	paquete.Ip = ip
 	paquete.Puerto = puerto
 
@@ -118,7 +118,7 @@ func PeticionClienteCPUServidorKERNEL(ip string, puerto int) {
 	}
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/handshake", paquete.Ip, paquete.Puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/handshake", globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel) //url del server
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
@@ -170,7 +170,7 @@ func PeticionClienteCPUServidorKERNEL(ip string, puerto int) {
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del server fue: %s.\n", respuesta.Mensaje)
+	log.Printf("%s.\n", respuesta.Mensaje)
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }

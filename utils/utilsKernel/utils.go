@@ -91,11 +91,11 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	fmt.Printf(request.Ip, request.Puerto)
+	log.Printf("Handshake recibido de -> IP: %s, Puerto: %d", request.Ip, request.Puerto)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCPU respuestaalCPU
-	respuestaCPU.Mensaje = "Se envio un string al CPU."
+	respuestaCPU.Mensaje = "Conexion recibida crack"
 	respuestaJSON, err := json.Marshal(respuestaCPU)
 	if err != nil {
 		return
@@ -106,7 +106,7 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// conexion kernel --> CPU lado del cliente (kernel)
+// conexion kernel --> IO lado del cliente (kernel)
 func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNEL
