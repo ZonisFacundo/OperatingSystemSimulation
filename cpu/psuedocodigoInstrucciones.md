@@ -16,7 +16,6 @@ solicitarPIDyPCKernel(){
 }
 
 1ro. Conectarme al Kernel.
-2
 2do. Recibir PID y PC del Kernel.
 
 3ro. Solicitar a memoria la instrucción para iniciar la ejecución, donde se ejecuta el ciclo de instrucción.
