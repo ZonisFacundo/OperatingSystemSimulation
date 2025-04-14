@@ -48,7 +48,7 @@ func PeticionCLienteCPUServidorMEMORIA(instruccion string, ip string, puerto int
 	}
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/handshake", paquete.Ip, paquete.Puerto)
+	url := fmt.Sprintf("http://%s:%d/CPUMEMORIA", paquete.Ip, paquete.Puerto)
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 

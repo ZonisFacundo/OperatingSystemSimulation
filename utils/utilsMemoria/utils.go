@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func ConfigurarLogger() {
@@ -39,9 +40,16 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.Printf("primera printeada CPU")
+	time.Sleep(4 * time.Second)
+	log.Printf("segunda printeada CPU")
+	time.Sleep(8 * time.Second)
+	log.Printf("tercera printeada CPU")
+	time.Sleep(1 * time.Second)
+	log.Printf("cuarta printeada CPU")
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("El cliente nos mando esto: \n instruccion: %s.\n", request.Instruccion)
+	log.Printf("(CPU) El cliente nos mando esto: \n instruccion: %s.\n", request.Instruccion)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
@@ -67,7 +75,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("El cliente nos mando esto: \n nombre pseudocodigo: %s, tamanio proceso: %d.\n", request.NombreCodigo, request.TamanioProceso)
+	log.Printf("(kernel) El cliente nos mando esto: \n nombre pseudocodigo: %s, tamanio proceso: %d.\n", request.NombreCodigo, request.TamanioProceso)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
