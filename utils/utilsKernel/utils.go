@@ -35,7 +35,8 @@ type respuestaalIO struct {
 }
 
 type respuestaalCPU struct {
-	Mensaje string `json:"message"`
+	Pc  int `json:"pc"`
+	Pid int `json:"pid"`
 }
 type PaqueteRecibidoKERNEL struct {
 	Mensaje string `json:"message"`
@@ -95,7 +96,7 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCPU respuestaalCPU
-	respuestaCPU.Mensaje = "Conexion recibida crack"
+
 	respuestaJSON, err := json.Marshal(respuestaCPU)
 	if err != nil {
 		return

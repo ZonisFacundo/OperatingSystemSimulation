@@ -16,6 +16,7 @@ solicitarPIDyPCKernel(){
 }
 
 1ro. Conectarme al Kernel.
+
 2do. Recibir PID y PC del Kernel.
 
 3ro. Solicitar a memoria la instrucción para iniciar la ejecución, donde se ejecuta el ciclo de instrucción.
@@ -35,4 +36,5 @@ solicitarPIDyPCKernel(){
     4.2 INIT_PROC (archivo de instrucciones, tamaño)
     4.3 DUMP_MEMORY
     4.4 EXIT
+    
 5to. 
