@@ -29,7 +29,9 @@ func instruccionDetalle(detalle *InstruccionDetallada) {
 	case "NOOP":
 		if detalle.Tiempo != nil {
 			tiempoEjecucion := Noop(*detalle.Tiempo)
-			fmt.Println("NOOP ejecutado con tiempo: ", tiempoEjecucion)
+			detalle.Instruct.Pc = detalle.Instruct.Pc + 1
+			fmt.Printf("NOOP ejecutado con tiempo:%d , y actualizado el PC:%d.\n", tiempoEjecucion, detalle.Instruct.Pc)
+
 			//acá voy a tener que actualizar el PC, ¿cómo? ni idea.
 		} else {
 			fmt.Println("Tiempo no especificado u acción incorrecta.")
