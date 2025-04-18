@@ -43,9 +43,5 @@ type PaqueteRecibidoKERNEL struct {
 	Mensaje string `json:"message"`
 }
 
-type PaqueteEnviadoKERNEL struct {
-	Mensaje string `json:"message"`
-}
-
 var ColaNew []PCB
 var ColaReady []PCB

@@ -23,7 +23,7 @@ type Config struct {
 type PaqueteRecibidoMemoriadeKernel struct {
 	NombreSyscall string `json:"syscallname"` //no se si necesito esto
 	TamProceso    int    `json:"processsize"`
-	archivo       string `json:"file"`
+	Archivo       string `json:"file"`
 	Pid           int    `json:"pid"`
 }
 

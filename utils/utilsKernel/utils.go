@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	//"github.com/sisoputnfrba/tp-golang/estructurasKernel"
 )
 
 func ConfigurarLogger() {
@@ -75,7 +74,7 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 // conexion kernel --> CPU lado del cliente (kernel)
 func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 
-	var paquete PaqueteEnviadoKERNEL
+	var paquete RespuestaalIO
 	paquete.Mensaje = "mensaje enviado a kernel desde io"
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
@@ -146,12 +145,13 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 }
 
 // conexion kernel --> CPU lado del cliente (kernel)
-func PeticionClienteKERNELServidorMemoria(nombreCodigo string, tamanioProceso int, ip string, puerto int) {
+func PeticionClienteKERNELServidorMemoria(Pid string, TamProceso int, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
-	paquete.Pid = nombreCodigo
-	paquete.TamProceso = tamanioProceso
+	paquete.Pid = Pid
+	paquete.TamProceso = TamProceso
 
+	log.Printf("tam proceso enviado: %d ", paquete.TamProceso)
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
 		//aca tiene que haber un logger
@@ -217,15 +217,4 @@ func PeticionClienteKERNELServidorMemoria(nombreCodigo string, tamanioProceso in
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
-}
-
-func CrearPCB(pid int, tamanio int) { //pid unico arranca de 0
-	ColaNew = append(ColaNew, PCB{
-		Pid:            pid,
-		PC:             0,
-		EstadoActual:   "NEW",
-		TamProceso:     tamanio,
-		MetricaEstados: make(map[Estado]int),
-		TiempoEstados:  make(map[Estado]int64),
-	})
 }
