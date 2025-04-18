@@ -149,8 +149,8 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 func PeticionClienteKERNELServidorMemoria(nombreCodigo string, tamanioProceso int, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
-	paquete.NombreCodigo = nombreCodigo
-	paquete.TamanioProceso = tamanioProceso
+	paquete.Pid = nombreCodigo
+	paquete.TamProceso = tamanioProceso
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -221,10 +221,10 @@ func PeticionClienteKERNELServidorMemoria(nombreCodigo string, tamanioProceso in
 
 func CrearPCB(pid int, tamanio int) { //pid unico arranca de 0
 	ColaNew = append(ColaNew, PCB{
-		PID:            pid,
+		Pid:            pid,
 		PC:             0,
 		EstadoActual:   "NEW",
-		Tamanio:        tamanio,
+		TamProceso:     tamanio,
 		MetricaEstados: make(map[Estado]int),
 		TiempoEstados:  make(map[Estado]int64),
 	})

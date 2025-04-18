@@ -3,10 +3,10 @@ package utilsKernel
 type Estado string
 
 type PCB struct {
-	PID            int              `json:"pid"`
+	Pid            int              `json:"pid"`
 	PC             int              `json:"PC"`
 	EstadoActual   Estado           `json:"estadoActual"`
-	Tamanio        int              `json:"tamanioProceso"`
+	TamProceso     int              `json:"tamanioProceso"`
 	MetricaEstados map[Estado]int   `json:"metricaEstados"`
 	TiempoEstados  map[Estado]int64 `json:"tiempoEstados"`
 }
@@ -28,8 +28,9 @@ type HandshakepaqueteKERNEL struct {
 }
 
 type PaqueteEnviadoKERNELaMemoria struct {
-	NombreCodigo   string `json:"nombreCodigo"`
-	TamanioProceso int    `json:"taamanioProceso"`
+	Pid        string `json:"pid"`
+	TamProceso int    `json:"tamanioProceso"`
+	Archivo    string `json:"file"`
 }
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
