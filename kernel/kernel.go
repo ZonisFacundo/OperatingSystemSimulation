@@ -31,7 +31,7 @@ func main() {
 
 	time.Sleep(3 * time.Second)
 
-	go utilsKernel.PeticionClienteKERNELServidorMemoria("codigo", 25, "127.0.0.1", 8002)
+	go utilsKernel.PeticionClienteKERNELServidorMemoria(12, 250, "127.0.0.1", 8002)
 
 	http.HandleFunc("POST /IO", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /handshake", utilsKernel.RetornoClienteCPUServidorKERNEL)

@@ -145,13 +145,12 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 }
 
 // conexion kernel --> CPU lado del cliente (kernel)
-func PeticionClienteKERNELServidorMemoria(Pid string, TamProceso int, ip string, puerto int) {
+func PeticionClienteKERNELServidorMemoria(Pid int, TamProceso int, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
 	paquete.Pid = Pid
 	paquete.TamProceso = TamProceso
 
-	log.Printf("tam proceso enviado: %d ", paquete.TamProceso)
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
 		//aca tiene que haber un logger

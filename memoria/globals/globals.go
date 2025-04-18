@@ -21,10 +21,9 @@ type Config struct {
 }
 
 type PaqueteRecibidoMemoriadeKernel struct {
-	NombreSyscall string `json:"syscallname"` //no se si necesito esto
-	TamProceso    int    `json:"processsize"`
-	Archivo       string `json:"file"`
-	Pid           int    `json:"pid"`
+	Pid        int    `json:"pid"`
+	TamProceso int    `json:"tamanioProceso"`
+	Archivo    string `json:"file"`
 }
 
 //					VARIABLES GLOBALES

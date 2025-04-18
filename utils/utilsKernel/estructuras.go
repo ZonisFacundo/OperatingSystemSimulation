@@ -28,7 +28,7 @@ type HandshakepaqueteKERNEL struct {
 }
 
 type PaqueteEnviadoKERNELaMemoria struct {
-	Pid        string `json:"pid"`
+	Pid        int    `json:"pid"`
 	TamProceso int    `json:"tamanioProceso"`
 	Archivo    string `json:"file"`
 }

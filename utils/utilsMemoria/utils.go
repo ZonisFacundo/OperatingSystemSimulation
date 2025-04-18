@@ -28,7 +28,7 @@ type PaqueteRecibidoMemoriadeKernel struct {
 }
 */
 type PaqueteRecibidoMemoriadeKernel struct {
-	Pid        string `json:"pid"`
+	Pid        int    `json:"pid"`
 	TamProceso int    `json:"tamanioproceso"`
 	Archivo    string `json:"file"`
 }
@@ -149,6 +149,12 @@ func InicializarMemoria() {
 
 	globals.MemoriaPrincipal = make([]byte, globals.ClientConfig.Memory_size) //inicializa la memoria segun lo que decia el enunciado
 
+	//Descomentar si tenes ganas de ver si anda
+	/*
+		globals.MemoriaPrincipal[22] = 1
+		globals.MemoriaPrincipal[80] = 1
+		globals.MemoriaPrincipal[200] = 1
+	*/
 }
 
 func InicializarPaginasDisponibles() {
