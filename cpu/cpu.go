@@ -14,4 +14,5 @@ func main() {
 
 	utilsCPU.PeticionClienteCPUServidorKERNEL("127.0.0.1", 8001)
 	utilsCPU.PeticionCLienteCPUServidorMEMORIA("NOOP", "127.0.0.1", 8002)
+
 }

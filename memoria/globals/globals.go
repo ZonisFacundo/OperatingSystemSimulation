@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// STRUCTS
 type Config struct {
 	Port_memory      int    `json:"port_memory"`
 	Memory_size      int    `json:"memory_size"`
@@ -19,8 +20,25 @@ type Config struct {
 	Dump_path        string `json:"dump_path"`
 }
 
-var ClientConfig *Config //variable global en globals que apunta a un struct que contiene toda la config, despues lo vamos a usar en el main
+type PaqueteRecibidoMemoriadeKernel struct {
+	NombreSyscall string `json:"syscallname"` //no se si necesito esto
+	TamProceso    int    `json:"processsize"`
+	archivo       string `json:"file"`
+	Pid           int    `json:"pid"`
+}
 
+//					VARIABLES GLOBALES
+/*
+este apartado es para poder comunicarnos entre distintos archivos .go (memoria, globals y utils) usando variables globales
+*/
+
+var ClientConfig *Config                                                                     //variable global que apunta a un struct que contiene toda la config, despues lo vamos a usar en el main
+var MemoriaPrincipal []byte                                                                  //variable donde se guarda la memoria principal
+var MemoriaKernel map[int]PaqueteRecibidoMemoriadeKernel                                     // memoria del kernel (donde guardo segmento de codigo basicamente)
+var PaqueteInfoProceso *PaqueteRecibidoMemoriadeKernel = new(PaqueteRecibidoMemoriadeKernel) //variable global donde guardo lo que me mande el kernel (info del proceso)
+var PaginasDisponibles []int
+
+// FUNCIONES
 func CargarConfig(path string) {
 
 	conjuntodebytes, err := os.ReadFile(path)
