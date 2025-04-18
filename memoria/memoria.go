@@ -15,7 +15,10 @@ func main() {
 
 	//var wg sync.WaitGroup
 	//wg.Add(2)
-	/*DESARROLLO DE MEMORIA PRINCIPAL DEL SISTEMA*/
+	/*DESARROLLO DE MEMORIA PRINCIPAL DEL SISTEMA
+	como aclara el json, vamos a tener 4096 bytes de MP, consecuentemente 12 bits para las direcciones de memoria
+
+	*/
 
 	http.HandleFunc("POST /CPUMEMORIA", utilsMemoria.RetornoClienteCPUServidorMEMORIA)
 	http.HandleFunc("POST /KERNELMEMORIA", utilsMemoria.RetornoClienteKernelServidorMEMORIA)
