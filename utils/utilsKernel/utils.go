@@ -8,42 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	//"github.com/sisoputnfrba/tp-golang/estructurasKernel"
 )
-
-type HandshakepaqueteIO struct {
-	Nombre string `json:"name"`
-	Ip     string `json:"ip"`
-	Puerto int    `json:"port"`
-}
-
-type HandshakepaqueteCPU struct {
-	Ip     string `json:"ip"`
-	Puerto int    `json:"port"`
-}
-
-type HandshakepaqueteKERNEL struct {
-	Ip     string `json:"ip"`
-	Puerto int    `json:"port"`
-}
-
-type PaqueteEnviadoKERNELaMemoria struct {
-	NombreCodigo   string `json:"nombreCodigo"`
-	TamanioProceso int    `json:"taamanioProceso"`
-}
-type respuestaalIO struct {
-	Mensaje string `json:"message"`
-}
-
-type respuestaalCPU struct {
-	Mensaje string `json:"message"`
-}
-type PaqueteRecibidoKERNEL struct {
-	Mensaje string `json:"message"`
-}
-
-type PaqueteEnviadoKERNEL struct {
-	Mensaje string `json:"message"`
-}
 
 func ConfigurarLogger() {
 	logFile, err := os.OpenFile("kernel.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
@@ -68,7 +34,7 @@ func RetornoClienteIOServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	log.Printf("El cliente nos mando esto: \n nombre: %s  \n puerto: %d \n IP: %s \n", request.Nombre, request.Puerto, request.Ip)
 
 	//Respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuestaIO respuestaalIO
+	var respuestaIO RespuestaalIO
 	respuestaIO.Mensaje = "Se envio un string al Kernel."
 	respuestaJSON, err := json.Marshal(respuestaIO)
 	if err != nil {
@@ -94,7 +60,7 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf(request.Ip, request.Puerto)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuestaCPU respuestaalCPU
+	var respuestaCPU RespuestaalCPU
 	respuestaCPU.Mensaje = "Se envio un string al CPU."
 	respuestaJSON, err := json.Marshal(respuestaCPU)
 	if err != nil {
@@ -183,8 +149,8 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 func PeticionClienteKERNELServidorMemoria(nombreCodigo string, tamanioProceso int, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
-	paquete.NombreCodigo = nombreCodigo
-	paquete.TamanioProceso = tamanioProceso
+	paquete.Pid = nombreCodigo
+	paquete.TamProceso = tamanioProceso
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -251,4 +217,15 @@ func PeticionClienteKERNELServidorMemoria(nombreCodigo string, tamanioProceso in
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
+}
+
+func CrearPCB(pid int, tamanio int) { //pid unico arranca de 0
+	ColaNew = append(ColaNew, PCB{
+		Pid:            pid,
+		PC:             0,
+		EstadoActual:   "NEW",
+		TamProceso:     tamanio,
+		MetricaEstados: make(map[Estado]int),
+		TiempoEstados:  make(map[Estado]int64),
+	})
 }
