@@ -2,6 +2,7 @@ package utilsMemoria
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"math"
@@ -40,7 +41,7 @@ type respuestaalKernel struct {
 	Mensaje string `json:"message"`
 }
 
-//						FUNCIONES
+//						FUNCIONES.
 
 func ConfigurarLogger() {
 	logFile, err := os.OpenFile("memory.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
@@ -133,7 +134,14 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusInsufficientStorage) //http tiene un mensaje de error especificamente para esto, tremendo
 		w.Write(respuestaJSON)
 	} else {
-		//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
+		//	respuesta del server al cliente
+
+		//llevamos contenido del archivo al map
+
+		(*globals.PaqueteInfoProceso).Archivo = "/home/utnso/archivosprueba/archi.txt" //voy a tener que recibir un archivo de kernel, esto es de prueba
+
+		LeerArchivoYCargarMap((*globals.PaqueteInfoProceso).Archivo, (*globals.PaqueteInfoProceso).Pid)
+
 		respuestaKernel.Mensaje = "Recibi de Kernel"
 		respuestaJSON, err := json.Marshal(respuestaKernel)
 		if err != nil {
@@ -191,8 +199,8 @@ func ActualizaPaginasDisponibles() {
 
 }
 func EntraEnMemoria(tam int) int {
-	var PaginasNecesarias float64
-	PaginasNecesarias = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
+
+	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
 	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
 
 	var PaginasContiguasEncontradas int = 0
@@ -209,4 +217,41 @@ func EntraEnMemoria(tam int) int {
 		}
 	}
 	return -1
+}
+
+func LeerArchivoYCargarMap(FilePath string, Pid int) {
+
+	var buffer []byte
+	var err error
+	var Contenido globals.ProcesoEnMemoria //guardo lo que voy viendo del archivo organizadito para pasarselo a MemoriaKernel
+	Contenido.Instrucciones = make([]string, 0)
+	var Line string = ""
+	buffer, err = os.ReadFile(FilePath)
+
+	if err != nil {
+		log.Printf("Error al leer el archivo enviado por Kernel Pid: %d", Pid)
+	}
+
+	for i := 0; i < (len(buffer)); i++ {
+
+		Line += string(buffer[i]) //va armando un string caracter a caracter hasta formar una instruccion (cuando lee \n)
+
+		if buffer[i] == 10 { //ASCII para \n
+			Contenido.Instrucciones = append(Contenido.Instrucciones, Line) //agrega la instruccion al slice de strings (donde cada elemento (cada string) es una instruccion)
+
+			Line = ""
+		}
+
+	}
+
+	globals.MemoriaKernel[Pid] = Contenido
+
+	//lo muestro a ver si funco
+	for i := 0; i < len(globals.MemoriaKernel); i++ {
+		for j := 0; j < len(globals.MemoriaKernel[i].Instrucciones); j++ {
+			fmt.Printf("%s", globals.MemoriaKernel[i].Instrucciones[j])
+		}
+
+	}
+
 }

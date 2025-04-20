@@ -26,3 +26,12 @@ func MostrarPaginasDisponibles() {
 		fmt.Printf("MARCO NUMERO %d: \t%d\n", i, globals.PaginasDisponibles[i])
 	}
 }
+func MostrarMemoriaKernel() {
+
+	for i := 0; i < len(globals.MemoriaKernel); i++ {
+		for j := 0; j < len(globals.MemoriaKernel[i].Instrucciones); j++ {
+			fmt.Printf("%s", globals.MemoriaKernel[i].Instrucciones[j])
+		}
+
+	}
+}
