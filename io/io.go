@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/sisoputnfrba/tp-golang/utils/utilsIO"
 )
@@ -16,6 +17,8 @@ func main() {
 	   enviamos handshake con datos del modulo y esperamos respuesta
 	*/
 	go func() {
+		time.Sleep(4 * time.Second)
+
 		utilsIO.PeticionClienteIOServidorKERNEL("pepe", "127.0.0.1", 8001)
 	}()
 

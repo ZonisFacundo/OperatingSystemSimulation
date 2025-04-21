@@ -9,7 +9,7 @@ import (
 type Config struct {
 	Ip_memory           string `json:"ip_memory"`
 	Port_memory         int    `json:"port_memory"`
-	Port_kernel         string `json:"port_kernel"`
+	Port_kernel         int    `json:"port_kernel"`
 	Scheduler_algorithm string `json:"scheduler_algorithm"`
 	Suspension_time     int    `json:"suspension_time"`
 	Log_level           string `json:"log_level"`
@@ -17,7 +17,7 @@ type Config struct {
 
 var ClientConfig *Config
 
-func CargarConfiguracion(path string) {
+func CargarConfig(path string) {
 
 	conjuntodebytes, err := os.ReadFile(path)
 	if err != nil {
@@ -28,7 +28,7 @@ func CargarConfiguracion(path string) {
 	var configgenerica Config
 	err = json.Unmarshal(conjuntodebytes, &configgenerica) //traducimos de .json a go digamosle
 	if err != nil {
-		log.Printf("error al decodificar datos json -> golang")
+		log.Printf("Error al decodificar datos json -> golang")
 		return
 	}
 
