@@ -9,13 +9,11 @@ import (
 	//"encoding/json"
 	"net/http"
 	"time"
-
-	"github.com/sisoputnfrba/tp-golang/kernel/globals"
 	//"github.com/sisoputnfrba/tp-golang/estructurasKernel"
 )
 
 func main() {
-	globals.CargarConfiguracion("./kernel/globals/config.json")
+	globals.CargarConfig("./kernel/globals/config.json")
 	utilsKernel.ConfigurarLogger()
 	globals.CargarConfig("./kernel/globals/config.json")
 
@@ -24,7 +22,7 @@ func main() {
 
 	time.Sleep(3 * time.Second)
 
-	utilsKernel.PeticionClienteKERNELServidorMemoria(0, 250, "127.0.0.1", 8002)
+	//utilsKernel.PeticionClienteKERNELServidorMemoria(0, 250, "127.0.0.1", 8002) debe recibir un pcb despues hago uno de prueba
 	http.HandleFunc("/handshake", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /IO", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /handshake", utilsKernel.RetornoClienteCPUServidorKERNEL)
