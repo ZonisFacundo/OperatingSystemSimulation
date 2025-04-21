@@ -6,5 +6,6 @@ type Instruccion struct {
 }
 
 type Interrupcion struct {
-	
+	TiempoInterrup int  `json:"interrup"`
+	InterrupValida bool `json:"interrupValida"`
 }

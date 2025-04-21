@@ -6,11 +6,6 @@ import (
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
-type Interrupcion struct {
-	TiempoInterrup int  `json:"interrup"`
-	InterrupValida bool `json:"interrupValida"`
-}
-
 type InstruccionDetallada struct {
 	Instruct  utilsCPU.Instruccion  `json:"instruction"`
 	Interrup  utilsCPU.Interrupcion `json:"interruption"`
