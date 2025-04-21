@@ -10,42 +10,6 @@ import (
 	"os"
 )
 
-type HandshakepaqueteIO struct {
-	Nombre string `json:"name"`
-	Ip     string `json:"ip"`
-	Puerto int    `json:"port"`
-}
-
-type HandshakepaqueteCPU struct {
-	Ip     string `json:"ip"`
-	Puerto int    `json:"port"`
-}
-
-type HandshakepaqueteKERNEL struct {
-	Ip     string `json:"ip"`
-	Puerto int    `json:"port"`
-}
-
-type PaqueteEnviadoKERNELaMemoria struct {
-	NombreCodigo   string `json:"nombreCodigo"`
-	TamanioProceso int    `json:"taamanioProceso"`
-}
-type respuestaalIO struct {
-	Mensaje string `json:"message"`
-}
-
-type respuestaalCPU struct {
-	Pc  int `json:"pc"`
-	Pid int `json:"pid"`
-}
-type PaqueteRecibidoKERNEL struct {
-	Mensaje string `json:"message"`
-}
-
-type PaqueteEnviadoKERNEL struct {
-	Mensaje string `json:"message"`
-}
-
 func ConfigurarLogger() {
 	logFile, err := os.OpenFile("kernel.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 	if err != nil {
@@ -69,7 +33,7 @@ func RetornoClienteIOServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	log.Printf("El cliente nos mando esto: \n nombre: %s  \n puerto: %d \n IP: %s \n", request.Nombre, request.Puerto, request.Ip)
 
 	//Respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuestaIO respuestaalIO
+	var respuestaIO RespuestaalIO
 	respuestaIO.Mensaje = "Se envio un string al Kernel."
 	respuestaJSON, err := json.Marshal(respuestaIO)
 	if err != nil {
@@ -95,8 +59,8 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handshake recibido de -> IP: %s, Puerto: %d", request.Ip, request.Puerto)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuestaCPU respuestaalCPU
-
+	var respuestaCPU RespuestaalCPU
+	respuestaCPU.Mensaje = "Se envio un string al CPU."
 	respuestaJSON, err := json.Marshal(respuestaCPU)
 	if err != nil {
 		return
@@ -110,7 +74,7 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 // conexion kernel --> IO lado del cliente (kernel)
 func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 
-	var paquete PaqueteEnviadoKERNEL
+	var paquete RespuestaalIO
 	paquete.Mensaje = "mensaje enviado a kernel desde io"
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
@@ -181,11 +145,11 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 }
 
 // conexion kernel --> CPU lado del cliente (kernel)
-func PeticionClienteKERNELServidorMemoria(nombreCodigo string, tamanioProceso int, ip string, puerto int) {
+func PeticionClienteKERNELServidorMemoria(Pid int, TamProceso int, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
-	paquete.NombreCodigo = nombreCodigo
-	paquete.TamanioProceso = tamanioProceso
+	paquete.Pid = Pid
+	paquete.TamProceso = TamProceso
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {

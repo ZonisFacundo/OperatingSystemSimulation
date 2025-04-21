@@ -5,17 +5,20 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/sisoputnfrba/tp-golang/memoria/auxiliares"
 	"github.com/sisoputnfrba/tp-golang/memoria/globals"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsMemoria"
 )
 
 func main() {
-	utilsMemoria.ConfigurarLogger()
 	globals.CargarConfig("./memoria/globals/config.json") //decodifica de json a go y guarda los datos en un puntero (variable global) ClientConfig
+	utilsMemoria.ConfigurarLogger()
 
-	//var wg sync.WaitGroup
-	//wg.Add(2)
-	/*DESARROLLO DE MEMORIA PRINCIPAL DEL SISTEMA*/
+	utilsMemoria.InicializarMemoria()
+	utilsMemoria.InicializarPaginasDisponibles()
+	utilsMemoria.ActualizaPaginasDisponibles()
+	auxiliares.MostrarPaginasDisponibles()
+	//auxiliares.Mostrarmemoria()
 
 	http.HandleFunc("POST /CPUMEMORIA", utilsMemoria.RetornoClienteCPUServidorMEMORIA)
 	http.HandleFunc("POST /KERNELMEMORIA", utilsMemoria.RetornoClienteKernelServidorMEMORIA)
