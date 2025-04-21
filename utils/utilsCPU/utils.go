@@ -13,8 +13,9 @@ import (
 )
 
 type HandshakepaqueteCPU struct {
-	Ip     string `json:"ip"`
-	Puerto int    `json:"port"`
+	Ip        string `json:"ip"`
+	Puerto    int    `json:"port"`
+	Instancia string `json:"instance"`
 }
 
 type HandshakepaqueteMemoria struct {
@@ -104,7 +105,7 @@ func PeticionCLienteCPUServidorMEMORIA(instruccion string, ip string, puerto int
 
 }
 
-func PeticionClienteCPUServidorKERNEL(ip string, puerto int) {
+func PeticionClienteCPUServidorKERNEL(ip string, puerto int, instancia string) {
 
 	var paquete HandshakepaqueteCPU
 
@@ -161,6 +162,8 @@ func PeticionClienteCPUServidorKERNEL(ip string, puerto int) {
 	if err != nil {
 		return
 	}
+
+	log.Println("Conexion establecida con exito en la instancia: ", instancia)
 
 	//pasamos la respuesta de JSON a formato paquete que nos mando el server
 

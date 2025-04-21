@@ -18,6 +18,7 @@ type Config struct {
 	Cache_replacement string `json:"cache_replacement"`
 	Cache_delay       int    `json:"cache_delay"`
 	Log_level         string `json:"log_level"`
+	Instance_id       string `json:"instance_id"`
 }
 
 var ClientConfig *Config
