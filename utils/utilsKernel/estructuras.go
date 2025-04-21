@@ -28,7 +28,7 @@ type HandshakepaqueteKERNEL struct {
 }
 
 type PaqueteEnviadoKERNELaMemoria struct {
-	Pid        string `json:"pid"`
+	Pid        int    `json:"pid"`
 	TamProceso int    `json:"tamanioProceso"`
 	Archivo    string `json:"file"`
 }
@@ -41,6 +41,7 @@ type RespuestaalCPU struct {
 }
 type PaqueteRecibidoKERNEL struct {
 	Mensaje string `json:"message"`
+	Exito   bool   `json:"exito"`
 }
 
 type PaqueteEnviadoKERNEL struct {
@@ -49,3 +50,4 @@ type PaqueteEnviadoKERNEL struct {
 
 var ColaNew []PCB
 var ColaReady []PCB
+var ContadorPCB int = 0

@@ -1,6 +1,7 @@
 package utilsKernel
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -8,7 +9,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	//"github.com/sisoputnfrba/tp-golang/estructurasKernel"
+
+	"github.com/sisoputnfrba/tp-golang/kernel/globals"
 )
 
 func ConfigurarLogger() {
@@ -144,13 +146,11 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
-
-// conexion kernel --> CPU lado del cliente (kernel)
-func PeticionClienteKERNELServidorMemoria(nombreCodigo string, tamanioProceso int, ip string, puerto int) {
+func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
-	paquete.Pid = nombreCodigo
-	paquete.TamProceso = tamanioProceso
+	paquete.Pid = pcb.Pid
+	paquete.TamProceso = pcb.TamProceso
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -215,17 +215,75 @@ func PeticionClienteKERNELServidorMemoria(nombreCodigo string, tamanioProceso in
 		return
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	if respuesta.Exito {
+		PasarReady(pcb)
+	}
+	//else hay que definirlo despues Santi gil
+
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
 
-func CrearPCB(pid int, tamanio int) { //pid unico arranca de 0
+func CrearPCB(tamanio int) { //pid unico arranca de 0
 	ColaNew = append(ColaNew, PCB{
-		Pid:            pid,
+		Pid:            ContadorPCB,
 		PC:             0,
 		EstadoActual:   "NEW",
 		TamProceso:     tamanio,
 		MetricaEstados: make(map[Estado]int),
 		TiempoEstados:  make(map[Estado]int64),
 	})
+	ContadorPCB++
+}
+
+func LeerConsola() string {
+	// Leer de la consola
+	reader := bufio.NewReader(os.Stdin)
+	log.Println("Precione enter para inciar el planificador")
+	text, _ := reader.ReadString('\n')
+	//log.Print(text)
+	return text
+}
+
+func IniciarPlanifcador() {
+	for true {
+		text := LeerConsola()
+		if text == "\n" {
+			//PlanificadorLargoPlazo()
+			break
+		}
+	}
+}
+
+/*
+func PlanificadorLargoPlazo() {
+	for i := range ColaNew{
+		pcb := Criterio()
+	}
+}*/
+
+func FIFO(cola []PCB) PCB {
+	return cola[0]
+}
+
+func PasarReady(pcb PCB) {
+	ColaReady = append(ColaReady, pcb)
+	ColaNew = removerPCB(ColaNew, pcb)
+	pcb.EstadoActual = "READY"
+}
+
+func removerPCB(cola []PCB, pcb PCB) []PCB {
+	for i, item := range cola {
+		if item.Pid == pcb.Pid {
+			return append(cola[:i], cola[1+i:]...)
+		}
+	}
+	return cola
+}
+
+func Criterio() PCB {
+	if globals.ClientConfig.Scheduler_algorithm == "FIFO" {
+		return FIFO(ColaNew)
+	}
+	return FIFO(ColaNew) //esto no va asi pero es para que no de error
 }

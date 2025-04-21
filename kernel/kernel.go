@@ -6,10 +6,13 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/sisoputnfrba/tp-golang/kernel/globals"
 	//"github.com/sisoputnfrba/tp-golang/estructurasKernel"
 )
 
 func main() {
+	globals.CargarConfiguracion("./kernel/globals/config.json")
 	utilsKernel.ConfigurarLogger()
 
 	/*
