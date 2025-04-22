@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+
+	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 // STRUCTS
@@ -28,6 +30,8 @@ type PaqueteRecibidoMemoriadeKernel struct {
 type ProcesoEnMemoria struct {
 	Instrucciones []string `json:"instructions"`
 }
+
+var Instruction *utilsCPU.Proceso
 
 //					VARIABLES GLOBALES
 /*

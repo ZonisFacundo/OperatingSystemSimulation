@@ -2,30 +2,17 @@ package instruction_cycle
 
 import (
 	"fmt"
-
-	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
-type InstruccionDetallada struct {
-	Instruct  utilsCPU.Instruccion  `json:"instruction"`
-	Interrup  utilsCPU.Interrupcion `json:"interruption"`
-	Direccion int                   `json:"adress"`
-	Contexto  string                `json:"context"`
-	Valor     *int                  `json:"value"`
-	Tamaño    *int                  `json:"size"`
-	Tiempo    *int                  `json:"time"`
-	Datos     *string               `json:"datos"`
-}
-
 // switch para ver que hace dependiendo la instruccion:
-func instruccionDetalle(detalle *InstruccionDetallada) {
+func instruccionDetalle(detalle *Instruccion) {
 
-	switch detalle.Contexto {
+	switch detalle.InstructionType {
 	case "NOOP":
 		if detalle.Tiempo != nil {
 			tiempoEjecucion := Noop(*detalle.Tiempo)
-			detalle.Instruct.Pc = detalle.Instruct.Pc + 1
-			fmt.Printf("NOOP ejecutado con tiempo:%d , y actualizado el PC:%d.\n", tiempoEjecucion, detalle.Instruct.Pc)
+			detalle.ProcessValues.Pc = detalle.ProcessValues.Pc + 1
+			fmt.Printf("NOOP ejecutado con tiempo:%d , y actualizado el PC:%d.\n", tiempoEjecucion, detalle.ProcessValues.Pc)
 
 			//acá voy a tener que actualizar el PC, ¿cómo? ni idea.
 		} else {
@@ -35,7 +22,7 @@ func instruccionDetalle(detalle *InstruccionDetallada) {
 	case "READ":
 	case "GOTO":
 		if detalle.Valor != nil {
-			pcInstrNew := GOTO(detalle.Instruct.Pc, *detalle.Valor)
+			pcInstrNew := GOTO(detalle.ProcessValues.Pc, *detalle.Valor)
 			fmt.Println("PC actualizado en: ", pcInstrNew)
 		} else {
 			fmt.Println("Valor no modificado.")

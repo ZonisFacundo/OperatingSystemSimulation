@@ -18,8 +18,8 @@ type HandshakepaqueteIO struct {
 }
 
 type HandshakepaqueteCPU struct {
-	Ip     string `json:"ip"`
-	Puerto int    `json:"port"`
+	Ip        string `json:"ip"`
+	Puerto    int    `json:"port"`
 	Instancia string `json:"instancia"`
 }
 
@@ -38,7 +38,8 @@ type RespuestaalIO struct {
 }
 
 type RespuestaalCPU struct {
-	Mensaje string `json:"message"`
+	Pid int
+	Pc  int
 }
 type PaqueteRecibidoKERNEL struct {
 	Mensaje string `json:"message"`
