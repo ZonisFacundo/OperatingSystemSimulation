@@ -20,5 +20,7 @@ func main() {
 
 	utilsCPU.PeticionClienteCPUServidorKERNEL(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id)
 
+	//Proceso con ID 4, el PC es la dirección lógica.
+	
 	utilsCPU.PeticionClienteCPUServidorMEMORIA(instruction.Pid, instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 }
