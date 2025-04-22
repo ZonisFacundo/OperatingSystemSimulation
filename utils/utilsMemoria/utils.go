@@ -15,19 +15,12 @@ import (
 
 //					STRUCTS
 
-type Handshakepaquete struct {
-	Instruccion string `json:"instruccion"`
+type PaqueteRecibidoMemoriadeCPU struct {
+	Pid int `json:"pid"`
+	Pc int  `json:"pc"`
 }
 
-// CAMBIO EL PAQUETE QUE RECIBO DE KERNEL
-/*vamos  tener que usar este eventualmente
-type PaqueteRecibidoMemoriadeKernel struct {
-	NombreSyscall string `json:"syscallname"` //no se si necesito esto
-	TamProceso    int    `json:"processsize"`
-	archivo       string `json:"file"`
-	Pid           int    `json:"pid"`
-}
-*/
+
 type PaqueteRecibidoMemoriadeKernel struct {
 	Pid        int    `json:"pid"`
 	TamProceso int    `json:"tamanioproceso"`
@@ -35,7 +28,7 @@ type PaqueteRecibidoMemoriadeKernel struct {
 }
 
 type respuestaalCPU struct {
-	Mensaje string `json:"message"`
+	Instruccion string `json:"instruction"` //puede joder con que el nombre sea igual a otro y el json tambien tiene que ser igual
 }
 type respuestaalKernel struct {
 	Mensaje string `json:"message"`
@@ -54,7 +47,7 @@ func ConfigurarLogger() {
 
 func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
-	var request Handshakepaquete
+	var request PaqueteRecibidoMemoriadeCPU
 
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
 	if err != nil {
@@ -63,11 +56,11 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("(CPU) El cliente nos mando esto: \n instruccion: %s.\n", request.Instruccion)
+	log.Printf("cliente envio: \n pid: %d \n pc: %d", request.Pid, request.Pc)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
-	respuestaCpu.Mensaje = "Recibi de CPU"
+	respuestaCpu.Mensaje = "todavia no arme lo de las instrucciones aguanten"
 	respuestaJSON, err := json.Marshal(respuestaCpu)
 	if err != nil {
 		return
@@ -78,34 +71,7 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 }
 
-/*
-func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
-
-	var request HandshakepaqueteKernel
-
-	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("(kernel) El cliente nos mando esto: \n nombre pseudocodigo: %s, tamanio proceso: %d.\n", request.NombreCodigo, request.TamanioProceso)
-
-	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuestaCpu respuestaalCPU
-	respuestaCpu.Mensaje = "Recibi de Kernel"
-	respuestaJSON, err := json.Marshal(respuestaCpu)
-	if err != nil {
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(respuestaJSON)
-
-}
-*/
-//cambio api con kernel para recibir paquete deseado
+ 
 func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 	var DondeGuardarProceso int
@@ -203,17 +169,17 @@ func EntraEnMemoria(tam int) int {
 	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
 	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
 
-	var PaginasContiguasEncontradas int = 0
+	var PaginasEncontradas int = 0
 
 	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
 
 		if globals.PaginasDisponibles[i] == 0 {
-			PaginasContiguasEncontradas++
-			if PaginasContiguasEncontradas == int(PaginasNecesarias) {
+			PaginasEncontradas++
+			if PaginasEncontradas == int(PaginasNecesarias) {
 				return (i - int(PaginasNecesarias) + 1) //devuelvo el indice del primer marco de pagina que vamos a usar para guardar el proceso
 			}
 		} else {
-			PaginasContiguasEncontradas = 0
+			PaginasEncontradas = 0
 		}
 	}
 	return -1
