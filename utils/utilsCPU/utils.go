@@ -12,22 +12,6 @@ import (
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 )
 
-type HandshakepaqueteCPU struct {
-	Ip        string `json:"ip"`
-	Puerto    int    `json:"port"`
-	Instancia string `json:"instance"`
-}
-
-type HandshakepaqueteMemoria struct {
-	Instruccion string `json:"instruccion"`
-	Ip          string `json:"ip"` // es fundamental ponerlo
-	Puerto      int    `json:"port"`
-}
-
-type RespuestaHandshakeKernel struct { // aca va el formato que va a tener lo que esperas del server
-	Mensaje string `json:"message"`
-}
-
 func ConfigurarLogger() {
 	logFile, err := os.OpenFile("cpu.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 	if err != nil {
@@ -37,9 +21,9 @@ func ConfigurarLogger() {
 	log.SetOutput(mw)
 }
 
-func PeticionCLienteCPUServidorMEMORIA(instruccion string, ip string, puerto int) {
+func PeticionClienteCPUServidorMEMORIA(pid int, pc int, ip string, puerto int) {
 
-	var paquete HandshakepaqueteMemoria
+	var paquete HandshakeMemory
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -93,21 +77,20 @@ func PeticionCLienteCPUServidorMEMORIA(instruccion string, ip string, puerto int
 	}
 
 	//pasamos la respuesta de JSON a formato paquete que nos mando el server
-
-	var respuesta RespuestaHandshakeKernel //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	var respuesta MemoryResponse           //para eso declaramos una variable con el struct que esperamos que nos envie el server
 	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	log.Printf("La respuesta del server fue: %s\n", respuesta.Instruccion)
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
 
 func PeticionClienteCPUServidorKERNEL(ip string, puerto int, instancia string) {
 
-	var paquete HandshakepaqueteCPU
+	var paquete HandshakeCPU
 
 	paquete.Ip = ip
 	paquete.Puerto = puerto

@@ -8,6 +8,8 @@ import (
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
+var instruction utilsCPU.Instruccion
+
 func main() {
 	utilsCPU.ConfigurarLogger()
 	globals.CargarConfig("./cpu/globals/config.json")
@@ -16,12 +18,7 @@ func main() {
 
 	fmt.Scanln(&globals.ClientConfig.Instance_id)
 
-	/*
-	   conexion entre CPU (Client) con Kernel (Server)
-	   enviamos handshake con datos del modulo y esperamos respuesta
-	*/
-
 	utilsCPU.PeticionClienteCPUServidorKERNEL(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id)
-	//utilsCPU.PeticionCLienteCPUServidorMEMORIA("NOOP", globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 
+	utilsCPU.PeticionClienteCPUServidorMEMORIA(instruction.Pid, instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 }
