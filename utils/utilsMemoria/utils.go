@@ -10,6 +10,7 @@ import (
 	"os"
 
 	//"github.com/sisoputnfrba/tp-golang/memoria/auxiliares"
+	"github.com/sisoputnfrba/tp-golang/memoria/auxiliares"
 	"github.com/sisoputnfrba/tp-golang/memoria/globals"
 )
 
@@ -120,8 +121,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo\n", (*globals.PaqueteInfoProceso).Pid, (*globals.PaqueteInfoProceso).TamProceso)
 
 	//el kernel quiere saber si podemos guardar eso en memoria, para eso vamos a consultar el espacio que tenemos
-	DondeGuardarProceso = EntraEnMemoria(globals.PaqueteInfoProceso.TamProceso)
-	log.Printf("lo guardamos a partir de la pagina %d \n", DondeGuardarProceso)
+	DondeGuardarProceso = EntraEnMemoria(globals.PaqueteInfoProceso.TamProceso, globals.PaqueteInfoProceso.Pid)
 
 	if DondeGuardarProceso < 0 {
 		log.Printf("NO HAY ESPACIO EN MEMORIA PARA GUARDAR EL PROCESO \n")
@@ -198,27 +198,60 @@ func ActualizaPaginasDisponibles() {
 	}
 
 }
+
+/*
 func EntraEnMemoria(tam int) int {
 
 	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
 	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
 
-	var PaginasContiguasEncontradas int = 0
+	var PaginasEncontradas int = 0
 
 	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
 
 		if globals.PaginasDisponibles[i] == 0 {
-			PaginasContiguasEncontradas++
-			if PaginasContiguasEncontradas == int(PaginasNecesarias) {
+			PaginasEncontradas++
+
+
+
+
+			if PaginasEncontradas == int(PaginasNecesarias) {
 				return (i - int(PaginasNecesarias) + 1) //devuelvo el indice del primer marco de pagina que vamos a usar para guardar el proceso
 			}
 		} else {
-			PaginasContiguasEncontradas = 0
+			PaginasEncontradas = 0
+		}
+	}
+	return -1
+} la voy a mejorar
+*/
+
+func EntraEnMemoria(tam int, pid int) int {
+
+	ActualizaPaginasDisponibles()
+	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
+	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
+
+	var frames globals.ProcesoEnMemoria
+	frames.TablaSimple = make([]int, 0) //inicializa el slice donde vamos a guardar la tabla de paginas simple para el proceso
+
+	var PaginasEncontradas int = 0
+
+	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
+
+		if globals.PaginasDisponibles[i] == 0 {
+			PaginasEncontradas++
+			frames.TablaSimple = append(frames.TablaSimple, i)
+
+			if PaginasEncontradas == int(PaginasNecesarias) {
+				auxiliares.ActualizarTablaSimple(frames, pid)
+
+				return 1 //devuelvo numero positivo para indicar que fue un exito, asignamos todas las paginas al proceso
+			}
 		}
 	}
 	return -1
 }
-
 func LeerArchivoYCargarMap(FilePath string, Pid int) {
 
 	var buffer []byte
@@ -244,14 +277,15 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 
 	}
 
-	globals.MemoriaKernel[Pid] = Contenido
+	//	globals.MemoriaKernel[Pid].Instrucciones = Contenido.Instrucciones    esto no anda, hay que hacerlo con una copia //carga instrucciones al map global, lo que verdaderamente importa
+
+	//creo una funcion para hacerlo porque sino rompe
 
 	//lo muestro a ver si funco
 	for i := 0; i < len(globals.MemoriaKernel); i++ {
 		for j := 0; j < len(globals.MemoriaKernel[i].Instrucciones); j++ {
 			fmt.Printf("%s", globals.MemoriaKernel[i].Instrucciones[j])
 		}
-
 	}
 
 }
