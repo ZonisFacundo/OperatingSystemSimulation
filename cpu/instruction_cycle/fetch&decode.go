@@ -13,14 +13,18 @@ import (
 )
 
 type Instruccion struct { // instruccion obtenida de memoria
-	ProcessValues   utilsCPU.Proceso      `json:"instruction"`     //Valores de PID y PC
-	Interrup        utilsCPU.Interrupcion `json:"interruption"`    //Valores de la interrupción.
-	Direccion       int                   `json:"adress"`          //Para Read and Write -> Dirección lógica que pasa memoria.
-	InstructionType string                `json:"instructionType"` //Contexto de la ejecución, es decir, la string que entra en el execute.
-	Valor           *int                  `json:"value"`           //Parámetro para GOTO
-	Tamaño          *int                  `json:"size"`            //Parámetro para el READ e INIT_PROC.
-	Tiempo          *int                  `json:"time"`            //Parámetro para NOOP.
-	Datos           *string               `json:"datos"`           //Parámetro para el WRITE.
+	ProcessValues   utilsCPU.Proceso      `json:"instruction"`  //Valores de PID y PC
+	Interrup        utilsCPU.Interrupcion `json:"interruption"` //Valores de la interrupción.
+	Direccion       int                   `json:"adress"`       //Para Read and Write -> Dirección lógica que pasa memoria.
+	InstructionType string                `json:"message"`      //Contexto de la ejecución, es decir, la string que entra en el execute.
+	Valor           *int                  `json:"value"`        //Parámetro para GOTO
+	Tamaño          *int                  `json:"size"`         //Parámetro para el READ e INIT_PROC.
+	Tiempo          *int                  `json:"time"`         //Parámetro para NOOP.
+	Datos           *string               `json:"datos"`        //Parámetro para el WRITE.
+}
+
+type PaqueteRecibidoMemoria struct {
+	Mensaje string `json:"message"`
 }
 
 // ¿Es correcto? porque, si no, no se guarda en la variable
@@ -135,15 +139,18 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 		return
 	}
 
-	var respuesta Instruccion
+	var respuesta PaqueteRecibidoMemoria
 
-	err = json.Unmarshal(body, &respuesta)
+	err = json.Unmarshal(body, &(respuesta))
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
 
-	log.Printf("Instruction given: %s.\n", respuesta.InstructionType) // Nos manda memoria la instrucción.
+	log.Printf("Instruction given: %s\n", respuesta.Mensaje) // Nos manda memoria la instrucción.
+
+	globals.ID.InstructionType = respuesta.Mensaje
+
 }
 
 /*

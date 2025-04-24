@@ -65,7 +65,7 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuesta utilsCPU.Proceso
 	respuesta.Pid = 5
-	respuesta.Pc = 2
+	respuesta.Pc = 0
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return

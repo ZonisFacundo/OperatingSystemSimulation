@@ -225,13 +225,12 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 
 	for i := 0; i < (len(buffer)); i++ {
 
-		Line += string(buffer[i]) //va armando un string caracter a caracter hasta formar una instruccion (cuando lee \n)
-
 		if buffer[i] == 10 { //ASCII para \n
 			Contenido.Instrucciones = append(Contenido.Instrucciones, Line) //agrega la instruccion al slice de strings (donde cada elemento (cada string) es una instruccion)
 
 			Line = ""
 		}
+		Line += string(buffer[i]) //va armando un string caracter a caracter hasta formar una instruccion (cuando lee \n)
 
 	}
 	//	globals.MemoriaKernel[Pid].Instrucciones = Contenido.Instrucciones    esto no anda, hay que hacerlo con una copia //carga instrucciones al map global, lo que verdaderamente importa
