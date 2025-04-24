@@ -12,8 +12,8 @@ type MMU struct {
 	TablasPaginas       map[int]int
 }
 
-1)Definir las estructuras de datos para la tabla de paginas
-2)Traducir direccion logica a fisica
+1) Definir las estructuras de datos para la tabla de paginas
+2) Traducir direccion logica a fisica
 3)Gestionar TLB "se implementará una TLB para agilizar la traducción de las direcciones lógicas a direcciones físicas"
 La TLB contará con la siguiente estructura base: [ página | marco ]
 

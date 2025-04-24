@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 type Config struct {
@@ -21,6 +22,8 @@ type Config struct {
 	Log_level         string `json:"log_level"`
 	Instance_id       string `json:"instance_id"`
 }
+
+var Instruction utilsCPU.Proceso
 
 var ClientConfig *Config
 

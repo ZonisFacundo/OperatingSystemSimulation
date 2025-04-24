@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/sisoputnfrba/tp-golang/kernel/globals"
+	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 func ConfigurarLogger() {
@@ -59,12 +60,13 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("Handshake recibido de la instancia: %s", request.Instancia)
+	// log.Printf("Handshake recibido de la instancia: %s", request.Instancia)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuestaCPU RespuestaalCPU
-	respuestaCPU.Mensaje = "Se envio un string al CPU."
-	respuestaJSON, err := json.Marshal(respuestaCPU)
+	var respuesta utilsCPU.Proceso
+	respuesta.Pid = 5
+	respuesta.Pc = 2
+	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return
 	}

@@ -25,16 +25,11 @@ type PaqueteRecibidoMemoriadeKernel struct {
 	TamProceso int    `json:"tamanioproceso"`
 	Archivo    string `json:"file"`
 }
-
-type respuestaalCPU struct {
-	Instruccion string `json:"instruction"` //puede joder con que el nombre sea igual a otro y el json tambien tiene que ser igual
-}
 type respuestaalKernel struct {
 	Mensaje string `json:"message"`
 }
 
-//						FUNCIONES.
-
+// FUNCIONES.
 func ConfigurarLogger() {
 	logFile, err := os.OpenFile("memory.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 	if err != nil {
@@ -46,16 +41,13 @@ func ConfigurarLogger() {
 
 func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
-	var request PaqueteRecibidoMemoriadeCPU
-
-	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
+	err := json.NewDecoder(r.Body).Decode(&globals.Instruction) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("cliente envio: \n pid: %d \n pc: %d", request.Pid, request.Pc)
+	log.Printf("Cliente envio: \n pid: %d \n pc: %d", globals.Instruction.Pid, globals.Instruction.Pc)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
