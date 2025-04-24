@@ -2,10 +2,12 @@ package instruction_cycle
 
 import (
 	"fmt"
+
+	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 )
 
 // switch para ver que hace dependiendo la instruccion:
-func instruccionDetalle(detalle *Instruccion) {
+func InstruccionDetalle(detalle globals.Instruccion) {
 
 	switch detalle.InstructionType {
 	case "NOOP":
