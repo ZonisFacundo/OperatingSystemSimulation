@@ -28,6 +28,9 @@ type PaqueteRecibidoMemoriadeKernel struct {
 type respuestaalKernel struct {
 	Mensaje string `json:"message"`
 }
+type respuestaalCPU struct {
+	Mensaje string `json:"message"`
+}
 
 // FUNCIONES.
 func ConfigurarLogger() {
@@ -51,7 +54,7 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
-	respuestaCpu.Instruccion = globals.MemoriaKernel[request.Pid].Instrucciones[request.Pc]
+	respuestaCpu.Mensaje = globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]
 	respuestaJSON, err := json.Marshal(respuestaCpu)
 	if err != nil {
 		return
