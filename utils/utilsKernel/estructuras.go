@@ -20,6 +20,7 @@ type HandshakepaqueteIO struct {
 type HandshakepaqueteCPU struct {
 	Ip     string `json:"ip"`
 	Puerto int    `json:"port"`
+	Instancia string `json:"instancia"`
 }
 
 type HandshakepaqueteKERNEL struct {
@@ -41,7 +42,9 @@ type RespuestaalCPU struct {
 }
 type PaqueteRecibidoKERNEL struct {
 	Mensaje string `json:"message"`
+	Exito   bool   `json:"exito"`
 }
 
 var ColaNew []PCB
 var ColaReady []PCB
+var ContadorPCB int = 0

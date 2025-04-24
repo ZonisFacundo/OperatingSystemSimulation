@@ -8,22 +8,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 )
-
-type HandshakepaqueteCPU struct {
-	Ip     string `json:"ip"`
-	Puerto int    `json:"port"`
-}
-
-type HandshakepaqueteMemoria struct {
-	Instruccion string `json:"instruccion"`
-	Ip          string `json:"ip"` // es fundamental ponerlo
-	Puerto      int    `json:"port"`
-}
-
-type RespuestaHandshakeKernel struct { // aca va el formato que va a tener lo que esperas del server
-	Mensaje string `json:"message"`
-}
 
 func ConfigurarLogger() {
 	logFile, err := os.OpenFile("cpu.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
@@ -34,12 +21,9 @@ func ConfigurarLogger() {
 	log.SetOutput(mw)
 }
 
-func PeticionCLienteCPUServidorMEMORIA(instruccion string, ip string, puerto int) {
+func PeticionClienteCPUServidorMEMORIA(pid int, pc int, ip string, puerto int) {
 
-	var paquete HandshakepaqueteMemoria
-	paquete.Instruccion = instruccion
-	paquete.Ip = ip
-	paquete.Puerto = puerto
+	var paquete HandshakeMemory
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -48,7 +32,7 @@ func PeticionCLienteCPUServidorMEMORIA(instruccion string, ip string, puerto int
 	}
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/CPUMEMORIA", paquete.Ip, paquete.Puerto)
+	url := fmt.Sprintf("http://%s:%d/CPUMEMORIA", globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
@@ -93,21 +77,21 @@ func PeticionCLienteCPUServidorMEMORIA(instruccion string, ip string, puerto int
 	}
 
 	//pasamos la respuesta de JSON a formato paquete que nos mando el server
-
-	var respuesta RespuestaHandshakeKernel //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	var respuesta MemoryResponse           //para eso declaramos una variable con el struct que esperamos que nos envie el server
 	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	log.Printf("La respuesta del server fue: %s\n", respuesta.Instruccion)
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
 
-func PeticionClienteCPUServidorKERNEL(ip string, puerto int) {
+func PeticionClienteCPUServidorKERNEL(ip string, puerto int, instancia string) {
 
-	var paquete HandshakepaqueteCPU
+	var paquete HandshakeCPU
+
 	paquete.Ip = ip
 	paquete.Puerto = puerto
 
@@ -118,7 +102,7 @@ func PeticionClienteCPUServidorKERNEL(ip string, puerto int) {
 	}
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/handshake", paquete.Ip, paquete.Puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/handshake", ip, puerto) //url del server
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
@@ -154,7 +138,7 @@ func PeticionClienteCPUServidorKERNEL(ip string, puerto int) {
 	}
 	defer respuestaJSON.Body.Close()
 
-	log.Printf("Conexion establecida con exito \n")
+	log.Printf("Conexion establecida con exito.\n")
 	//pasamos de JSON a formato bytes lo que nos paso el paquete
 	body, err := io.ReadAll(respuestaJSON.Body)
 
@@ -162,15 +146,17 @@ func PeticionClienteCPUServidorKERNEL(ip string, puerto int) {
 		return
 	}
 
+	log.Println("Conexion establecida con exito en la instancia: ", instancia)
+
 	//pasamos la respuesta de JSON a formato paquete que nos mando el server
 
-	var respuesta RespuestaHandshakeKernel //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	var respuesta Instruccion //para eso declaramos una variable con el struct que esperamos que nos envie el server
+
 	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
-		return
 	}
-	log.Printf("La respuesta del server fue: %s.\n", respuesta.Mensaje)
-	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
+
+	log.Printf("Recibido del Kernel el PID: %d y el PC: %d.\n", respuesta.Pid, respuesta.Pc) //en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }

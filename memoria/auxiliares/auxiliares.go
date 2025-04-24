@@ -49,3 +49,13 @@ func ActualizarTablaSimple(x globals.ProcesoEnMemoria, pid int) { //hay que hace
 	globals.MemoriaKernel[pid] = auxi
 
 }
+func MostrarProceso(pid int) {
+
+	fmt.Printf("pid: %d \n", pid)
+	fmt.Printf("paginas ocupadas: \n")
+
+	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
+		fmt.Printf("%d \n", globals.MemoriaKernel[pid].TablaSimple[i])
+
+	}
+}

@@ -16,19 +16,11 @@ import (
 
 //					STRUCTS
 
-type Handshakepaquete struct {
-	Instruccion string `json:"instruccion"`
+type PaqueteRecibidoMemoriadeCPU struct {
+	Pid int `json:"pid"`
+	Pc  int `json:"pc"`
 }
 
-// CAMBIO EL PAQUETE QUE RECIBO DE KERNEL
-/*vamos  tener que usar este eventualmente
-type PaqueteRecibidoMemoriadeKernel struct {
-	NombreSyscall string `json:"syscallname"` //no se si necesito esto
-	TamProceso    int    `json:"processsize"`
-	archivo       string `json:"file"`
-	Pid           int    `json:"pid"`
-}
-*/
 type PaqueteRecibidoMemoriadeKernel struct {
 	Pid        int    `json:"pid"`
 	TamProceso int    `json:"tamanioproceso"`
@@ -36,7 +28,7 @@ type PaqueteRecibidoMemoriadeKernel struct {
 }
 
 type respuestaalCPU struct {
-	Mensaje string `json:"message"`
+	Instruccion string `json:"instruction"` //puede joder con que el nombre sea igual a otro y el json tambien tiene que ser igual
 }
 type respuestaalKernel struct {
 	Mensaje string `json:"message"`
@@ -55,7 +47,7 @@ func ConfigurarLogger() {
 
 func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
-	var request Handshakepaquete
+	var request PaqueteRecibidoMemoriadeCPU
 
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
 	if err != nil {
@@ -64,11 +56,11 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("(CPU) El cliente nos mando esto: \n instruccion: %s.\n", request.Instruccion)
+	log.Printf("cliente envio: \n pid: %d \n pc: %d", request.Pid, request.Pc)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
-	respuestaCpu.Mensaje = "Recibi de CPU"
+	respuestaCpu.Instruccion = "todavia no arme lo de las instrucciones aguanten"
 	respuestaJSON, err := json.Marshal(respuestaCpu)
 	if err != nil {
 		return
@@ -79,34 +71,6 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 }
 
-/*
-func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
-
-	var request HandshakepaqueteKernel
-
-	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("(kernel) El cliente nos mando esto: \n nombre pseudocodigo: %s, tamanio proceso: %d.\n", request.NombreCodigo, request.TamanioProceso)
-
-	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuestaCpu respuestaalCPU
-	respuestaCpu.Mensaje = "Recibi de Kernel"
-	respuestaJSON, err := json.Marshal(respuestaCpu)
-	if err != nil {
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(respuestaJSON)
-
-}
-*/
-//cambio api con kernel para recibir paquete deseado
 func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 	var DondeGuardarProceso int
@@ -121,7 +85,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo\n", (*globals.PaqueteInfoProceso).Pid, (*globals.PaqueteInfoProceso).TamProceso)
 
 	//el kernel quiere saber si podemos guardar eso en memoria, para eso vamos a consultar el espacio que tenemos
-	DondeGuardarProceso = EntraEnMemoria(globals.PaqueteInfoProceso.TamProceso, globals.PaqueteInfoProceso.Pid)
+	DondeGuardarProceso = EntraEnMemoria(globals.PaqueteInfoProceso.TamProceso, globals.PaqueteInfoProceso.Pid) //devuelve menor a 0 si no entra en memoria el proceso
 
 	if DondeGuardarProceso < 0 {
 		log.Printf("NO HAY ESPACIO EN MEMORIA PARA GUARDAR EL PROCESO \n")
@@ -134,7 +98,11 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusInsufficientStorage) //http tiene un mensaje de error especificamente para esto, tremendo
 		w.Write(respuestaJSON)
 	} else {
-		//	respuesta del server al cliente
+		if ReservarMemoria(globals.PaqueteInfoProceso.TamProceso, globals.PaqueteInfoProceso.Pid) < 0 { //ReservarMemoria devuelve <0 si hubo un error, si no hubieron errores actualiza el map y reserva la memoria para el proceso
+
+			log.Printf("error al reservar memoria para el proceso de pid: %d", (*globals.PaqueteInfoProceso).Pid)
+			return
+		}
 
 		//llevamos contenido del archivo al map
 
@@ -161,7 +129,7 @@ func InicializarMemoria() {
 	/*
 		globals.MemoriaPrincipal[22] = 1
 		globals.MemoriaPrincipal[80] = 1
-		globals.MemoriaPrincipal[200] = 1
+		globals.MemoriaPrincipal[200] = 1S
 	*/
 }
 
@@ -175,83 +143,88 @@ func InicializarPaginasDisponibles() {
 
 }
 
-func ActualizaPaginasDisponibles() {
-
-	//buscamos espacio contiguo en memoria, la memoria esta dividida en paginas
-	//primer for recorre de a paginas, segundo for recorre cada pagina buscando ver si esta libre o no
-	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ {
-		//	fmt.Printf("entre al ciclo i \n")
-		for j := 0; j < globals.ClientConfig.Page_size; j++ {
-			//		fmt.Printf("entre al ciclo j \n")
-
-			if globals.MemoriaPrincipal[(i*globals.ClientConfig.Page_size)+j] != 0 {
-				//			fmt.Printf(" \n \n \n DIJE QUE ESTA OCUPADAAA \n \n")
-
-				globals.PaginasDisponibles[i] = 1   //marcamos que esta ocupada
-				j += globals.ClientConfig.Page_size //salimos de la pagina si sabemos que esta ocupada
-			} else if j == globals.ClientConfig.Page_size-1 {
-				globals.PaginasDisponibles[i] = 0 //marcamos que esta desocupada
-			}
-
-		}
-
-	}
-
-}
-
 /*
-func EntraEnMemoria(tam int) int {
+	DEPRECADO
 
-	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
-	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
+func EscanearMemoria() {
 
-	var PaginasEncontradas int = 0
+		//buscamos espacio contiguo en memoria, la memoria esta dividida en paginas
+		//primer for recorre de a paginas, segundo for recorre cada pagina buscando ver si esta libre o no
+		for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ {
+			//	fmt.Printf("entre al ciclo i \n")
+			for j := 0; j < globals.ClientConfig.Page_size; j++ {
+				//		fmt.Printf("entre al ciclo j \n")
 
-	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
+				if globals.MemoriaPrincipal[(i*globals.ClientConfig.Page_size)+j] != 0 {
+					//			fmt.Printf(" \n \n \n DIJE QUE ESTA OCUPADAAA \n \n")
 
-		if globals.PaginasDisponibles[i] == 0 {
-			PaginasEncontradas++
+					globals.PaginasDisponibles[i] = 1   //marcamos que esta ocupada
+					j += globals.ClientConfig.Page_size //salimos de la pagina si sabemos que esta ocupada
+				} else if j == globals.ClientConfig.Page_size-1 {
+					globals.PaginasDisponibles[i] = 0 //marcamos que esta desocupada
+				}
 
-
-
-
-			if PaginasEncontradas == int(PaginasNecesarias) {
-				return (i - int(PaginasNecesarias) + 1) //devuelvo el indice del primer marco de pagina que vamos a usar para guardar el proceso
 			}
-		} else {
-			PaginasEncontradas = 0
+
 		}
 	}
-	return -1
-} la voy a mejorar
 */
 
-func EntraEnMemoria(tam int, pid int) int {
+/*
+QUE HACE RESERVAR MEMORIA?
 
-	ActualizaPaginasDisponibles()
+reservar memoria basicamente recibe informacion sobre un proceso que quiere iniciar kernel y guarda en el map que tenemos con informacion basica de proceso las paginas que este tiene reservada en memoria
+*/
+func ReservarMemoria(tam int, pid int) int {
+
 	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
-	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
 
 	var frames globals.ProcesoEnMemoria
 	frames.TablaSimple = make([]int, 0) //inicializa el slice donde vamos a guardar la tabla de paginas simple para el proceso
 
 	var PaginasEncontradas int = 0
+	if EntraEnMemoria(tam, pid) >= 0 {
+		for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
 
-	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
+			if globals.PaginasDisponibles[i] == 0 {
+				PaginasEncontradas++
+				frames.TablaSimple = append(frames.TablaSimple, i)
+				globals.PaginasDisponibles[i] = 1 //reservamos la pagina (podemos hacerlo ya que se llamo a EntraEnMemoria anteriormente)
 
-		if globals.PaginasDisponibles[i] == 0 {
-			PaginasEncontradas++
-			frames.TablaSimple = append(frames.TablaSimple, i)
+				if PaginasEncontradas == int(PaginasNecesarias) {
+					auxiliares.ActualizarTablaSimple(frames, pid)
 
-			if PaginasEncontradas == int(PaginasNecesarias) {
-				auxiliares.ActualizarTablaSimple(frames, pid)
+					auxiliares.MostrarProceso(pid)
 
-				return 1 //devuelvo numero positivo para indicar que fue un exito, asignamos todas las paginas al proceso
+					return 1 //devuelvo numero positivo para indicar que fue un exito, asignamos todas las paginas al proceso
+				}
 			}
 		}
 	}
 	return -1
 }
+
+func EntraEnMemoria(tam int, pid int) int {
+
+	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
+	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
+
+	var PaginasEncontradas int = 0
+
+	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles para ver si entran todas las paginas del proceso
+
+		if globals.PaginasDisponibles[i] == 0 {
+			PaginasEncontradas++
+
+			if PaginasEncontradas == int(PaginasNecesarias) {
+
+				return 1 //devuelvo numero positivo para indicar que fue entra
+			}
+		}
+	}
+	return -1 //no entra en memoria
+}
+
 func LeerArchivoYCargarMap(FilePath string, Pid int) {
 
 	var buffer []byte

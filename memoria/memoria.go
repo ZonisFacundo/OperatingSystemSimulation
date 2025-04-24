@@ -16,7 +16,7 @@ func main() {
 
 	utilsMemoria.InicializarMemoria()
 	utilsMemoria.InicializarPaginasDisponibles()
-	utilsMemoria.ActualizaPaginasDisponibles()
+	//utilsMemoria.EscanearMemoria() DEPRECADO
 	auxiliares.MostrarPaginasDisponibles()
 	//auxiliares.Mostrarmemoria()
 

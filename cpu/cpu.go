@@ -1,18 +1,24 @@
 package main
 
 import (
+	"fmt"
+	"log"
+
+	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
+var instruction utilsCPU.Instruccion
+
 func main() {
 	utilsCPU.ConfigurarLogger()
+	globals.CargarConfig("./cpu/globals/config.json")
 
-	/*
-	   conexion entre CPU (Client) con Kernel (Server)
-	   enviamos handshake con datos del modulo y esperamos respuesta
-	*/
+	log.Println("Ingrese el nombre de la instancia a ejecutar: ")
 
-	utilsCPU.PeticionClienteCPUServidorKERNEL("127.0.0.1", 8001)
-	utilsCPU.PeticionCLienteCPUServidorMEMORIA("NOOP", "127.0.0.1", 8002)
+	fmt.Scanln(&globals.ClientConfig.Instance_id)
 
+	utilsCPU.PeticionClienteCPUServidorKERNEL(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id)
+
+	utilsCPU.PeticionClienteCPUServidorMEMORIA(instruction.Pid, instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 }
