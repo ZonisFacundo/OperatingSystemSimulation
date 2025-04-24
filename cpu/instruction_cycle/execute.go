@@ -10,7 +10,7 @@ import (
 func InstruccionDetalle(detalle globals.Instruccion) {
 
 	switch detalle.InstructionType {
-	case "NOOP":
+	case "NOOP\n":
 		if detalle.Tiempo != nil {
 			tiempoEjecucion := Noop(*detalle.Tiempo)
 			detalle.ProcessValues.Pc = detalle.ProcessValues.Pc + 1

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
@@ -21,22 +22,21 @@ type Config struct {
 	Log_level         string `json:"log_level"`
 	Instance_id       string `json:"instance_id"`
 }
-
 type Instruccion struct { // instruccion obtenida de memoria
-	ProcessValues   utilsCPU.Proceso      `json:"instruction"`     //Valores de PID y PC
-	Interrup        utilsCPU.Interrupcion `json:"interruption"`    //Valores de la interrupción.
-	Direccion       int                   `json:"adress"`          //Para Read and Write -> Dirección lógica que pasa memoria.
-	InstructionType string                `json:"instructionType"` //Contexto de la ejecución, es decir, la string que entra en el execute.
-	Valor           *int                  `json:"value"`           //Parámetro para GOTO
-	Tamaño          *int                  `json:"size"`            //Parámetro para el READ e INIT_PROC.
-	Tiempo          *int                  `json:"time"`            //Parámetro para NOOP.
-	Datos           *string               `json:"datos"`           //Parámetro para el WRITE.
+	ProcessValues   utilsCPU.Proceso      `json:"instruction"`  //Valores de PID y PC
+	Interrup        utilsCPU.Interrupcion `json:"interruption"` //Valores de la interrupción.
+	Direccion       int                   `json:"adress"`       //Para Read and Write -> Dirección lógica que pasa memoria.
+	InstructionType string                `json:"message"`      //Contexto de la ejecución, es decir, la string que entra en el execute.
+	Valor           *int                  `json:"value"`        //Parámetro para GOTO
+	Tamaño          *int                  `json:"size"`         //Parámetro para el READ e INIT_PROC.
+	Tiempo          *int                  `json:"time"`         //Parámetro para NOOP.
+	Datos           *string               `json:"datos"`        //Parámetro para el WRITE.
 }
 
 var InstruccionDetalle Instruccion
 
 var Instruction utilsCPU.Proceso
-
+var ID Instruccion
 var ClientConfig *Config
 
 func CargarConfig(path string) {
