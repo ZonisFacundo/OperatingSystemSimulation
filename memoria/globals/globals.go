@@ -35,11 +35,10 @@ type ProcesoEnMemoria struct {
 este apartado es para poder comunicarnos entre distintos archivos .go (memoria, globals y utils) usando variables globales
 */
 
-var ClientConfig *Config                                                                     //variable global que apunta a un struct que contiene toda la config, despues lo vamos a usar en el main
-var MemoriaPrincipal []byte                                                                  //variable donde se guarda la memoria principal
-var MemoriaKernel map[int]ProcesoEnMemoria = make(map[int]ProcesoEnMemoria)                  // memoria del kernel (donde guardo segmento de codigo basicamente) y paginas reservadas para cada proceso con pid como key
-var PaqueteInfoProceso *PaqueteRecibidoMemoriadeKernel = new(PaqueteRecibidoMemoriadeKernel) //variable global donde guardo lo que me mande el kernel (info del proceso)
-var PaginasDisponibles []int                                                                 //nos indica el estado de cada pagina, ocupada o libre
+var ClientConfig *Config                                                    //variable global que apunta a un struct que contiene toda la config, despues lo vamos a usar en el main
+var MemoriaPrincipal []byte                                                 //variable donde se guarda la memoria principal
+var MemoriaKernel map[int]ProcesoEnMemoria = make(map[int]ProcesoEnMemoria) // memoria del kernel (donde guardo segmento de codigo basicamente) y paginas reservadas para cada proceso con pid como key
+var PaginasDisponibles []int                                                //nos indica el estado de cada pagina, ocupada o libre
 
 // FUNCIONES
 func CargarConfig(path string) {

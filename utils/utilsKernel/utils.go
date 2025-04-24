@@ -147,6 +147,7 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 
 }
 
+/*
 func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
@@ -212,8 +213,8 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
+*/
 
-/*
 func PeticionClienteKERNELServidorMemoria(pid int, TamProceso int, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
@@ -280,7 +281,7 @@ func PeticionClienteKERNELServidorMemoria(pid int, TamProceso int, ip string, pu
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
-*/
+
 func CrearPCB(tamanio int) { //pid unico arranca de 0
 	ColaNew = append(ColaNew, PCB{
 		Pid:            ContadorPCB,

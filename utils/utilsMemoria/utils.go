@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 
-	//"github.com/sisoputnfrba/tp-golang/memoria/auxiliares"
 	"github.com/sisoputnfrba/tp-golang/memoria/auxiliares"
 	"github.com/sisoputnfrba/tp-golang/memoria/globals"
 )
@@ -60,7 +59,7 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
-	respuestaCpu.Instruccion = "todavia no arme lo de las instrucciones aguanten"
+	respuestaCpu.Instruccion = globals.MemoriaKernel[request.Pid].Instrucciones[request.Pc]
 	respuestaJSON, err := json.Marshal(respuestaCpu)
 	if err != nil {
 		return
@@ -75,17 +74,19 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 
 	var DondeGuardarProceso int
 	var respuestaKernel respuestaalKernel
+	var PaqueteInfoProceso PaqueteRecibidoMemoriadeKernel //variable global donde guardo lo que me mande el kernel (info del proceso)
 
-	err := json.NewDecoder(r.Body).Decode(globals.PaqueteInfoProceso) //guarda en una variable global lo que nos mando el cliente
+	err := json.NewDecoder(r.Body).Decode(&PaqueteInfoProceso) //guarda en una variable global lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo\n", (*globals.PaqueteInfoProceso).Pid, (*globals.PaqueteInfoProceso).TamProceso)
+	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo\n", (PaqueteInfoProceso).Pid, (PaqueteInfoProceso).TamProceso)
+	(PaqueteInfoProceso).Archivo = "/home/utnso/archivosprueba/archi.txt" //voy a tener que recibir un archivo de kernel, esto es de prueba
 
 	//el kernel quiere saber si podemos guardar eso en memoria, para eso vamos a consultar el espacio que tenemos
-	DondeGuardarProceso = EntraEnMemoria(globals.PaqueteInfoProceso.TamProceso, globals.PaqueteInfoProceso.Pid) //devuelve menor a 0 si no entra en memoria el proceso
+	DondeGuardarProceso = EntraEnMemoria(PaqueteInfoProceso.TamProceso, PaqueteInfoProceso.Pid) //devuelve menor a 0 si no entra en memoria el proceso
 
 	if DondeGuardarProceso < 0 {
 		log.Printf("NO HAY ESPACIO EN MEMORIA PARA GUARDAR EL PROCESO \n")
@@ -98,17 +99,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusInsufficientStorage) //http tiene un mensaje de error especificamente para esto, tremendo
 		w.Write(respuestaJSON)
 	} else {
-		if ReservarMemoria(globals.PaqueteInfoProceso.TamProceso, globals.PaqueteInfoProceso.Pid) < 0 { //ReservarMemoria devuelve <0 si hubo un error, si no hubieron errores actualiza el map y reserva la memoria para el proceso
-
-			log.Printf("error al reservar memoria para el proceso de pid: %d", (*globals.PaqueteInfoProceso).Pid)
-			return
-		}
-
-		//llevamos contenido del archivo al map
-
-		(*globals.PaqueteInfoProceso).Archivo = "/home/utnso/archivosprueba/archi.txt" //voy a tener que recibir un archivo de kernel, esto es de prueba
-
-		LeerArchivoYCargarMap((*globals.PaqueteInfoProceso).Archivo, (*globals.PaqueteInfoProceso).Pid)
+		CrearProceso(PaqueteInfoProceso)
 
 		respuestaKernel.Mensaje = "Recibi de Kernel"
 		respuestaJSON, err := json.Marshal(respuestaKernel)
@@ -226,7 +217,6 @@ func EntraEnMemoria(tam int, pid int) int {
 }
 
 func LeerArchivoYCargarMap(FilePath string, Pid int) {
-
 	var buffer []byte
 	var err error
 	var Contenido globals.ProcesoEnMemoria //guardo lo que voy viendo del archivo organizadito para pasarselo a MemoriaKernel
@@ -249,16 +239,28 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 		}
 
 	}
-
 	//	globals.MemoriaKernel[Pid].Instrucciones = Contenido.Instrucciones    esto no anda, hay que hacerlo con una copia //carga instrucciones al map global, lo que verdaderamente importa
 
 	//creo una funcion para hacerlo porque sino rompe
-
+	auxiliares.ActualizarInstrucciones(Contenido, Pid)
 	//lo muestro a ver si funco
-	for i := 0; i < len(globals.MemoriaKernel); i++ {
-		for j := 0; j < len(globals.MemoriaKernel[i].Instrucciones); j++ {
-			fmt.Printf("%s", globals.MemoriaKernel[i].Instrucciones[j])
-		}
+	for j := 0; j < len(globals.MemoriaKernel[Pid].Instrucciones); j++ {
+		fmt.Printf("%s", globals.MemoriaKernel[Pid].Instrucciones[j])
 	}
+
+}
+func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
+	if ReservarMemoria(paquete.TamProceso, paquete.Pid) < 0 { //ReservarMemoria devuelve <0 si hubo un error, si no hubieron errores actualiza el map y reserva la memoria para el proceso
+
+		log.Printf("error al reservar memoria para el proceso de pid: %d", (paquete).Pid)
+		return
+	}
+
+	//llevamos contenido del archivo al map
+	LeerArchivoYCargarMap((paquete).Archivo, (paquete).Pid)
+	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
+
+}
+func CrearTablaDePaginas() {
 
 }
