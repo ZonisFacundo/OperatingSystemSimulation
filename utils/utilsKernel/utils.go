@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/sisoputnfrba/tp-golang/kernel/globals"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
@@ -149,7 +150,6 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 
 }
 
-/*
 func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
@@ -210,13 +210,15 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 	if respuesta.Exito {
 		PasarReady(pcb)
 	}
-	//else hay que definirlo despues Santi gil
+
+	time.Sleep(2 * time.Second)
+	PlanificadorLargoPlazo()
 
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
-*/
 
+/*
 func PeticionClienteKERNELServidorMemoria(pid int, TamProceso int, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
@@ -281,8 +283,9 @@ func PeticionClienteKERNELServidorMemoria(pid int, TamProceso int, ip string, pu
 	//else hay que definirlo despues Santi gil
 
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
-
+	//nosotros tenemos que de alguna manera ademas de un menaje tipo striung que seria muy hardcodeado, deberiamos saber si puede o no ejecutarse ese proceso
 }
+*/
 
 func CrearPCB(tamanio int) { //pid unico arranca de 0
 	ColaNew = append(ColaNew, PCB{
@@ -294,6 +297,7 @@ func CrearPCB(tamanio int) { //pid unico arranca de 0
 		TiempoEstados:  make(map[Estado]int64),
 	})
 	ContadorPCB++
+	PlanificadorLargoPlazo()
 }
 
 func LeerConsola() string {
@@ -315,12 +319,19 @@ func IniciarPlanifcador() {
 	}
 }
 
-/*
 func PlanificadorLargoPlazo() {
-	for i := range ColaNew{
-		pcb := Criterio()
+	if len(ColaNew) != 0 {
+		pcbChequear := CriterioColaNew()
+		PeticionClienteKERNELServidorMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	}
-}*/
+}
+
+func PlanificadorCortoPlazo() {
+	if len(ColaReady) != 0 {
+		pcbChequear := CriterioColaReady()
+		PeticionClienteKERNELServidorMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory) //dejo esto asi para que no de error
+	}
+}
 
 func FIFO(cola []PCB) PCB {
 	return cola[0]
@@ -332,6 +343,11 @@ func PasarReady(pcb PCB) {
 	pcb.EstadoActual = "READY"
 }
 
+func PasarExec(pcb PCB) {
+	ColaReady = removerPCB(ColaReady, pcb)
+	pcb.EstadoActual = "EXECUTE"
+}
+
 func removerPCB(cola []PCB, pcb PCB) []PCB {
 	for i, item := range cola {
 		if item.Pid == pcb.Pid {
@@ -341,7 +357,14 @@ func removerPCB(cola []PCB, pcb PCB) []PCB {
 	return cola
 }
 
-func Criterio() PCB {
+func CriterioColaNew() PCB {
+	if globals.ClientConfig.Ready_ingress_algorithm == "FIFO" {
+		return FIFO(ColaNew)
+	}
+	return FIFO(ColaNew) //esto no va asi pero es para que no de error
+}
+
+func CriterioColaReady() PCB {
 	if globals.ClientConfig.Scheduler_algorithm == "FIFO" {
 		return FIFO(ColaNew)
 	}

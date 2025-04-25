@@ -7,8 +7,8 @@ type PCB struct {
 	PC             int              `json:"PC"`
 	EstadoActual   Estado           `json:"estadoActual"`
 	TamProceso     int              `json:"tamanioProceso"`
-	MetricaEstados map[Estado]int   `json:"metricaEstados"`
-	TiempoEstados  map[Estado]int64 `json:"tiempoEstados"`
+	MetricaEstados map[Estado]int   `json:"metricaEstados"` //falta verlo
+	TiempoEstados  map[Estado]int64 `json:"tiempoEstados"`  // falta verlo
 }
 
 type HandshakepaqueteIO struct {
