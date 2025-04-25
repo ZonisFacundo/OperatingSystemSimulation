@@ -35,3 +35,27 @@ func MostrarMemoriaKernel() {
 
 	}
 }
+func ActualizarInstrucciones(x globals.ProcesoEnMemoria, pid int) { //hay que hacer esto porque no te deja actualizarle solo un miembro del struct directamente al de globals por algun motivo
+
+	auxi := globals.MemoriaKernel[pid]
+	auxi.Instrucciones = x.Instrucciones
+	globals.MemoriaKernel[pid] = auxi
+
+}
+func ActualizarTablaSimple(x globals.ProcesoEnMemoria, pid int) { //hay que hacer esto porque no te deja actualizarle solo un miembro del struct directamente al de globals por algun motivo
+
+	auxi := globals.MemoriaKernel[pid]
+	auxi.TablaSimple = x.TablaSimple
+	globals.MemoriaKernel[pid] = auxi
+
+}
+func MostrarProceso(pid int) {
+
+	fmt.Printf("pid: %d \n", pid)
+	fmt.Printf("paginas ocupadas: \n")
+
+	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
+		fmt.Printf("%d \n", globals.MemoriaKernel[pid].TablaSimple[i])
+
+	}
+}

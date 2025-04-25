@@ -16,11 +16,11 @@ func main() {
 
 	utilsMemoria.InicializarMemoria()
 	utilsMemoria.InicializarPaginasDisponibles()
-	utilsMemoria.ActualizaPaginasDisponibles()
+	//utilsMemoria.EscanearMemoria() DEPRECADO
 	auxiliares.MostrarPaginasDisponibles()
 	//auxiliares.Mostrarmemoria()
 
-	http.HandleFunc("POST /CPUMEMORIA", utilsMemoria.RetornoClienteCPUServidorMEMORIA)
+	http.HandleFunc("GET /INSTRUCCIONES", utilsMemoria.RetornoClienteCPUServidorMEMORIA)
 	http.HandleFunc("POST /KERNELMEMORIA", utilsMemoria.RetornoClienteKernelServidorMEMORIA)
 	log.Printf("Servidor corriendo (Memoria) en puerto %d.\n", globals.ClientConfig.Port_memory)
 	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_memory), nil)

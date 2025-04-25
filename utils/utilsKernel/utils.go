@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/sisoputnfrba/tp-golang/kernel/globals"
+	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 func ConfigurarLogger() {
@@ -59,12 +60,13 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("Handshake recibido de la instancia: %s", request.Instancia)
+	// log.Printf("Handshake recibido de la instancia: %s", request.Instancia)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuestaCPU RespuestaalCPU
-	respuestaCPU.Mensaje = "Se envio un string al CPU."
-	respuestaJSON, err := json.Marshal(respuestaCPU)
+	var respuesta utilsCPU.Proceso
+	respuesta.Pid = 5
+	respuesta.Pc = 0
+	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return
 	}
@@ -146,6 +148,8 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
+
+/*
 func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
@@ -172,19 +176,7 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 
 	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
 
-	respuestaJSON, err := cliente.Do(req) //recibe la respuesta del server
-	/* que tipo de dato tiene respuestaJSON?
-		type respuestaJSON struct {
-	    Status     string
-	    StatusCode int
-	    Header     Header
-	    Body       io.ReadCloser  // ← This is what you're accessing
-	    // ... other fields ...
-
-
-		ya definido por go de esa forma
-	*/
-
+	respuestaJSON, err := cliente.Do(req)
 	if err != nil {
 		log.Printf("Error al recibir respuesta.\n")
 		return
@@ -218,6 +210,74 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 	if respuesta.Exito {
 		PasarReady(pcb)
 	}
+	//else hay que definirlo despues Santi gil
+
+	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
+
+}
+*/
+
+func PeticionClienteKERNELServidorMemoria(pid int, TamProceso int, ip string, puerto int) {
+
+	var paquete PaqueteEnviadoKERNELaMemoria
+	paquete.Pid = pid
+	paquete.TamProceso = TamProceso
+
+	PaqueteFormatoJson, err := json.Marshal(paquete)
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al convertir a json.")
+		return
+	}
+	cliente := http.Client{} //crea un "cliente"
+
+	url := fmt.Sprintf("http://%s:%d/KERNELMEMORIA", ip, puerto) //url del server
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al generar la peticion al server.\n")
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
+
+	respuestaJSON, err := cliente.Do(req)
+
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+
+	}
+
+	if respuestaJSON.StatusCode != http.StatusOK {
+
+		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		return
+	}
+	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+
+	log.Printf("Conexion establecida con exito \n")
+	//pasamos de JSON a formato bytes lo que nos paso el paquete
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	//pasamos la respuesta de JSON a formato paquete que nos mando el server
+
+	var respuesta PaqueteRecibidoKERNEL    //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
+	if err != nil {
+		log.Printf("Error al decodificar el JSON.\n")
+		return
+	}
+	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	//if respuesta.Exito {
+	//	PasarReady(pcb)
+	//}
 	//else hay que definirlo despues Santi gil
 
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
