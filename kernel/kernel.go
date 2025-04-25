@@ -15,7 +15,6 @@ import (
 func main() {
 	globals.CargarConfig("./kernel/globals/config.json")
 	utilsKernel.ConfigurarLogger()
-	globals.CargarConfig("./kernel/globals/config.json")
 
 	time.Sleep(3 * time.Second)
 	utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003)

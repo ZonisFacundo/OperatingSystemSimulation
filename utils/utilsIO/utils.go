@@ -1,6 +1,7 @@
 package utilsIO
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -154,4 +155,13 @@ func RetornoClienteKERNELServidorIO(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
+}
+
+func LeerConsola() string {
+	// Leer de la consola
+	reader := bufio.NewReader(os.Stdin)
+	log.Println("Ingrese el nombre con el que se identificara la interfaz IO")
+	text, _ := reader.ReadString('\n')
+	//log.Print(text)
+	return text
 }
