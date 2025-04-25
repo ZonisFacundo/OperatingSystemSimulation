@@ -9,7 +9,9 @@ import (
 	//"encoding/json"
 	"net/http"
 	"time"
+
 	//"github.com/sisoputnfrba/tp-golang/estructurasKernel"
+	"fmt"
 )
 
 func main() {
@@ -29,6 +31,6 @@ func main() {
 	http.HandleFunc("POST /IO", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /handshake", utilsKernel.RetornoClienteCPUServidorKERNEL)
 	log.Printf("Servidor corriendo.\n")
-	http.ListenAndServe(":8001", nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_kernel), nil)
 
 }

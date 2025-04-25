@@ -13,7 +13,7 @@ import (
 )
 
 // switch para ver que hace dependiendo la instruccion:
-func InstruccionDetalle(detalle globals.Instruccion) {
+func Execute(detalle globals.Instruccion) {
 
 	switch detalle.InstructionType {
 	case "NOOP":
@@ -21,8 +21,8 @@ func InstruccionDetalle(detalle globals.Instruccion) {
 			tiempoEjecucion := Noop(*detalle.Tiempo)
 			detalle.ProcessValues.Pc = detalle.ProcessValues.Pc + 1
 			fmt.Printf("NOOP ejecutado con tiempo:%d , y actualizado el PC:%d.\n", tiempoEjecucion, detalle.ProcessValues.Pc)
+			log.Printf("## PID: %d - Ejecutando -> TYPE: %s ", detalle.ProcessValues.Pid, detalle.InstructionType)
 
-			//acá voy a tener que actualizar el PC, ¿cómo? ni idea.
 		} else {
 			fmt.Println("Tiempo no especificado u acción incorrecta.")
 		}
@@ -34,6 +34,7 @@ func InstruccionDetalle(detalle globals.Instruccion) {
 
 			/*TraducirDireccion(direccionObtenida)*/
 			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionObtenida, *datosACopiar)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Datos, detalle.Direccion)
 		} else {
 			fmt.Println("WRITE inválido.")
 		}
@@ -45,6 +46,7 @@ func InstruccionDetalle(detalle globals.Instruccion) {
 
 			TraducirDireccion(direccionObtenida)*/
 			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, detalle.Direccion, *detalle.Tamaño)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *detalle.Tamaño, detalle.Direccion)
 
 		} else {
 			fmt.Println("READ inválido.")
@@ -54,6 +56,8 @@ func InstruccionDetalle(detalle globals.Instruccion) {
 		if detalle.Valor != nil {
 			pcInstrNew := GOTO(detalle.ProcessValues.Pc, *detalle.Valor)
 			fmt.Println("PC actualizado en: ", pcInstrNew)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *detalle.Valor)
+
 		} else {
 			fmt.Println("Valor no modificado.")
 		}
