@@ -33,8 +33,6 @@ type Instruccion struct { // instruccion obtenida de memoria
 	Datos           *string               `json:"datos"`        //Parámetro para el WRITE.
 }
 
-var InstruccionDetalle Instruccion
-
 var Instruction utilsCPU.Proceso
 var ID Instruccion
 var ClientConfig *Config

@@ -26,6 +26,12 @@ type Instruccion struct { // instruccion obtenida de memoria
 type PaqueteRecibidoMemoria struct {
 	Mensaje string `json:"message"`
 }
+type PaqueteRecibidoWRITE struct {
+	Mensaje string `json:"message"`
+}
+type PaqueteRecibidoREAD struct {
+	ValorInstruccion string `json:"message"`
+}
 
 // ¿Es correcto? porque, si no, no se guarda en la variable
 
@@ -107,7 +113,7 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 
 	// log.Printf("Process ID: %d - FETCH - Program Counter: %d.\n", pid, pc) // log mínimo y obligatorio
 
-	url := fmt.Sprintf("http://%s:%d/INSTRUCCIONES", globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+	url := fmt.Sprintf("http://%s:%d/INSTRUCCIONES", ip, puerto)
 
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer(PaqueteFormatoJson))
 
