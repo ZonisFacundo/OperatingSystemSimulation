@@ -33,6 +33,10 @@ type PaqueteEnviadoKERNELaMemoria struct {
 	TamProceso int    `json:"tamanioProceso"`
 	Archivo    string `json:"file"`
 }
+
+type PaqueteEnviadoKERNELaCPU struct {
+	Pid int `json:"pid"`
+}
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
 }
@@ -41,9 +45,18 @@ type RespuestaalCPU struct {
 	Pid int
 	Pc  int
 }
-type PaqueteRecibidoKERNEL struct {
+type PaqueteRecibidoDeMemoria struct {
 	Mensaje string `json:"message"`
 	Exito   bool   `json:"exito"`
+}
+
+type PaqueteRecibidoDeIO struct {
+	Mensaje string `json:"message"`
+}
+
+type PaqueteRecibidoDeCPU struct {
+	Mensaje string `json:"message"`
+	Pid     int    `json:"pid"`
 }
 
 var ColaNew []PCB
