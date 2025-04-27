@@ -11,6 +11,12 @@ type PCB struct {
 	TiempoEstados  map[Estado]int64 `json:"tiempoEstados"`  // falta verlo
 }
 
+type CPU struct {
+	Ip         string `json:"ip"`
+	Port       int    `json:"port"`
+	Disponible bool   `json:"disponible"`
+}
+
 type HandshakepaqueteIO struct {
 	Nombre string `json:"name"`
 	Ip     string `json:"ip"`
@@ -36,14 +42,15 @@ type PaqueteEnviadoKERNELaMemoria struct {
 
 type PaqueteEnviadoKERNELaCPU struct {
 	Pid int `json:"pid"`
+	PC  int `json:"pc"`
 }
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
 }
 
 type RespuestaalCPU struct {
-	Pid int
-	Pc  int
+	Pid int `json:"pid"`
+	PC  int `json:"pc"`
 }
 type PaqueteRecibidoDeMemoria struct {
 	Mensaje string `json:"message"`
@@ -62,3 +69,4 @@ type PaqueteRecibidoDeCPU struct {
 var ColaNew []PCB
 var ColaReady []PCB
 var ContadorPCB int = 0
+var ListaCPU []CPU

@@ -218,10 +218,11 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 
 }
 
-func PeticionClienteKERNELServidorCPU(pcb PCB, ip string, puerto int) { //falta hacer la conexion del lado del cpu pero no sabia donde hacerlas ni le queria romper el codigo
+func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) { //falta hacer la conexion del lado del cpu pero no sabia donde hacerlas ni le queria romper el codigo
 
 	var paquete PaqueteEnviadoKERNELaCPU
 	paquete.Pid = pcb.Pid
+	paquete.PC = pcb.PC
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -231,7 +232,7 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, ip string, puerto int) { //falta 
 	}
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/KERNELCPU", ip, puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/KERNELCPU", cpu.Ip, cpu.Port) //url del server
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
@@ -274,6 +275,11 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, ip string, puerto int) { //falta 
 		return
 	}
 	log.Printf("La respuesta del server fue: %s %d \n", respuesta.Mensaje, respuesta.Pid)
+	if respuesta.Mensaje == "RUNNING" {
+		//hacer algo a chequear
+	} else {
+		cpu.Disponible = true
+	}
 
 }
 
@@ -388,7 +394,12 @@ func PlanificadorLargoPlazo() {
 func PlanificadorCortoPlazo() {
 	if len(ColaReady) != 0 {
 		pcbChequear := CriterioColaReady()
-		PeticionClienteKERNELServidorMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory) //dejo esto asi para que no de error
+		CPUDisponible, noEsVacio := TraqueoCPU() //drakukeo en su defecto
+		if noEsVacio {
+			pcbChequear.EstadoActual = "EXEC"
+			CPUDisponible.Disponible = false
+			PeticionClienteKERNELServidorCPU(pcbChequear, CPUDisponible)
+		}
 	}
 }
 
@@ -428,4 +439,13 @@ func CriterioColaReady() PCB {
 		return FIFO(ColaNew)
 	}
 	return FIFO(ColaNew) //esto no va asi pero es para que no de error
+}
+
+func TraqueoCPU() (CPU, bool) {
+	for _, CPU := range ListaCPU {
+		if CPU.Disponible {
+			return CPU, true
+		}
+	}
+	return CPU{}, false
 }
