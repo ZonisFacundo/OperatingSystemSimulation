@@ -115,15 +115,8 @@ func PeticionClienteIOServidorKERNEL(nombre string, ip string, puerto int) {
 		return
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
-	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
-
-//hago conexion   KERNEL --> IO
-/*
-Al momento de recibir una petición del Kernel, el módulo deberá iniciar un usleep por el tiempo indicado en la request.
-Al finalizar deberá informar al Kernel que finalizó la solicitud de I/O y quedará a la espera de la siguiente petición.
-*/
 
 func RetornoClienteKERNELServidorIO(w http.ResponseWriter, r *http.Request) {
 

@@ -14,6 +14,7 @@ type PCB struct {
 type CPU struct {
 	Ip         string `json:"ip"`
 	Port       int    `json:"port"`
+	Instancia  string `json:"instancia"`
 	Disponible bool   `json:"disponible"`
 }
 
@@ -26,6 +27,13 @@ type HandshakepaqueteIO struct {
 type HandshakepaqueteCPU struct {
 	Ip        string `json:"ip"`
 	Puerto    int    `json:"port"`
+	Instancia string `json:"instancia"`
+}
+
+type HandshakepaqueteCPUPCB struct {
+	Pid       string `json:"pid"`
+	Pc        int    `json:"pc"`
+	Contexto  string `json:"contexto"`
 	Instancia string `json:"instancia"`
 }
 
@@ -48,16 +56,18 @@ type RespuestaalIO struct {
 	Mensaje string `json:"message"`
 }
 
-type RespuestaalCPU struct {
-	Pid int `json:"pid"`
-	PC  int `json:"pc"`
+type Respuesta struct {
+	Mensaje string `json:"message"`
 }
 type PaqueteRecibidoDeMemoria struct {
 	Mensaje string `json:"message"`
-	Exito   bool   `json:"exito"`
 }
 
 type PaqueteRecibidoDeIO struct {
+	Mensaje string `json:"message"`
+}
+
+type PaqueteRecibido struct {
 	Mensaje string `json:"message"`
 }
 

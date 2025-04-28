@@ -29,6 +29,7 @@ func main() {
 	http.HandleFunc("/handshake", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /IO", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /handshake", utilsKernel.RetornoClienteCPUServidorKERNEL)
+	http.HandleFunc("POST /PCB", utilsKernel.RetornoClienteCPUServidorKERNEL2)
 	log.Printf("Servidor corriendo.\n")
 	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_kernel), nil)
 

@@ -9,10 +9,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/sisoputnfrba/tp-golang/kernel/globals"
-	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 func ConfigurarLogger() {
@@ -61,15 +59,52 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	// log.Printf("Handshake recibido de la instancia: %s", request.Instancia)
+	log.Printf("Handshake recibido de la instancia: %s", request.Instancia)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuesta utilsCPU.Proceso
-	respuesta.Pid = 5
-	respuesta.Pc = 0
+	var respuesta Respuesta
+	respuesta.Mensaje = "conexion realizada con exito"
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return
+	}
+
+	crearStructCPU(request.Ip, request.Puerto, request.Instancia)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
+
+func RetornoClienteCPUServidorKERNEL2(w http.ResponseWriter, r *http.Request) {
+
+	var request HandshakepaqueteCPUPCB
+
+	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
+	log.Printf("contexto de devolucion del proceso: %s", request.Contexto)
+
+	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
+	var respuesta Respuesta
+	respuesta.Mensaje = "conexion realizada con exito"
+	respuestaJSON, err := json.Marshal(respuesta)
+	if err != nil {
+		return
+	}
+
+	cpuServidor := ObtenerCpu(request.Instancia)
+	cpuServidor.Disponible = true
+
+	if request.Contexto == "RUNNING" {
+		//hacer algo a chequear
+	} else {
+		//cambiar estado de pcb
+
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -104,17 +139,6 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
 
 	respuestaJSON, err := cliente.Do(req) //recibe la respuesta del server
-	/* que tipo de dato tiene respuestaJSON?
-		type respuestaJSON struct {
-	    Status     string
-	    StatusCode int
-	    Header     Header
-	    Body       io.ReadCloser  // ← This is what you're accessing
-	    // ... other fields ...
-
-
-		ya definido por go de esa forma
-	*/
 
 	if err != nil {
 		log.Printf("Error al recibir respuesta.\n")
@@ -183,11 +207,6 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 
 	}
 
-	if respuestaJSON.StatusCode != http.StatusOK {
-
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
-		return
-	}
 	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
 
 	log.Printf("Conexion establecida con exito \n")
@@ -207,18 +226,15 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 		return
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
-	if respuesta.Exito {
+	if respuestaJSON.StatusCode == http.StatusOK {
 		PasarReady(pcb)
 	}
-
-	time.Sleep(2 * time.Second)
-	PlanificadorLargoPlazo()
 
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
 
-func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) { //falta hacer la conexion del lado del cpu pero no sabia donde hacerlas ni le queria romper el codigo
+func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) {
 
 	var paquete PaqueteEnviadoKERNELaCPU
 	paquete.Pid = pcb.Pid
@@ -237,6 +253,7 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) { //falta hacer la conex
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
 	if err != nil {
+
 		//aca tiene que haber un logger
 		log.Printf("Error al generar la peticion al server.\n")
 		return
@@ -268,89 +285,15 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) { //falta hacer la conex
 
 	//pasamos la respuesta de JSON a formato paquete que nos mando el server
 
-	var respuesta PaqueteRecibidoDeCPU
+	var respuesta PaqueteRecibido
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del server fue: %s %d \n", respuesta.Mensaje, respuesta.Pid)
-	if respuesta.Mensaje == "RUNNING" {
-		//hacer algo a chequear
-	} else {
-		cpu.Disponible = true
-	}
-
-}
-
-/*
-func PeticionClienteKERNELServidorMemoria(pid int, TamProceso int, ip string, puerto int) {
-
-	var paquete PaqueteEnviadoKERNELaMemoria
-	paquete.Pid = pid
-	paquete.TamProceso = TamProceso
-
-	PaqueteFormatoJson, err := json.Marshal(paquete)
-	if err != nil {
-		//aca tiene que haber un logger
-		log.Printf("Error al convertir a json.")
-		return
-	}
-	cliente := http.Client{} //crea un "cliente"
-
-	url := fmt.Sprintf("http://%s:%d/KERNELMEMORIA", ip, puerto) //url del server
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
-
-	if err != nil {
-		//aca tiene que haber un logger
-		log.Printf("Error al generar la peticion al server.\n")
-		return
-	}
-
-	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
-
-	respuestaJSON, err := cliente.Do(req)
-
-	if err != nil {
-		log.Printf("Error al recibir respuesta.\n")
-		return
-
-	}
-
-	if respuestaJSON.StatusCode != http.StatusOK {
-
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
-		return
-	}
-	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
-
-	log.Printf("Conexion establecida con exito \n")
-	//pasamos de JSON a formato bytes lo que nos paso el paquete
-	body, err := io.ReadAll(respuestaJSON.Body)
-
-	if err != nil {
-		return
-	}
-
-	//pasamos la respuesta de JSON a formato paquete que nos mando el server
-
-	var respuesta PaqueteRecibidoDeMemoria    //para eso declaramos una variable con el struct que esperamos que nos envie el server
-	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
-	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
-		return
-	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
-	//if respuesta.Exito {
-	//	PasarReady(pcb)
-	//}
-	//else hay que definirlo despues Santi gil
 
-	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
-	//nosotros tenemos que de alguna manera ademas de un menaje tipo striung que seria muy hardcodeado, deberiamos saber si puede o no ejecutarse ese proceso
 }
-*/
 
 func CrearPCB(tamanio int) { //pid unico arranca de 0
 	ColaNew = append(ColaNew, PCB{
@@ -448,4 +391,22 @@ func TraqueoCPU() (CPU, bool) {
 		}
 	}
 	return CPU{}, false
+}
+
+func crearStructCPU(ip string, puerto int, instancia string) {
+	ListaCPU = append(ListaCPU, CPU{
+		Ip:         ip,
+		Port:       puerto,
+		Disponible: true,
+		Instancia:  instancia,
+	})
+}
+
+func ObtenerCpu(instancia string) CPU {
+	for _, cpu := range ListaCPU {
+		if cpu.Instancia == instancia {
+			return cpu
+		}
+	}
+	return CPU{}
 }
