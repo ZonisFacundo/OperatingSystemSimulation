@@ -25,8 +25,15 @@ type PaqueteRecibidoMemoriadeKernel struct {
 	TamProceso int    `json:"tamanioproceso"`
 	Archivo    string `json:"file"`
 }
+
+/*
+	type respuestaalKernel struct {
+		Mensaje string `json:"message"`
+	}
+*/
 type respuestaalKernel struct {
 	Mensaje string `json:"message"`
+	Exito   bool   `json:"exito"`
 }
 type respuestaalCPU struct {
 	Mensaje string `json:"message"`
@@ -90,6 +97,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	if DondeGuardarProceso < 0 {
 		log.Printf("NO HAY ESPACIO EN MEMORIA PARA GUARDAR EL PROCESO \n")
 		respuestaKernel.Mensaje = "No hay espacio para guardar el proceso en memoria crack"
+		respuestaKernel.Exito = false //estamos probando esto como respuesta ademas del mesanje
 		respuestaJSON, err := json.Marshal(respuestaKernel)
 		if err != nil {
 			return
@@ -101,6 +109,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		CrearProceso(PaqueteInfoProceso)
 
 		respuestaKernel.Mensaje = "Recibi de Kernel"
+		respuestaKernel.Exito = true //estamos probando esto como respuesta ademas del mesanje
 		respuestaJSON, err := json.Marshal(respuestaKernel)
 		if err != nil {
 			return

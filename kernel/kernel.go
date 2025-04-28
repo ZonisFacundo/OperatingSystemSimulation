@@ -9,26 +9,27 @@ import (
 	//"encoding/json"
 	"net/http"
 	"time"
+
 	//"github.com/sisoputnfrba/tp-golang/estructurasKernel"
+	"fmt"
 )
 
 func main() {
 	globals.CargarConfig("./kernel/globals/config.json")
 	utilsKernel.ConfigurarLogger()
-	globals.CargarConfig("./kernel/globals/config.json")
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(1 * time.Second)
 	utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003)
 
 	time.Sleep(2 * time.Second)
 
 	//utilsKernel.PeticionClienteKERNELServidorMemoria(0, 250, "127.0.0.1", 8002) //debe recibir un pcb despues hago uno de prueba
-	utilsKernel.PeticionClienteKERNELServidorMemoria(5, 250, "127.0.0.1", 8002) //con este codigo y la parte comentada de cliente kernel anda, entiendo que quieren pasarle un pcb o algo asi pero lo use para probar
+	//utilsKernel.PeticionClienteKERNELServidorMemoria(5, 250, "127.0.0.1", 8002) //con este codigo y la parte comentada de cliente kernel anda, entiendo que quieren pasarle un pcb o algo asi pero lo use para probar
 
 	http.HandleFunc("/handshake", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /IO", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /handshake", utilsKernel.RetornoClienteCPUServidorKERNEL)
 	log.Printf("Servidor corriendo.\n")
-	http.ListenAndServe(":8001", nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_kernel), nil)
 
 }

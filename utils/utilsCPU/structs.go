@@ -19,3 +19,12 @@ type HandshakeMemory struct {
 	Pid    int    `json:"pid"`
 	Pc     int    `json:"pc"`
 }
+
+type WriteStruct struct {
+	Datos     string `json:"datos"`
+	Direccion int    `json:"adress"`
+}
+type ReadStruct struct {
+	Tamaño    int `json:"datos"`
+	Direccion int `json:"adress"`
+}

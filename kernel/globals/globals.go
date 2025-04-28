@@ -7,12 +7,13 @@ import (
 )
 
 type Config struct {
-	Ip_memory           string `json:"ip_memory"`
-	Port_memory         int    `json:"port_memory"`
-	Port_kernel         int    `json:"port_kernel"`
-	Scheduler_algorithm string `json:"scheduler_algorithm"`
-	Suspension_time     int    `json:"suspension_time"`
-	Log_level           string `json:"log_level"`
+	Ip_memory               string `json:"ip_memory"`
+	Port_memory             int    `json:"port_memory"`
+	Port_kernel             int    `json:"port_kernel"`
+	Scheduler_algorithm     string `json:"scheduler_algorithm"`
+	Ready_ingress_algorithm string `json:"Ready_ingress_algorithm"`
+	Suspension_time         int    `json:"suspension_time"`
+	Log_level               string `json:"log_level"`
 }
 
 var ClientConfig *Config

@@ -7,8 +7,14 @@ type PCB struct {
 	PC             int              `json:"PC"`
 	EstadoActual   Estado           `json:"estadoActual"`
 	TamProceso     int              `json:"tamanioProceso"`
-	MetricaEstados map[Estado]int   `json:"metricaEstados"`
-	TiempoEstados  map[Estado]int64 `json:"tiempoEstados"`
+	MetricaEstados map[Estado]int   `json:"metricaEstados"` //falta verlo
+	TiempoEstados  map[Estado]int64 `json:"tiempoEstados"`  // falta verlo
+}
+
+type CPU struct {
+	Ip         string `json:"ip"`
+	Port       int    `json:"port"`
+	Disponible bool   `json:"disponible"`
 }
 
 type HandshakepaqueteIO struct {
@@ -33,19 +39,34 @@ type PaqueteEnviadoKERNELaMemoria struct {
 	TamProceso int    `json:"tamanioProceso"`
 	Archivo    string `json:"file"`
 }
+
+type PaqueteEnviadoKERNELaCPU struct {
+	Pid int `json:"pid"`
+	PC  int `json:"pc"`
+}
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
 }
 
 type RespuestaalCPU struct {
-	Pid int
-	Pc  int
+	Pid int `json:"pid"`
+	PC  int `json:"pc"`
 }
-type PaqueteRecibidoKERNEL struct {
+type PaqueteRecibidoDeMemoria struct {
 	Mensaje string `json:"message"`
 	Exito   bool   `json:"exito"`
+}
+
+type PaqueteRecibidoDeIO struct {
+	Mensaje string `json:"message"`
+}
+
+type PaqueteRecibidoDeCPU struct {
+	Mensaje string `json:"message"`
+	Pid     int    `json:"pid"`
 }
 
 var ColaNew []PCB
 var ColaReady []PCB
 var ContadorPCB int = 0
+var ListaCPU []CPU

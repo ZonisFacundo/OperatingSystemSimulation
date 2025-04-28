@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/sisoputnfrba/tp-golang/kernel/globals"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
@@ -138,7 +139,7 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 
 	//pasamos la respuesta de JSON a formato paquete que nos mando el server
 
-	var respuesta PaqueteRecibidoKERNEL    //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	var respuesta PaqueteRecibidoDeIO      //para eso declaramos una variable con el struct que esperamos que nos envie el server
 	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
@@ -149,7 +150,6 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 
 }
 
-/*
 func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
@@ -200,7 +200,7 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 
 	//pasamos la respuesta de JSON a formato paquete que nos mando el server
 
-	var respuesta PaqueteRecibidoKERNEL    //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	var respuesta PaqueteRecibidoDeMemoria //para eso declaramos una variable con el struct que esperamos que nos envie el server
 	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
@@ -210,13 +210,80 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 	if respuesta.Exito {
 		PasarReady(pcb)
 	}
-	//else hay que definirlo despues Santi gil
+
+	time.Sleep(2 * time.Second)
+	PlanificadorLargoPlazo()
 
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
-*/
 
+func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) { //falta hacer la conexion del lado del cpu pero no sabia donde hacerlas ni le queria romper el codigo
+
+	var paquete PaqueteEnviadoKERNELaCPU
+	paquete.Pid = pcb.Pid
+	paquete.PC = pcb.PC
+
+	PaqueteFormatoJson, err := json.Marshal(paquete)
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al convertir a json.")
+		return
+	}
+	cliente := http.Client{} //crea un "cliente"
+
+	url := fmt.Sprintf("http://%s:%d/KERNELCPU", cpu.Ip, cpu.Port) //url del server
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al generar la peticion al server.\n")
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
+
+	respuestaJSON, err := cliente.Do(req)
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+
+	}
+
+	if respuestaJSON.StatusCode != http.StatusOK {
+
+		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		return
+	}
+	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+
+	log.Printf("Conexion establecida con exito \n")
+	//pasamos de JSON a formato bytes lo que nos paso el paquete
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	//pasamos la respuesta de JSON a formato paquete que nos mando el server
+
+	var respuesta PaqueteRecibidoDeCPU
+	err = json.Unmarshal(body, &respuesta)
+	if err != nil {
+		log.Printf("Error al decodificar el JSON.\n")
+		return
+	}
+	log.Printf("La respuesta del server fue: %s %d \n", respuesta.Mensaje, respuesta.Pid)
+	if respuesta.Mensaje == "RUNNING" {
+		//hacer algo a chequear
+	} else {
+		cpu.Disponible = true
+	}
+
+}
+
+/*
 func PeticionClienteKERNELServidorMemoria(pid int, TamProceso int, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
@@ -268,7 +335,7 @@ func PeticionClienteKERNELServidorMemoria(pid int, TamProceso int, ip string, pu
 
 	//pasamos la respuesta de JSON a formato paquete que nos mando el server
 
-	var respuesta PaqueteRecibidoKERNEL    //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	var respuesta PaqueteRecibidoDeMemoria    //para eso declaramos una variable con el struct que esperamos que nos envie el server
 	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
@@ -281,8 +348,9 @@ func PeticionClienteKERNELServidorMemoria(pid int, TamProceso int, ip string, pu
 	//else hay que definirlo despues Santi gil
 
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
-
+	//nosotros tenemos que de alguna manera ademas de un menaje tipo striung que seria muy hardcodeado, deberiamos saber si puede o no ejecutarse ese proceso
 }
+*/
 
 func CrearPCB(tamanio int) { //pid unico arranca de 0
 	ColaNew = append(ColaNew, PCB{
@@ -294,6 +362,7 @@ func CrearPCB(tamanio int) { //pid unico arranca de 0
 		TiempoEstados:  make(map[Estado]int64),
 	})
 	ContadorPCB++
+	PlanificadorLargoPlazo()
 }
 
 func LeerConsola() string {
@@ -315,12 +384,24 @@ func IniciarPlanifcador() {
 	}
 }
 
-/*
 func PlanificadorLargoPlazo() {
-	for i := range ColaNew{
-		pcb := Criterio()
+	if len(ColaNew) != 0 {
+		pcbChequear := CriterioColaNew()
+		PeticionClienteKERNELServidorMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	}
-}*/
+}
+
+func PlanificadorCortoPlazo() {
+	if len(ColaReady) != 0 {
+		pcbChequear := CriterioColaReady()
+		CPUDisponible, noEsVacio := TraqueoCPU() //drakukeo en su defecto
+		if noEsVacio {
+			pcbChequear.EstadoActual = "EXEC"
+			CPUDisponible.Disponible = false
+			PeticionClienteKERNELServidorCPU(pcbChequear, CPUDisponible)
+		}
+	}
+}
 
 func FIFO(cola []PCB) PCB {
 	return cola[0]
@@ -332,6 +413,11 @@ func PasarReady(pcb PCB) {
 	pcb.EstadoActual = "READY"
 }
 
+func PasarExec(pcb PCB) {
+	ColaReady = removerPCB(ColaReady, pcb)
+	pcb.EstadoActual = "EXECUTE"
+}
+
 func removerPCB(cola []PCB, pcb PCB) []PCB {
 	for i, item := range cola {
 		if item.Pid == pcb.Pid {
@@ -341,9 +427,25 @@ func removerPCB(cola []PCB, pcb PCB) []PCB {
 	return cola
 }
 
-func Criterio() PCB {
+func CriterioColaNew() PCB {
+	if globals.ClientConfig.Ready_ingress_algorithm == "FIFO" {
+		return FIFO(ColaNew)
+	}
+	return FIFO(ColaNew) //esto no va asi pero es para que no de error
+}
+
+func CriterioColaReady() PCB {
 	if globals.ClientConfig.Scheduler_algorithm == "FIFO" {
 		return FIFO(ColaNew)
 	}
 	return FIFO(ColaNew) //esto no va asi pero es para que no de error
+}
+
+func TraqueoCPU() (CPU, bool) {
+	for _, CPU := range ListaCPU {
+		if CPU.Disponible {
+			return CPU, true
+		}
+	}
+	return CPU{}, false
 }

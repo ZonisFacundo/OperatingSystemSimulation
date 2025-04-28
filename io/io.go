@@ -11,7 +11,7 @@ import (
 func main() {
 
 	utilsIO.ConfigurarLogger()
-
+	nombre := utilsIO.LeerConsola()
 	/*
 	   conexion entre IO (Client) con Kernel (Server)
 	   enviamos handshake con datos del modulo y esperamos respuesta
@@ -19,7 +19,7 @@ func main() {
 	go func() {
 		time.Sleep(4 * time.Second)
 
-		utilsIO.PeticionClienteIOServidorKERNEL("pepe", "127.0.0.1", 8001)
+		utilsIO.PeticionClienteIOServidorKERNEL(nombre, "127.0.0.1", 8001)
 	}()
 
 	http.HandleFunc("/KERNELIO", utilsIO.RetornoClienteKERNELServidorIO)
