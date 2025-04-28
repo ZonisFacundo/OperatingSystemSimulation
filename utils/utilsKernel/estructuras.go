@@ -26,7 +26,7 @@ type HandshakepaqueteIO struct {
 type HandshakepaqueteCPU struct {
 	Ip        string `json:"ip"`
 	Puerto    int    `json:"port"`
-	Instancia string `json:"instancia"`
+	Instancia string `json:"instance_id"`
 }
 
 type HandshakepaqueteKERNEL struct {
@@ -49,8 +49,7 @@ type RespuestaalIO struct {
 }
 
 type RespuestaalCPU struct {
-	Pid int `json:"pid"`
-	PC  int `json:"pc"`
+	Mensaje string `json:"messageCPU"`
 }
 type PaqueteRecibidoDeMemoria struct {
 	Mensaje string `json:"message"`
@@ -58,12 +57,13 @@ type PaqueteRecibidoDeMemoria struct {
 }
 
 type PaqueteRecibidoDeIO struct {
-	Mensaje string `json:"message"`
+	Mensaje string `json:"message"` //Tiene que ser igual de ambos lados.
 }
 
 type PaqueteRecibidoDeCPU struct {
-	Mensaje string `json:"message"`
+	Mensaje string `json:"messageCPU"`
 	Pid     int    `json:"pid"`
+	Pc      int    `json:"pc"`
 }
 
 var ColaNew []PCB
