@@ -37,7 +37,7 @@ var Instruction utilsCPU.Proceso
 var ID Instruccion
 var ClientConfig *Config
 
-func CargarConfig(path string) {
+func CargarConfig(path string, instanceID string) {
 
 	conjuntodebytes, err := os.ReadFile(path)
 	if err != nil {
@@ -53,5 +53,5 @@ func CargarConfig(path string) {
 	}
 
 	ClientConfig = &configgenerica //hacemos que nuestro puntero (variable global) apunte a donde guardamos los datos
-
+	configgenerica.Instance_id = instanceID
 }

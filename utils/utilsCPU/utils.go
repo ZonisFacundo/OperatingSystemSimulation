@@ -1,10 +1,13 @@
 package utilsCPU
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"os"
-	"fmt"
 )
 
 /*
@@ -30,4 +33,84 @@ func ConfigurarLogger(cpuId string) {
 
 	//prefija cada línea de log con el cpuId:
 	log.SetPrefix(fmt.Sprintf("[CPU-%s] ", cpuId))
+}
+
+func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
+	var request HandshakeKERNEL
+
+	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var respuesta Proceso
+
+	respuestaJSON, err := json.Marshal(respuesta)
+	if err != nil {
+		return
+	}
+
+	log.Printf("El Kernel envio PID: %d - PC: %d", respuesta.Pid, respuesta.Pc)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+}
+
+func EnvioPortKernel(ip string, puerto int, instancia string) {
+
+	var paquete HandshakeCPU
+
+	paquete.Ip = ip
+	paquete.Puerto = puerto
+	paquete.Instancia = instancia
+
+	PaqueteFormatoJson, err := json.Marshal(paquete)
+	if err != nil {
+		log.Printf("Error al convertir a json.\n")
+		return
+	}
+
+	cliente := http.Client{} //crea un "cliente"
+
+	url := fmt.Sprintf("http://%s:%d/handshake", ip, puerto) //url del server
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+
+	if err != nil {
+		log.Printf("Error al generar la peticion al server.\n")
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	respuestaJSON, err := cliente.Do(req)
+
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+	}
+
+	if respuestaJSON.StatusCode != http.StatusOK {
+
+		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		return
+	}
+	defer respuestaJSON.Body.Close()
+
+	log.Printf("Conexion establecida con exito.\n")
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	var respuesta RespuestaalCPU
+	err = json.Unmarshal(body, &respuesta)
+	if err != nil {
+		log.Printf("Error al decodificar el JSON.\n")
+	}
+
+	log.Printf("Conexión realizada con exito.")
+
 }

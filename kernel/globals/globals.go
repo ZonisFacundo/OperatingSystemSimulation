@@ -14,6 +14,7 @@ type Config struct {
 	Ready_ingress_algorithm string `json:"Ready_ingress_algorithm"`
 	Suspension_time         int    `json:"suspension_time"`
 	Log_level               string `json:"log_level"`
+	Ip_cpu                  string `json:"ip_cpu"`
 }
 
 var ClientConfig *Config

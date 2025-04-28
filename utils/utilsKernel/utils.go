@@ -47,7 +47,6 @@ func RetornoClienteIOServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	w.Write(respuestaJSON)
 
 }
-
 func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 
 	var request HandshakepaqueteCPU
@@ -62,7 +61,7 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Handshake recibido de la instancia: %s", request.Instancia)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuesta Respuesta
+	var respuesta RespuestaalCPU
 	respuesta.Mensaje = "conexion realizada con exito"
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
@@ -90,7 +89,7 @@ func RetornoClienteCPUServidorKERNEL2(w http.ResponseWriter, r *http.Request) {
 	log.Printf("contexto de devolucion del proceso: %s", request.Contexto)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuesta Respuesta
+	var respuesta RespuestaalCPU
 	respuesta.Mensaje = "conexion realizada con exito"
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
@@ -110,9 +109,7 @@ func RetornoClienteCPUServidorKERNEL2(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
-}
-
-// conexion kernel --> IO lado del cliente (kernel)
+} // conexion kernel --> IO lado del cliente (kernel)
 func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 
 	var paquete RespuestaalIO
@@ -160,20 +157,15 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int) {
 	if err != nil {
 		return
 	}
-
-	//pasamos la respuesta de JSON a formato paquete que nos mando el server
-
-	var respuesta PaqueteRecibidoDeIO      //para eso declaramos una variable con el struct que esperamos que nos envie el server
-	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
+	var respuesta PaqueteRecibidoDeIO
+	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
-	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
-
 func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
@@ -237,6 +229,7 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) {
 
 	var paquete PaqueteEnviadoKERNELaCPU
+
 	paquete.Pid = pcb.Pid
 	paquete.PC = pcb.PC
 
@@ -246,7 +239,8 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) {
 		log.Printf("Error al convertir a json.")
 		return
 	}
-	cliente := http.Client{} //crea un "cliente"
+
+	cliente := http.Client{} // Crea un "cliente"
 
 	url := fmt.Sprintf("http://%s:%d/KERNELCPU", cpu.Ip, cpu.Port) //url del server
 
@@ -259,13 +253,12 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) {
 		return
 	}
 
-	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
+	req.Header.Set("Content-Type", "application/json") // Le avisa al server que manda la data en json format
 
 	respuestaJSON, err := cliente.Do(req)
 	if err != nil {
 		log.Printf("Error al recibir respuesta.\n")
 		return
-
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
@@ -273,6 +266,7 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) {
 		log.Printf("Status de respuesta el server no fue la esperada.\n")
 		return
 	}
+
 	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
 
 	log.Printf("Conexion establecida con exito \n")
@@ -281,9 +275,7 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) {
 
 	if err != nil {
 		return
-	}
-
-	//pasamos la respuesta de JSON a formato paquete que nos mando el server
+	} //pasamos la respuesta de JSON a formato paquete que nos mando el server
 
 	var respuesta PaqueteRecibido
 	err = json.Unmarshal(body, &respuesta)

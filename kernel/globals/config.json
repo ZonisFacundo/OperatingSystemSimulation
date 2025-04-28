@@ -5,5 +5,6 @@
     "scheduler_algorithm": "FIFO",
     "ready_ingress_algorithm": "PMCP",
     "suspension_time": 4500,
-    "log_level": "EXAMPLE"
+    "log_level": "EXAMPLE",
+    "ip_cpu": "127.0.0.1"
 }
