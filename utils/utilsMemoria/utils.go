@@ -31,6 +31,10 @@ type respuestaalKernel struct {
 type respuestaalCPU struct {
 	Mensaje string `json:"message"`
 }
+type TablaDePagina struct {
+	siguiente []*TablaDePagina
+	marco     []int
+}
 
 // FUNCIONES.
 func ConfigurarLogger() {
@@ -255,6 +259,20 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
 
 }
-func CrearTablaDePaginas() {
+
+func CrearTablaDePaginas(nivel int) TablaDePagina {
+
+	var Nivel []*TablaDePagina = make([]*TablaDePagina, globals.ClientConfig.Entries_per_page) //inicializa el nivel inicial con la cantidad de entradas definidas por el archivo de configuracion
+	//no pasa nada si se llaman igual al llamarse recursivamente... se va apilando y desapilando el stack
+
+	if nivel == globals.ClientConfig.Number_of_levels {
+
+	} else if nivel == globals.ClientConfig.Number_of_levels-1 { //apunta a tabla de paginas que contiene los marcos (ints) no punteros
+
+		for i := 0; i < globals.ClientConfig.Entries_per_page; i++ {
+			Nivel[i].siguiente = new([]TablaDePagina)
+
+		}
+	}
 
 }
