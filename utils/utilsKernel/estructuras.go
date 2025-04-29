@@ -14,6 +14,7 @@ type PCB struct {
 type CPU struct {
 	Ip         string `json:"ip"`
 	Port       int    `json:"port"`
+	Instancia  string `json:"instancia"`
 	Disponible bool   `json:"disponible"`
 }
 
@@ -26,6 +27,13 @@ type HandshakepaqueteIO struct {
 type HandshakepaqueteCPU struct {
 	Ip        string `json:"ip"`
 	Puerto    int    `json:"port"`
+	Instancia string `json:"instance_id"`
+}
+
+type HandshakepaqueteCPUPCB struct {
+	Pid       string `json:"pid"`
+	Pc        int    `json:"pc"`
+	Contexto  string `json:"contexto"`
 	Instancia string `json:"instancia"`
 }
 
@@ -49,21 +57,24 @@ type RespuestaalIO struct {
 }
 
 type RespuestaalCPU struct {
-	Pid int `json:"pid"`
-	PC  int `json:"pc"`
+	Mensaje string `json:"messageCPU"`
 }
 type PaqueteRecibidoDeMemoria struct {
 	Mensaje string `json:"message"`
-	Exito   bool   `json:"exito"`
 }
 
 type PaqueteRecibidoDeIO struct {
+	Mensaje string `json:"message"` //Tiene que ser igual de ambos lados.
+}
+
+type PaqueteRecibido struct {
 	Mensaje string `json:"message"`
 }
 
 type PaqueteRecibidoDeCPU struct {
-	Mensaje string `json:"message"`
+	Mensaje string `json:"messageCPU"`
 	Pid     int    `json:"pid"`
+	Pc      int    `json:"pc"`
 }
 
 var ColaNew []PCB

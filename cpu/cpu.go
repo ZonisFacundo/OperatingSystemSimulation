@@ -1,8 +1,10 @@
 package main
 
 import (
-	"os"
+	"fmt"
 	"log"
+	"net/http"
+	"os"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/cpu/instruction_cycle"
@@ -13,22 +15,21 @@ import (
 func main() {
 
 	if len(os.Args) < 2 {
-		log.Fatal("Error: Debe indicar el identificador de la CPU como argumento.\nEjemplo: ./cpu cpuX")
+		log.Fatal("Error: Debe indicar el identificador de la CPU como argumento, por ejemplo: ./cpu cpuX")
 	}
 
 	instanceID := os.Args[1]
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
+	globals.CargarConfig("./cpu/globals/config.json", instanceID)
 
-	globals.CargarConfig("./cpu/globals/config.json")
-
+	utilsCPU.EnvioPortKernel(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id)
 	
-	/*log.Println("Ingrese el nombre de la instancia a ejecutar: ")
+	http.HandleFunc("/KERNELCPU", utilsCPU.RecibirPCyPID)
+	log.Printf("Servidor corriendo, esperando PID y PC de Kernel.")
+	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
 
-	fmt.Scanln(&globals.ClientConfig.Instance_id)*/
-
-	instruction_cycle.SolicitudPIDyPCAKernel(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id)
 	instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	instruction_cycle.Execute(globals.ID)
 }
