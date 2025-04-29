@@ -38,8 +38,8 @@ type respuestaalKernel struct {
 type respuestaalCPU struct {
 	Mensaje string `json:"message"`
 }
-type TablaDePagina struct {
-	siguiente []*TablaDePagina
+type Nodo struct {
+	siguiente []*Nodo
 	marco     []int
 }
 
@@ -269,6 +269,7 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 }
 
+/*
 func CrearTablaDePaginas(nivel int) TablaDePagina {
 
 	var Nivel []*TablaDePagina = make([]*TablaDePagina, globals.ClientConfig.Entries_per_page) //inicializa el nivel inicial con la cantidad de entradas definidas por el archivo de configuracion
@@ -282,6 +283,30 @@ func CrearTablaDePaginas(nivel int) TablaDePagina {
 			Nivel[i].siguiente = new([]TablaDePagina)
 
 		}
+	}
+
+}
+*/
+
+func CrearEInicializarTablaDePaginas(PunteroANodo *Nodo, nivel int) {
+
+	if nivel < 0 {
+		log.Printf("No puede haber una estructura con niveles negativos...")
+		return
+	}
+	if nivel == globals.ClientConfig.Number_of_levels {
+
+		(*PunteroANodo).marco = make([]int, globals.ClientConfig.Entries_per_page)
+		return
+
+	}
+	PunteroANodo.siguiente = make([]*Nodo, globals.ClientConfig.Entries_per_page) //inicializa el nodo -> sgte
+
+	for entrada := 0; entrada < globals.ClientConfig.Entries_per_page; entrada++ {
+
+		(*PunteroANodo).siguiente[entrada] = new(Nodo)
+		CrearEInicializarTablaDePaginas((*PunteroANodo).siguiente[entrada], nivel+1)
+
 	}
 
 }
