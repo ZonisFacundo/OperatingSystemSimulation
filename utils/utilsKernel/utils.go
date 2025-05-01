@@ -299,7 +299,7 @@ func CrearPCB(tamanio int) { //pid unico arranca de 0
 		TiempoEstados:  make(map[Estado]int64),
 	})
 	ContadorPCB++
-	PlanificadorLargoPlazo()
+	//PlanificadorLargoPlazo()
 }
 
 func LeerConsola() string {
