@@ -17,7 +17,7 @@ import (
 func main() {
 	globals.CargarConfig("./kernel/globals/config.json")
 	utilsKernel.ConfigurarLogger()
-	utilsKernel.CrearPCB(2)
+	utilsKernel.CrearPCB(2, "/home/utnso/Desktop/tp-2025-1c-NutriGO/archi.txt") //Esta hardcodeado para probar
 
 	go utilsKernel.IniciarPlanifcador()
 	/*

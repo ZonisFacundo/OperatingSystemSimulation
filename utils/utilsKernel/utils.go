@@ -172,6 +172,7 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 	var paquete PaqueteEnviadoKERNELaMemoria
 	paquete.Pid = pcb.Pid
 	paquete.TamProceso = pcb.TamProceso
+	paquete.Archivo = pcb.Archivo
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -289,7 +290,7 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) {
 
 }
 
-func CrearPCB(tamanio int) { //pid unico arranca de 0
+func CrearPCB(tamanio int, archivo string) { //pid unico arranca de 0
 	ColaNew = append(ColaNew, PCB{
 		Pid:            ContadorPCB,
 		PC:             0,
@@ -297,6 +298,7 @@ func CrearPCB(tamanio int) { //pid unico arranca de 0
 		TamProceso:     tamanio,
 		MetricaEstados: make(map[Estado]int),
 		TiempoEstados:  make(map[Estado]int64),
+		Archivo:        archivo,
 	})
 	ContadorPCB++
 	//PlanificadorLargoPlazo()
