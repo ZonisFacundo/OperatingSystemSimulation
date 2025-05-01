@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/sisoputnfrba/tp-golang/kernel/globals"
 )
@@ -219,6 +220,7 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
 	if respuestaJSON.StatusCode == http.StatusOK {
+		println("Se pasa el proceso a READY")
 		PasarReady(pcb)
 	}
 
@@ -312,9 +314,12 @@ func LeerConsola() string {
 func IniciarPlanifcador() {
 	for true {
 		text := LeerConsola()
-		if text == "\n" {
-			//PlanificadorLargoPlazo()
-			break
+		for text == "\n" {
+
+			println("Planificador de largo plazo ejecutando") //solo para saber que esta funcionando
+			PlanificadorLargoPlazo()
+			PlanificadorCortoPlazo()
+			time.Sleep(5 * time.Second)
 		}
 	}
 }
@@ -323,6 +328,8 @@ func PlanificadorLargoPlazo() {
 	if len(ColaNew) != 0 {
 		pcbChequear := CriterioColaNew()
 		PeticionClienteKERNELServidorMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+	} else {
+		println("No hay procesos en cola NEW")
 	}
 }
 
@@ -331,15 +338,23 @@ func PlanificadorCortoPlazo() {
 		pcbChequear := CriterioColaReady()
 		CPUDisponible, noEsVacio := TraqueoCPU() //drakukeo en su defecto
 		if noEsVacio {
+			println("Proceso ejecutandose") //solo para saber que esta funcionando
 			pcbChequear.EstadoActual = "EXEC"
 			CPUDisponible.Disponible = false
 			PeticionClienteKERNELServidorCPU(pcbChequear, CPUDisponible)
+
 		}
+	} else {
+		println("No hay procesos en cola READY")
 	}
 }
 
 func FIFO(cola []PCB) PCB {
-	return cola[0]
+	if len(cola) == 0 {
+		return PCB{}
+	}
+	pcb := cola[0]
+	return pcb
 }
 
 func PasarReady(pcb PCB) {
