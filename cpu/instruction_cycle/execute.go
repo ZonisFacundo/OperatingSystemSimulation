@@ -16,6 +16,8 @@ import (
 // switch para ver que hace dependiendo la instruccion:
 func Execute(detalle globals.Instruccion) {
 
+	var memoryManagement mmu.MMU
+
 	switch detalle.InstructionType {
 	case "NOOP":
 		if detalle.Tiempo != nil {
@@ -34,7 +36,7 @@ func Execute(detalle globals.Instruccion) {
 
 			datosACopiar := detalle.Datos
 			direccionObtenida := detalle.DireccionFis //Traduzco la direccion específica acá.
-			mmu.TraducirDireccion(direccionObtenida)
+			mmu.TraducirDireccion(direccionObtenida, memoryManagement)
 
 			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionObtenida, *datosACopiar)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Datos, detalle.DireccionFis)
@@ -45,10 +47,10 @@ func Execute(detalle globals.Instruccion) {
 
 	case "READ":
 		if detalle.DireccionLog != 0 || detalle.Tamaño != nil {
-			tamañoDet := detalle.Tamaño
+			//tamañoDet := detalle.Tamaño
 			direccionObtenida := detalle.DireccionLog
 
-			mmu.TraducirDireccion(direccionObtenida)
+			mmu.TraducirDireccion(direccionObtenida, memoryManagement)
 			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, detalle.DireccionLog, *detalle.Tamaño)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *detalle.Tamaño, detalle.DireccionLog)
 
