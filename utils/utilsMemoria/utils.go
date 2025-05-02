@@ -38,20 +38,8 @@ type respuestaalKernel struct {
 type respuestaalCPU struct {
 	Mensaje string `json:"message"`
 }
-type Nodo struct {
-	siguiente []*Nodo
-	marco     []int
-}
 
-// FUNCIONES.
-func ConfigurarLogger() {
-	logFile, err := os.OpenFile("memory.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
-	if err != nil {
-		panic(err)
-	}
-	mw := io.MultiWriter(os.Stdout, logFile)
-	log.SetOutput(mw)
-}
+// http codigo
 
 func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
@@ -120,32 +108,72 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-/*
 func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWriter, r *http.Request) {
 
-	var DireccionLogica[] int
+	var DireccionLogica []int
 
-	err := json.NewDecoder(r.Body).Decode(&) //guarda en request lo que nos mando el cliente
+	err := json.NewDecoder(r.Body).Decode(&DireccionLogica) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	log.Printf("Cliente envio: \n pid: %d \n pc: %d", globals.Instruction.Pid, globals.Instruction.Pc)
+	for i := 0; i < globals.ClientConfig.Number_of_levels+1; i++ {
+		log.Printf("entranda nivel %d: %d\n", i, DireccionLogica[i])
 
-	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
-	var respuestaCpu respuestaalCPU
-	respuestaCpu.Mensaje = globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]
-	respuestaJSON, err := json.Marshal(respuestaCpu)
+	}
+
+	log.Printf("desplazamiento %d: \n", DireccionLogica[globals.ClientConfig.Number_of_levels+1])
+
+	var Traduccion globals.DireccionFisica = TraducirLogicaAFisica(DireccionLogica, globals.PunteroBase)
+
+	respuestaJSON, err := json.Marshal(Traduccion)
 	if err != nil {
 		return
 	}
+
+	if Traduccion.Direccion == -1 {
+		log.Printf("ERROR, envio una entrada mayor a la cantidad de entradas posibles en la configuracion actual \n")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if Traduccion.Direccion == -2 {
+		log.Printf("ERROR, envio un desplazamiento (%d) mayor al tam de pagina de la configuracion actual (%d)  \n", DireccionLogica[0], globals.ClientConfig.Page_size)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("DIRECCION FISICA HALLADA:  %d: \n", Traduccion.Direccion)
+	log.Printf("MARCO:  %d: \n", Traduccion.Marco)
+	log.Printf("DESPLAZAMIENTO:  %d: \n", Traduccion.Desplazamiento)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
 }
+
+/*
+/
+/
+/
+/
+	FUNCIONES NO HTTP
+/
+/
+/
+/
+
 */
+
+func ConfigurarLogger() {
+	logFile, err := os.OpenFile("memory.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
+	if err != nil {
+		panic(err)
+	}
+	mw := io.MultiWriter(os.Stdout, logFile)
+	log.SetOutput(mw)
+}
+
 func InicializarMemoria() {
 
 	globals.MemoriaPrincipal = make([]byte, globals.ClientConfig.Memory_size) //inicializa la memoria segun lo que decia el enunciado
@@ -274,9 +302,7 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 	}
 	//	globals.MemoriaKernel[Pid].Instrucciones = Contenido.Instrucciones    esto no anda, hay que hacerlo con una copia //carga instrucciones al map global, lo que verdaderamente importa
 
-	//creo una funcion para hacerlo porque sino rompe
-	auxiliares.ActualizarInstrucciones(Contenido, Pid)
-	//lo muestro a ver si funco
+	//creo una funcion para hacerlo porque sino rompeutilsMemoria
 	for j := 0; j < len(globals.MemoriaKernel[Pid].Instrucciones); j++ {
 		fmt.Printf("%s", globals.MemoriaKernel[Pid].Instrucciones[j])
 	}
@@ -295,26 +321,7 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 }
 
-/*
-func CrearTablaDePaginas(nivel int) TablaDePagina {
-
-	var Nivel []*TablaDePagina = make([]*TablaDePagina, globals.ClientConfig.Entries_per_page) //inicializa el nivel inicial con la cantidad de entradas definidas por el archivo de configuracion
-	//no pasa nada si se llaman igual al llamarse recursivamente... se va apilando y desapilando el stack
-
-	if nivel == globals.ClientConfig.Number_of_levels {
-
-	} else if nivel == globals.ClientConfig.Number_of_levels-1 { //apunta a tabla de paginas que contiene los marcos (ints) no punteros
-
-		for i := 0; i < globals.ClientConfig.Entries_per_page; i++ {
-			Nivel[i].siguiente = new([]TablaDePagina)
-
-		}
-	}
-
-}
-*/
-
-func CrearEInicializarTablaDePaginas(PunteroANodo *Nodo, nivel int) {
+func CrearEInicializarTablaDePaginas(PunteroANodo *globals.Nodo, nivel int) {
 
 	if nivel < 0 {
 		log.Printf("No puede haber una estructura con niveles negativos...")
@@ -322,17 +329,86 @@ func CrearEInicializarTablaDePaginas(PunteroANodo *Nodo, nivel int) {
 	}
 	if nivel == globals.ClientConfig.Number_of_levels {
 
-		(*PunteroANodo).marco = make([]int, globals.ClientConfig.Entries_per_page)
+		(*PunteroANodo).Marco = make([]int, globals.ClientConfig.Entries_per_page)
+		for j := 0; j < globals.ClientConfig.Entries_per_page; j++ {
+			(*PunteroANodo).Marco[j] = -1 //lo dejo en -1 porque si los dejo en 0 podria significar una pagina valida
+		}
 		return
-
 	}
-	PunteroANodo.siguiente = make([]*Nodo, globals.ClientConfig.Entries_per_page) //inicializa el nodo -> sgte
+	(*PunteroANodo).Siguiente = make([]*globals.Nodo, globals.ClientConfig.Entries_per_page) //inicializa el globals.Nodo -> sgte
 
 	for entrada := 0; entrada < globals.ClientConfig.Entries_per_page; entrada++ {
 
-		(*PunteroANodo).siguiente[entrada] = new(Nodo)
-		CrearEInicializarTablaDePaginas((*PunteroANodo).siguiente[entrada], nivel+1)
+		(*PunteroANodo).Siguiente[entrada] = new(globals.Nodo)
+		CrearEInicializarTablaDePaginas((*PunteroANodo).Siguiente[entrada], nivel+1)
 
 	}
 
+}
+
+/*
+que hace traducirlogicaafisica?
+
+recibe el slice de cpu
+DireccionLogica[0] = desplazamiento
+DireccionLogica[1] = entrada nivel 1
+...
+DireccionLogica[n] = entrada nivel n
+
+a partir de estos datos accede a la tabla de paginas y devuelve el marco asociado a tal direccion logica, ademas el desplazamiento en otro valor aparte.
+Tambien devuelvo la direccion en forma de bytes para que CPU use la que mas le guste
+*/
+func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) globals.DireccionFisica {
+
+	var DireccionFisica globals.DireccionFisica
+
+	//VERIFICO SI LOS DATOS QUE MANDO CPU TIENEN SENTIDO (O SEA, NO HAY VALORES MAYORES A LOS DE LA CANTIDAD DE NIVELES/ENTRADAS/TAMDEPAGINA QUE TENEMOS DEFINIDOS)
+	for i := 1; i <= globals.ClientConfig.Number_of_levels; i++ { //arrancamos desde 1 porque en 0 esta el desplazamiento, nos fijamos si la entrada nivel n es mayor a la cantidad de entradas por tabla
+		if DireccionLogica[i] >= globals.ClientConfig.Entries_per_page {
+
+			DireccionFisica.Desplazamiento = -1
+			DireccionFisica.Marco = -1
+			DireccionFisica.Direccion = -1 //para marcar error
+			return DireccionFisica
+		}
+	}
+
+	if DireccionLogica[0] >= globals.ClientConfig.Page_size { //nos envio un desplazamiento dentro de la pagina mayor al tam de la pagina
+		DireccionFisica.Desplazamiento = -2
+		DireccionFisica.Marco = -2
+		DireccionFisica.Direccion = -2 //para marcar error
+		return DireccionFisica
+	}
+
+	//SI LLEGAMOS ACA, LO QUE ENVIO CPU TIENE SENTIDO
+
+	marco := AccedeAEntrada(DireccionLogica, 1, PunteroNodo)
+
+	DireccionFisica.Marco = marco
+	DireccionFisica.Desplazamiento = DireccionLogica[0]                                       //desplazamiento
+	DireccionFisica.Direccion = (marco * globals.ClientConfig.Page_size) + DireccionLogica[0] //tam de pagina * numero de pagina + desplazamiento dentro de pagina
+
+	return DireccionFisica
+
+}
+
+/*
+Direccion logica tiene la forma de
+DireccionLogica[0] = desplazamiento
+DireccionLogica[1] = entrada nivel 1
+...
+DireccionLogica[n] = entrada nivel n
+
+Para aumentar expresividad en el codigo (no estar agregando i - 1 en los loops por ejemplo)
+*/
+
+func AccedeAEntrada(DireccionLogica []int, nivel int, PunteroNodo *globals.Nodo) int {
+
+	if nivel == globals.ClientConfig.Number_of_levels { //significa que ya estamos parados en el nivel que contiene los marcos
+		return ((*PunteroNodo).Marco[nivel])
+
+	} else {
+		return AccedeAEntrada(DireccionLogica, nivel+1, (*PunteroNodo).Siguiente[DireccionLogica[nivel]])
+
+	}
 }

@@ -32,6 +32,16 @@ type ProcesoEnMemoria struct {
 	TablaSimple   []int    `json:"tablasimple"` //basicamente la tabla de paginas simple para el proceso...
 }
 
+type Nodo struct {
+	Siguiente []*Nodo `json:"node"`
+	Marco     []int   `json:"frame"`
+}
+type DireccionFisica struct {
+	Marco          int `json:"frame"`
+	Desplazamiento int `json:"offset"`
+	Direccion      int `json:"address"`
+}
+
 var Instruction *utilsCPU.Proceso
 
 //					VARIABLES GLOBALES
@@ -43,6 +53,7 @@ var ClientConfig *Config                                                    //va
 var MemoriaPrincipal []byte                                                 //variable donde se guarda la memoria principal
 var MemoriaKernel map[int]ProcesoEnMemoria = make(map[int]ProcesoEnMemoria) // memoria del kernel (donde guardo segmento de codigo basicamente) y paginas reservadas para cada proceso con pid como key
 var PaginasDisponibles []int                                                //nos indica el estado de cada pagina, ocupada o libre
+var PunteroBase *Nodo = nil
 
 // FUNCIONES
 func CargarConfig(path string) {

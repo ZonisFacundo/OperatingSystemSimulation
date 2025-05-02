@@ -20,11 +20,10 @@ func main() {
 	auxiliares.MostrarPaginasDisponibles()
 	//auxiliares.Mostrarmemoria()
 
-	var PunteroBase *utilsMemoria.Nodo = nil
-	PunteroBase = new(utilsMemoria.Nodo)
-	utilsMemoria.CrearEInicializarTablaDePaginas(PunteroBase, 1) //cuidado con esta cte, no creo que moleste porque no se vuelve a llamar a esta funcion
+	globals.PunteroBase = new(globals.Nodo)
+	utilsMemoria.CrearEInicializarTablaDePaginas(globals.PunteroBase, 1) //cuidado con esta cte, no creo que moleste porque no se vuelve a llamar a esta funcion
 
-	//http.HandleFunc("POST /TRADUCCIONLOGICAAFISICA", utilsMemoria.RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica)
+	http.HandleFunc("POST /TRADUCCIONLOGICAAFISICA", utilsMemoria.RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica)
 	http.HandleFunc("GET /INSTRUCCIONES", utilsMemoria.RetornoClienteCPUServidorMEMORIA)
 	http.HandleFunc("POST /KERNELMEMORIA", utilsMemoria.RetornoClienteKernelServidorMEMORIA)
 	log.Printf("Servidor corriendo (Memoria) en puerto %d.\n", globals.ClientConfig.Port_memory)
