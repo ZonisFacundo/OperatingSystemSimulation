@@ -8,27 +8,37 @@ import (
 
 	//"encoding/json"
 	"net/http"
-	"time"
+	//"time"
 
 	//"github.com/sisoputnfrba/tp-golang/estructurasKernel"
 	"fmt"
+	"os"
+	"strconv"
 )
 
 func main() {
 	globals.CargarConfig("./kernel/globals/config.json")
 	utilsKernel.ConfigurarLogger()
+	//utilsKernel.CrearPCB(2, "github.com/sisoputnfrba/tp-golang/archi.txt") ///home/utnso/tp-2025-1c-NutriGO/archi.txt
+	archivo := os.Args[1]
+	tamanio, err := strconv.Atoi(os.Args[2])
+	if err != nil {
+		log.Fatalf("❌ Tamaño inválido: %v", err)
+	}
+	println(archivo)
+	println(tamanio)
+	utilsKernel.CrearPCB(tamanio, archivo)
 
-	time.Sleep(1 * time.Second)
-	utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003)
+	go utilsKernel.IniciarPlanifcador()
+	/*
+		time.Sleep(1 * time.Second)
+		utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003)
 
-	time.Sleep(2 * time.Second)
+		time.Sleep(2 * time.Second)
+	*/
 
-	//utilsKernel.PeticionClienteKERNELServidorMemoria(0, 250, "127.0.0.1", 8002) //debe recibir un pcb despues hago uno de prueba
-	//utilsKernel.PeticionClienteKERNELServidorMemoria(5, 250, "127.0.0.1", 8002) //con este codigo y la parte comentada de cliente kernel anda, entiendo que quieren pasarle un pcb o algo asi pero lo use para probar
-
-	//utilsKernel.PeticionClienteKERNELServidorCPU() // ??? que seria pcb PCB (al llamar a la función deben ir parametros, cuales?)
-	http.HandleFunc("/handshake", utilsKernel.RetornoClienteIOServidorKERNEL)
-	http.HandleFunc("POST /IO", utilsKernel.RetornoClienteIOServidorKERNEL)
+	//http.HandleFunc("/handshake", utilsKernel.RetornoClienteIOServidorKERNEL)
+	//http.HandleFunc("POST /IO", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /handshake", utilsKernel.RetornoClienteCPUServidorKERNEL)
 	http.HandleFunc("POST /PCB", utilsKernel.RetornoClienteCPUServidorKERNEL2)
 	log.Printf("Servidor corriendo.\n")

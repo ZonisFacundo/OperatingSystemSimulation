@@ -87,9 +87,9 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo\n", (PaqueteInfoProceso).Pid, (PaqueteInfoProceso).TamProceso)
-	(PaqueteInfoProceso).Archivo = "/home/utnso/archivosprueba/archi.txt" //voy a tener que recibir un archivo de kernel, esto es de prueba
+	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo con esta ruta: %s \n", (PaqueteInfoProceso).Pid, (PaqueteInfoProceso).TamProceso, (PaqueteInfoProceso.Archivo))
 
 	//el kernel quiere saber si podemos guardar eso en memoria, para eso vamos a consultar el espacio que tenemos
 	DondeGuardarProceso = EntraEnMemoria(PaqueteInfoProceso.TamProceso, PaqueteInfoProceso.Pid) //devuelve menor a 0 si no entra en memoria el proceso
