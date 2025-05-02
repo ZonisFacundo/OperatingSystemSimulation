@@ -120,6 +120,32 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+/*
+func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWriter, r *http.Request) {
+
+	var DireccionLogica[] int
+
+	err := json.NewDecoder(r.Body).Decode(&) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("Cliente envio: \n pid: %d \n pc: %d", globals.Instruction.Pid, globals.Instruction.Pc)
+
+	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
+	var respuestaCpu respuestaalCPU
+	respuestaCpu.Mensaje = globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]
+	respuestaJSON, err := json.Marshal(respuestaCpu)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
+*/
 func InicializarMemoria() {
 
 	globals.MemoriaPrincipal = make([]byte, globals.ClientConfig.Memory_size) //inicializa la memoria segun lo que decia el enunciado
