@@ -8,8 +8,17 @@ type PCB struct {
 	EstadoActual   Estado           `json:"estadoActual"`
 	TamProceso     int              `json:"tamanioProceso"`
 	MetricaEstados map[Estado]int   `json:"metricaEstados"` //falta verlo
-	TiempoEstados  map[Estado]int64 `json:"tiempoEstados"`  // falta verlo
+	TiempoEstados  map[Estado]int64 `json:"tiempoEstados"`  // falta verlo un abrazo
+	Archivo        string           `json:"file"`
 }
+
+/*
+type PaqueteRecibidoMemoriadeKernel struct {
+	Pid        int    `json:"pid"`
+	TamProceso int    `json:"tamanioproceso"`
+	Archivo    string `json:"file"`
+}
+*/
 
 type CPU struct {
 	Ip         string `json:"ip"`

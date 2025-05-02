@@ -38,6 +38,10 @@ type respuestaalKernel struct {
 type respuestaalCPU struct {
 	Mensaje string `json:"message"`
 }
+type Nodo struct {
+	siguiente []*Nodo
+	marco     []int
+}
 
 // FUNCIONES.
 func ConfigurarLogger() {
@@ -83,9 +87,9 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo\n", (PaqueteInfoProceso).Pid, (PaqueteInfoProceso).TamProceso)
-	(PaqueteInfoProceso).Archivo = "/home/utnso/archivosprueba/archi.txt" //voy a tener que recibir un archivo de kernel, esto es de prueba
+	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo con esta ruta: %s \n", (PaqueteInfoProceso).Pid, (PaqueteInfoProceso).TamProceso, (PaqueteInfoProceso.Archivo))
 
 	//el kernel quiere saber si podemos guardar eso en memoria, para eso vamos a consultar el espacio que tenemos
 	DondeGuardarProceso = EntraEnMemoria(PaqueteInfoProceso.TamProceso, PaqueteInfoProceso.Pid) //devuelve menor a 0 si no entra en memoria el proceso
@@ -264,6 +268,45 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
 
 }
-func CrearTablaDePaginas() {
+
+/*
+func CrearTablaDePaginas(nivel int) TablaDePagina {
+
+	var Nivel []*TablaDePagina = make([]*TablaDePagina, globals.ClientConfig.Entries_per_page) //inicializa el nivel inicial con la cantidad de entradas definidas por el archivo de configuracion
+	//no pasa nada si se llaman igual al llamarse recursivamente... se va apilando y desapilando el stack
+
+	if nivel == globals.ClientConfig.Number_of_levels {
+
+	} else if nivel == globals.ClientConfig.Number_of_levels-1 { //apunta a tabla de paginas que contiene los marcos (ints) no punteros
+
+		for i := 0; i < globals.ClientConfig.Entries_per_page; i++ {
+			Nivel[i].siguiente = new([]TablaDePagina)
+
+		}
+	}
+
+}
+*/
+
+func CrearEInicializarTablaDePaginas(PunteroANodo *Nodo, nivel int) {
+
+	if nivel < 0 {
+		log.Printf("No puede haber una estructura con niveles negativos...")
+		return
+	}
+	if nivel == globals.ClientConfig.Number_of_levels {
+
+		(*PunteroANodo).marco = make([]int, globals.ClientConfig.Entries_per_page)
+		return
+
+	}
+	PunteroANodo.siguiente = make([]*Nodo, globals.ClientConfig.Entries_per_page) //inicializa el nodo -> sgte
+
+	for entrada := 0; entrada < globals.ClientConfig.Entries_per_page; entrada++ {
+
+		(*PunteroANodo).siguiente[entrada] = new(Nodo)
+		CrearEInicializarTablaDePaginas((*PunteroANodo).siguiente[entrada], nivel+1)
+
+	}
 
 }
