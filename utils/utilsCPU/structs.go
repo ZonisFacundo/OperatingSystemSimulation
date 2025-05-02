@@ -21,6 +21,13 @@ type HandshakeMemory struct {
 	Pc     int    `json:"pc"`
 }
 
+type PackageFinEjecucion struct {
+	Pid       int    `json:"pid"`
+	Pc        int    `json:"pc"`
+	Contexto  string `json:"context"`
+	Instancia string `json:"instance_id"`
+}
+
 type WriteStruct struct {
 	Datos     string `json:"datos"`
 	Direccion int    `json:"adress"`
@@ -36,5 +43,8 @@ type HandshakeKERNEL struct {
 	Instancia string `json:"instancia"`
 }
 type RespuestaalCPU struct {
+	Mensaje string `json:"messageCPU"`
+}
+type RespuestaKernel struct {
 	Mensaje string `json:"messageCPU"`
 }

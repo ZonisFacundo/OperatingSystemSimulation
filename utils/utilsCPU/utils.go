@@ -114,3 +114,61 @@ func EnvioPortKernel(ip string, puerto int, instancia string) {
 	log.Printf("Conexión realizada con exito con el Kernel.")
 
 }
+
+func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, contexto string) {
+	var paquete PackageFinEjecucion
+
+	paquete.Pid = pid
+	paquete.Pc = pc
+	paquete.Contexto = contexto
+	paquete.Instancia = instancia
+
+	PaqueteFormatoJson, err := json.Marshal(paquete)
+	if err != nil {
+		log.Printf("Error al convertir a json.\n")
+		return
+	}
+
+	cliente := http.Client{} //crea un "cliente"
+
+	url := fmt.Sprintf("http://%s:%d/handshake", ip, puerto) //url del server
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+
+	if err != nil {
+		log.Printf("Error al generar la peticion al server.\n")
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	respuestaJSON, err := cliente.Do(req)
+
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+	}
+
+	if respuestaJSON.StatusCode != http.StatusOK {
+
+		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		return
+	}
+	defer respuestaJSON.Body.Close()
+
+	log.Printf("Conexion establecida con exito.\n")
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	var respuesta RespuestaKernel
+
+	err = json.Unmarshal(body, &respuesta)
+	if err != nil {
+		log.Printf("Error al decodificar el JSON.\n")
+	}
+
+	log.Printf("El Kernel recibió correctamente el PID y el PC.\n")
+}

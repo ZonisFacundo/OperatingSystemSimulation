@@ -33,7 +33,6 @@ func main() {
 	/*
 		time.Sleep(1 * time.Second)
 		utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003)
-
 		time.Sleep(2 * time.Second)
 	*/
 
