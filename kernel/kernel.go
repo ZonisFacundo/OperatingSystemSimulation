@@ -12,12 +12,22 @@ import (
 
 	//"github.com/sisoputnfrba/tp-golang/estructurasKernel"
 	"fmt"
+	"os"
+	"strconv"
 )
 
 func main() {
 	globals.CargarConfig("./kernel/globals/config.json")
 	utilsKernel.ConfigurarLogger()
-	utilsKernel.CrearPCB(2, "/home/utnso/Desktop/tp-2025-1c-NutriGO/archi.txt") //Esta hardcodeado para probar
+	//utilsKernel.CrearPCB(2, "github.com/sisoputnfrba/tp-golang/archi.txt") ///home/utnso/tp-2025-1c-NutriGO/archi.txt
+	archivo := os.Args[1]
+	tamanio, err := strconv.Atoi(os.Args[2])
+	if err != nil {
+		log.Fatalf("❌ Tamaño inválido: %v", err)
+	}
+	println(archivo)
+	println(tamanio)
+	utilsKernel.CrearPCB(tamanio, archivo)
 
 	go utilsKernel.IniciarPlanifcador()
 	/*
