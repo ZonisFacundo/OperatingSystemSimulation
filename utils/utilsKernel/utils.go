@@ -58,11 +58,11 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("Handshake recibido de la instancia: %s", request.Instancia)
+	log.Printf("Handshake recibido: Port: %d - Instance: %s - Ip: %s", request.Puerto, request.Instancia, request.Ip)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuesta RespuestaalCPU
-	respuesta.Mensaje = "conexion realizada con exito"
+	respuesta.Mensaje = "Conexion realizada con exito"
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return
@@ -90,7 +90,7 @@ func RetornoClienteCPUServidorKERNEL2(w http.ResponseWriter, r *http.Request) {
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuesta RespuestaalCPU
-	respuesta.Mensaje = "conexion realizada con exito"
+	respuesta.Mensaje = "Conexion realizada con exito"
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return

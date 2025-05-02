@@ -3,7 +3,7 @@ package utilsCPU
 type Proceso struct {
 	Pc  int `json:"pc"`
 	Pid int `json:"pid"`
-	Mensaje string `json:"messageCPU"`
+	//Mensaje string `json:"messageCPU"`
 }
 type Interrupcion struct {
 	TiempoInterrup int  `json:"interrup"`

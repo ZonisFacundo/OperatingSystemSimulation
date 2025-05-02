@@ -111,6 +111,6 @@ func EnvioPortKernel(ip string, puerto int, instancia string) {
 		log.Printf("Error al decodificar el JSON.\n")
 	}
 
-	log.Printf("Conexión realizada con exito.")
+	log.Printf("Conexión realizada con exito con el Kernel.")
 
 }
