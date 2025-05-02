@@ -63,6 +63,7 @@ type PaqueteEnviadoKERNELaCPU struct {
 }
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
+	Tiempo  int    `json:"tiempo"`
 }
 
 type RespuestaalCPU struct {
