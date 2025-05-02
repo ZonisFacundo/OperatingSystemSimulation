@@ -38,7 +38,7 @@ func RetornoClienteIOServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 
 	//Respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaIO RespuestaalIO
-	respuestaIO.Mensaje = "Se envio un string al Kernel."
+	respuestaIO.Mensaje = "Conexion establecida con exito"
 	respuestaJSON, err := json.Marshal(respuestaIO)
 	if err != nil {
 		return
@@ -59,7 +59,7 @@ func RetornoClienteCPUServidorKERNEL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("Handshake recibido de la instancia: %s", request.Instancia)
+	log.Printf("Handshake recibido de la instancia: %s, ip: %s, port: %d", request.Instancia, request.Ip, request.Puerto)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuesta RespuestaalCPU
@@ -111,10 +111,11 @@ func RetornoClienteCPUServidorKERNEL2(w http.ResponseWriter, r *http.Request) {
 	w.Write(respuestaJSON)
 
 } // conexion kernel --> IO lado del cliente (kernel)
-func PeticionClienteKERNELServidorIO(ip string, puerto int) {
+func PeticionClienteKERNELServidorIO(ip string, puerto int, tiempo int) {
 
 	var paquete RespuestaalIO
 	paquete.Mensaje = "mensaje enviado a kernel desde io"
+	paquete.Tiempo = tiempo
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {

@@ -1,7 +1,6 @@
 package utilsIO
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -31,6 +30,7 @@ type PaqueteRespuestaKERNEL struct {
 	Mensaje string `json:"message"`
 }
 
+/*
 func ConfigurarLogger() {
 	logFile, err := os.OpenFile("io.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 	if err != nil {
@@ -39,18 +39,32 @@ func ConfigurarLogger() {
 	mw := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(mw)
 }
-
+*/
 /*
 conexion entre IO (Client) con Kernel (Server)
 enviamos handshake con datos del modulo y esperamos respuesta
 */
 
-func PeticionClienteIOServidorKERNEL(nombre string, ip string, puerto int) {
+func ConfigurarLogger(ioId string) {
+	logFileName := fmt.Sprintf("IO-%s.log", ioId)
+	logFile, err := os.OpenFile(logFileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
+	if err != nil {
+		panic(err)
+	}
+
+	mw := io.MultiWriter(os.Stdout, logFile)
+	log.SetOutput(mw)
+
+	//prefija cada línea de log con el ioname:
+	log.SetPrefix(fmt.Sprintf("[IO-%s] ", ioId))
+}
+
+func PeticionClienteIOServidorKERNEL(nombre string, ipKernel string, puertoKernel int, ipIO string, puertoIO int) {
 
 	var paquete Handshakepaquete
 	paquete.Nombre = nombre
-	paquete.Ip = ip
-	paquete.Puerto = puerto
+	paquete.Ip = ipIO
+	paquete.Puerto = puertoIO
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -60,7 +74,7 @@ func PeticionClienteIOServidorKERNEL(nombre string, ip string, puerto int) {
 	}
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/IO", paquete.Ip, paquete.Puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/IO", ipKernel, puertoKernel) //url del server
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
@@ -73,17 +87,6 @@ func PeticionClienteIOServidorKERNEL(nombre string, ip string, puerto int) {
 	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
 
 	respuestaJSON, err := cliente.Do(req) //recibe la respuesta del server
-	/* que tipo de dato tiene respuestaJSON?
-		type respuestaJSON struct {
-	    Status     string
-	    StatusCode int
-	    Header     Header
-	    Body       io.ReadCloser  // ← This is what you're accessing
-	    // ... other fields ...
-
-
-		ya definido por go de esa forma
-	*/
 
 	if err != nil {
 		log.Printf("Error al recibir respuesta.\n")
@@ -124,16 +127,14 @@ func RetornoClienteKERNELServidorIO(w http.ResponseWriter, r *http.Request) {
 	log.Printf("llegue.\n")
 
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
-	log.Printf("llegue2.\n")
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Printf("llegue.\n")
 
 	log.Printf("I/O Iniciado.\n")
-	time.Sleep(4 * time.Second) //4 segundos simulando una entrada salida
+	IniciarSleep(request.Tiempo)
 
 	//Leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
 	log.Printf("El kernel nos envio esto: %s\n", request.Mensaje)
@@ -150,15 +151,6 @@ func RetornoClienteKERNELServidorIO(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
-}
-
-func LeerConsola() string {
-	// Leer de la consola
-	reader := bufio.NewReader(os.Stdin)
-	log.Println("Ingrese el nombre con el que se identificara la interfaz IO")
-	text, _ := reader.ReadString('\n')
-	//log.Print(text)
-	return text
 }
 
 func IniciarSleep(tiempo int) {
