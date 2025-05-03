@@ -41,6 +41,17 @@ type DireccionFisica struct {
 	Desplazamiento int `json:"offset"`
 	Direccion      int `json:"address"`
 }
+type PaqueteWrite struct {
+	Direccion int  `json:"address"`
+	Contenido byte `json:"content"`
+}
+type DFisica struct {
+	DireccionFisica int `json:"address"`
+}
+
+type BytePaquete struct {
+	Info byte `json:"info"`
+}
 
 var Instruction *utilsCPU.Proceso
 

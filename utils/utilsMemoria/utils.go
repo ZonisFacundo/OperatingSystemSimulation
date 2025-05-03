@@ -152,6 +152,54 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 
 }
 
+// lee y devuelve a CPU lo que quiere de memoria principal
+func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request) {
+
+	var PaqueteDireccion globals.DFisica
+	err := json.NewDecoder(r.Body).Decode(&PaqueteDireccion) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var ContenidoDireccion globals.BytePaquete
+	ContenidoDireccion.Info = globals.MemoriaPrincipal[PaqueteDireccion.DireccionFisica]
+
+	respuestaJSON, err := json.Marshal(ContenidoDireccion)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
+
+func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Request) {
+
+	var PaqueteInfoWrite globals.PaqueteWrite
+
+	err := json.NewDecoder(r.Body).Decode(&PaqueteInfoWrite) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	PaqueteInfoWrite.Contenido = globals.MemoriaPrincipal[PaqueteInfoWrite.Direccion]
+
+	var rta respuestaalCPU
+	rta.Mensaje = "OK\n"
+
+	respuestaJSON, err := json.Marshal(rta)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
+
 /*
 /
 /
@@ -412,3 +460,18 @@ func AccedeAEntrada(DireccionLogica []int, nivel int, PunteroNodo *globals.Nodo)
 
 	}
 }
+
+/*
+Leer Página completa
+Se deberá devolver el contenido correspondiente de la página a partir del byte enviado como dirección física dentro de la Memoria de Usuario, que deberá coincidir con la posición del byte 0 de la página.
+Actualizar página completa
+Se escribirá la página completa a partir del byte 0 que igual será enviado como dirección física, esta operación se realizará dentro de la Memoria de Usuario y se responderá como OK.
+*/
+/*
+func LeerPaginaCompleta (direccion int) {
+
+	if direccion % globals.ClientConfig.Page_size != 0 {
+
+		log.Printf("")
+	}
+}*/
