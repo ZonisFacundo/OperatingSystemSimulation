@@ -467,11 +467,50 @@ Se deberá devolver el contenido correspondiente de la página a partir del byte
 Actualizar página completa
 Se escribirá la página completa a partir del byte 0 que igual será enviado como dirección física, esta operación se realizará dentro de la Memoria de Usuario y se responderá como OK.
 */
+
 /*
-func LeerPaginaCompleta (direccion int) {
+que hace LeerPaginaCompleta?
+recibe una direccion fisica (tiene que ser una donde inicie una pagina) y devuelve el contenido de esa pagina en un slice de bytes
+*/
+func LeerPaginaCompleta(direccion int) (globals.Pagina, error) {
 
-	if direccion % globals.ClientConfig.Page_size != 0 {
+	var pagina globals.Pagina
 
-		log.Printf("")
+	//reviso varias posibilidades... si el usuario envia una direccion distinta a un inicio de pagina es el obvio pero tambien reviso si de casualidad nos pusieron un tam de memoria no divisible por page size, tambien controlo que no nos envien la ultima direccion de la memoria
+	if direccion%globals.ClientConfig.Page_size != 0 || direccion+globals.ClientConfig.Page_size > globals.ClientConfig.Memory_size {
+
+		log.Printf("ERROR, LA DIRECCION RECIBIDA NO CORRESPONDE A LA DE UN INICIO DE PAGINA \n")
+		return pagina, fmt.Errorf("error")
+
+	} else {
+
+		for i := 0; i < globals.ClientConfig.Page_size; i++ {
+			pagina.Info[i] = globals.MemoriaPrincipal[direccion+i] //vamos recorriendo la pagina en memoria y se la asignamos a la variable que vamos a devolver
+		}
+		return pagina, nil
+	} //esa es la forma de go de devolver errores, no la uso en otras partes porque puedo arreglarme con valores negativos o cosas asi que siento que dejan el codigo mas expresivo, al menos para mi, devuelve dos cosas esta funcion.
+
+}
+
+/*
+Actualizar página completa
+Se escribirá la página completa a partir del byte 0 que igual será enviado como dirección física,
+esta operación se realizará dentro de la Memoria de Usuario y se responderá como OK.
+*/
+
+func ActualizarPaginaCompleta(PaginaNueva globals.Pagina, direccion int) {
+
+	//reviso varias posibilidades... si el usuario envia una direccion distinta a un inicio de pagina es el obvio pero tambien reviso si de casualidad nos pusieron un tam de memoria no divisible por page size, tambien controlo que no nos envien la ultima direccion de la memoria
+	if direccion%globals.ClientConfig.Page_size != 0 || direccion+globals.ClientConfig.Page_size > globals.ClientConfig.Memory_size {
+
+		log.Printf("ERROR, LA DIRECCION RECIBIDA NO CORRESPONDE A LA DE UN INICIO DE PAGINA \n")
+
+	} else {
+
+		for i := 0; i < globals.ClientConfig.Page_size; i++ {
+			globals.MemoriaPrincipal[direccion+i] = PaginaNueva.Info[i]
+
+		}
+
 	}
-}*/
+}

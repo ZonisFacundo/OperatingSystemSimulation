@@ -52,6 +52,9 @@ type DFisica struct {
 type BytePaquete struct {
 	Info byte `json:"info"`
 }
+type Pagina struct {
+	Info []byte `json:"info"`
+}
 
 var Instruction *utilsCPU.Proceso
 
