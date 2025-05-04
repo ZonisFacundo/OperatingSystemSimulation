@@ -16,9 +16,8 @@ func main() {
 	nombre := os.Args[1]
 
 	utilsIO.ConfigurarLogger(nombre)
-	println(nombre)
 	go func() {
-		time.Sleep(4 * time.Second)
+		time.Sleep(1 * time.Second)
 
 		utilsIO.PeticionClienteIOServidorKERNEL(nombre, globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Ip_io, globals.ClientConfig.Port_io)
 	}()
