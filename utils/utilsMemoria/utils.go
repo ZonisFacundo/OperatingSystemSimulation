@@ -120,7 +120,7 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 	}
 
 	for i := 0; i < globals.ClientConfig.Number_of_levels+1; i++ {
-		log.Printf("entranda nivel %d: %d\n", i, DireccionLogica[i])
+		log.Printf("entrada nivel %d: %d\n", i, DireccionLogica[i])
 
 	}
 

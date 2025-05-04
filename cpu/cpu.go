@@ -8,8 +8,8 @@ import (
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/cpu/instruction_cycle"
+	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
-	//"github.com/sisoputnfrba/tp-golang/cpu/mmu"
 )
 
 // falta hacer la conexion del lado del cpu como servidor hacia el kernel pero no sabia donde hacerlas ni les queria romper el codigo =)
@@ -21,7 +21,7 @@ func main() {
 
 	instanceID := os.Args[1]
 
-	/* Esto fue para probar la traduccion
+	// Esto fue para probar la traduccion
 	mmU := mmu.MMU{
 		Niveles:             2,
 		TamPagina:           256,
@@ -30,7 +30,6 @@ func main() {
 
 	dirLogica := 1800
 	resultado := mmu.TraducirDireccion(dirLogica, mmU)
-	*/
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
@@ -38,7 +37,7 @@ func main() {
 
 	utilsCPU.EnvioPortKernel(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id, globals.ClientConfig.Port_cpu)
 
-	//fmt.Println("Entradas + Desplazamiento:", resultado)
+	fmt.Println("Entradas + Desplazamiento:", resultado)
 
 	http.HandleFunc("/KERNELCPU", utilsCPU.RecibirPCyPID)
 	log.Printf("Servidor corriendo, esperando PID y PC de Kernel.")

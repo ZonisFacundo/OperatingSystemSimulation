@@ -36,9 +36,10 @@ func Execute(detalle globals.Instruccion) {
 
 			datosACopiar := detalle.Datos
 			direccionObtenida := detalle.DireccionFis //Traduzco la direccion específica acá.
+			
 			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
-
 			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
 			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *datosACopiar)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Datos, detalle.DireccionFis)
 		} else {

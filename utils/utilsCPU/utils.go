@@ -177,8 +177,8 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 
 	var paquete EnvioDirLogicaAMemoria
 
-	paquete.Ip = ip
-	paquete.Puerto = puerto
+	// paquete.Ip = ip
+	// paquete.Puerto = puerto
 	paquete.DirLogica = dirLogica
 	
 
@@ -228,6 +228,6 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 		log.Printf("Error al decodificar el JSON.\n")
 	}
 
-	log.Printf("Conexión realizada con exito con el Kernel.")
+	log.Printf("Enviado todo a Memoria.")
 
 }
