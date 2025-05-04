@@ -25,14 +25,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("Tamaño inválido: %v", err)
 	}
-	println(archivo)
-	println(tamanio)
+
 	utilsKernel.CrearPCB(tamanio, archivo)
 
 	go utilsKernel.IniciarPlanifcador()
 	go func() {
 		time.Sleep(4 * time.Second)
-		utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003, 8)
+		utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003, 0, 8)
 	}()
 	http.HandleFunc("/handshake", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /IO", utilsKernel.RetornoClienteIOServidorKERNEL)

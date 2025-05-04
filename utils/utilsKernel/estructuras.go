@@ -63,7 +63,11 @@ type PaqueteEnviadoKERNELaCPU struct {
 }
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
-	Tiempo  int    `json:"tiempo"`
+}
+
+type PaqueteEnviadoKERNELaIO struct {
+	Pid    int `json:"pid"`
+	Tiempo int `json:"tiempo"`
 }
 
 type RespuestaalCPU struct {
