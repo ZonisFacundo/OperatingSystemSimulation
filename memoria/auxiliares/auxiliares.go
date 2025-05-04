@@ -17,6 +17,7 @@ func Mostrarmemoria() {
 		time.Sleep(10 * time.Millisecond)
 	}
 }
+
 func MostrarPaginasDisponibles() {
 
 	fmt.Printf("SI VALE 1 ESTA OCUPADO, SI VALE 0 ESTA DESOCUPADO\n\n")
@@ -26,15 +27,16 @@ func MostrarPaginasDisponibles() {
 		fmt.Printf("MARCO NUMERO %d: \t%d\n", i, globals.PaginasDisponibles[i])
 	}
 }
+
 func MostrarMemoriaKernel() {
 
 	for i := 0; i < len(globals.MemoriaKernel); i++ {
 		for j := 0; j < len(globals.MemoriaKernel[i].Instrucciones); j++ {
 			fmt.Printf("%s", globals.MemoriaKernel[i].Instrucciones[j])
 		}
-
 	}
 }
+
 func ActualizarInstrucciones(x globals.ProcesoEnMemoria, pid int) { //hay que hacer esto porque no te deja actualizarle solo un miembro del struct directamente al de globals por algun motivo
 
 	auxi := globals.MemoriaKernel[pid]
@@ -42,6 +44,7 @@ func ActualizarInstrucciones(x globals.ProcesoEnMemoria, pid int) { //hay que ha
 	globals.MemoriaKernel[pid] = auxi
 
 }
+
 func ActualizarTablaSimple(x globals.ProcesoEnMemoria, pid int) { //hay que hacer esto porque no te deja actualizarle solo un miembro del struct directamente al de globals por algun motivo
 
 	auxi := globals.MemoriaKernel[pid]
@@ -49,6 +52,7 @@ func ActualizarTablaSimple(x globals.ProcesoEnMemoria, pid int) { //hay que hace
 	globals.MemoriaKernel[pid] = auxi
 
 }
+
 func MostrarProceso(pid int) {
 
 	fmt.Printf("pid: %d \n", pid)

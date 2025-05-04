@@ -29,5 +29,5 @@ func main() {
 	http.HandleFunc("POST /KERNELMEMORIA", utilsMemoria.RetornoClienteKernelServidorMEMORIA)
 	log.Printf("Servidor corriendo (Memoria) en puerto %d.\n", globals.ClientConfig.Port_memory)
 	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_memory), nil)
-
+	
 }

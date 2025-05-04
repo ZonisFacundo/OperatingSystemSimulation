@@ -44,6 +44,7 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU) []int {
 	for x := 1; x <= memoryManagement.Niveles; x++ {
 		exp := memoryManagement.Niveles - x
 		divisor := int(math.Pow(float64(memoryManagement.Cant_entradas_tabla), float64(exp)))
+		
 		// Calculamos la entrada en el nivel X
 		entradaNivelX := (nroPagina / divisor) % memoryManagement.Cant_entradas_tabla
 		entradas[x-1] = entradaNivelX
@@ -53,5 +54,7 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU) []int {
 	resultado := append([]int{desplazamiento}, entradas...) // agrego desplazamiento al principio del slice y concateno las entradas de nivel
 
 	// Retorno el array con las entradas de nivel + desplazamiento
+	
 	return resultado
+
 }

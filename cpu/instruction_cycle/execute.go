@@ -36,9 +36,10 @@ func Execute(detalle globals.Instruccion) {
 
 			datosACopiar := detalle.Datos
 			direccionObtenida := detalle.DireccionFis //Traduzco la direccion específica acá.
-			mmu.TraducirDireccion(direccionObtenida, memoryManagement)
+			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
 
-			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionObtenida, *datosACopiar)
+			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *datosACopiar)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Datos, detalle.DireccionFis)
 		} else {
 			fmt.Println("WRITE inválido.")
@@ -50,8 +51,10 @@ func Execute(detalle globals.Instruccion) {
 			//tamañoDet := detalle.Tamaño
 			direccionObtenida := detalle.DireccionLog
 
-			mmu.TraducirDireccion(direccionObtenida, memoryManagement)
-			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, detalle.DireccionLog, *detalle.Tamaño)
+			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
+			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
+			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *detalle.Tamaño)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *detalle.Tamaño, detalle.DireccionLog)
 
 		} else {
@@ -132,7 +135,7 @@ para simplificar la comprensión de los scripts, vamos a utilizar un nombre dife
 
 */
 
-func Write(ip string, port int, direccion int, datos string) {
+func Write(ip string, port int, direccion []int, datos string) {
 
 	var paquete utilsCPU.WriteStruct
 
@@ -192,7 +195,7 @@ func Write(ip string, port int, direccion int, datos string) {
 
 }
 
-func Read(ip string, port int, direccion int, tamaño int) {
+func Read(ip string, port int, direccion []int, tamaño int) {
 
 	var paquete utilsCPU.ReadStruct
 

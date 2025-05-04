@@ -27,6 +27,7 @@ type PaqueteRecibidoMemoriadeKernel struct {
 	TamProceso int    `json:"tamanioProceso"`
 	Archivo    string `json:"file"`
 }
+
 type ProcesoEnMemoria struct {
 	Instrucciones []string `json:"instructions"`
 	TablaSimple   []int    `json:"tablasimple"` //basicamente la tabla de paginas simple para el proceso...
