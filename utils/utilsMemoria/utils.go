@@ -94,6 +94,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusInsufficientStorage) //http tiene un mensaje de error especificamente para esto, tremendo
 		w.Write(respuestaJSON)
 	} else {
+		
 		CrearProceso(PaqueteInfoProceso)
 
 		respuestaKernel.Mensaje = "Recibi de Kernel"
@@ -241,7 +242,6 @@ func InicializarPaginasDisponibles() {
 	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ {
 		globals.PaginasDisponibles[i] = 0
 	}
-
 }
 
 /*
@@ -272,10 +272,12 @@ func EscanearMemoria() {
 */
 
 /*
-QUE HACE RESERVAR MEMORIA?
+¿QUE HACE RESERVAR MEMORIA?
 
-reservar memoria basicamente recibe informacion sobre un proceso que quiere iniciar kernel y guarda en el map que tenemos con informacion basica de proceso las paginas que este tiene reservada en memoria
+reservar memoria basicamente recibe informacion sobre un proceso que quiere iniciar kernel y guarda en el map que tenemos con informacion basica de proceso 
+las paginas que este tiene reservada en memoria.
 */
+
 func ReservarMemoria(tam int, pid int) int {
 
 	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
@@ -356,6 +358,7 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 	}
 
 }
+
 func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	if ReservarMemoria(paquete.TamProceso, paquete.Pid) < 0 { //ReservarMemoria devuelve <0 si hubo un error, si no hubieron errores actualiza el map y reserva la memoria para el proceso
 
