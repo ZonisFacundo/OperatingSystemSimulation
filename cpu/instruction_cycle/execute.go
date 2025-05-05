@@ -36,7 +36,7 @@ func Execute(detalle globals.Instruccion) {
 
 			datosACopiar := detalle.Datos
 			direccionObtenida := detalle.DireccionFis //Traduzco la direccion específica acá.
-			
+
 			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
 			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 
@@ -76,9 +76,10 @@ func Execute(detalle globals.Instruccion) {
 			fmt.Println("Valor no modificado.")
 			detalle.Contexto = "Valor no modificado"
 		}
+
 		// LLamada a Kernel, debido a que son parte principalmente de interrupciones.
 	case "IO":
-	case "INIT_PROC":
+	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
 	case "DUMP_MEMORY":
 	case "EXIT":
 		fmt.Println("Nada que hacer.")
