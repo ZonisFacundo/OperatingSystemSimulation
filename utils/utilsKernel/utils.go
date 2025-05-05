@@ -96,7 +96,7 @@ func RetornoClienteCPUServidorKERNEL2(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-
+	log.Printf("Conexion establecida con exito \n")
 	cpuServidor := ObtenerCpu(request.Instancia)
 	cpuServidor.Disponible = true
 
@@ -308,7 +308,7 @@ func CrearPCB(tamanio int, archivo string) { //pid unico arranca de 0
 func LeerConsola() string {
 	// Leer de la consola
 	reader := bufio.NewReader(os.Stdin)
-	log.Println("Precione enter para inciar el planificador")
+	log.Println("Presione enter para inciar el planificador")
 	text, _ := reader.ReadString('\n')
 	//log.Print(text)
 	return text

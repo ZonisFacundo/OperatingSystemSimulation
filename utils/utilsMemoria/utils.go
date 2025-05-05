@@ -45,6 +45,7 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&globals.Instruction) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+
 		return
 	}
 
@@ -52,6 +53,8 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
+
+	log.Printf("map, pid 0: %s\n", globals.MemoriaKernel[0].Instrucciones[0])
 	respuestaCpu.Mensaje = globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]
 	respuestaJSON, err := json.Marshal(respuestaCpu)
 	if err != nil {
@@ -93,6 +96,18 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		w.Write(respuestaJSON)
 	} else {
 
+		/*
+			verificamos si el archivo que nos enviaron es valido
+		*/
+
+		_, err := os.ReadFile(PaqueteInfoProceso.Archivo)
+
+		if err != nil {
+			log.Printf("error al abrir el archivo de instrucciones enviado por kernel, pid: %d\n", PaqueteInfoProceso.Pid)
+			log.Printf("TENEMOS ESPACIO, EL PROBLEMA ES EN EL ARCHIVO, MANDO ESTE STATUS CODE PORQUE ES MAS PRACTICO POR EL CODIGO DE KERNEL\n")
+			w.WriteHeader(http.StatusInsufficientStorage)
+		}
+
 		CrearProceso(PaqueteInfoProceso)
 
 		respuestaKernel.Mensaje = "Recibi de Kernel"
@@ -108,22 +123,23 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 
 func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWriter, r *http.Request) {
 
-	var DireccionLogica []int
+	var Paquete globals.DireccionLogica
+	Paquete.DirLogica = make([]int, 0) //inicializamos el slice
 
-	err := json.NewDecoder(r.Body).Decode(&DireccionLogica) //guarda en request lo que nos mando el cliente
+	err := json.NewDecoder(r.Body).Decode(&Paquete) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	for i := 0; i < globals.ClientConfig.Number_of_levels+1; i++ {
-		log.Printf("entrada nivel %d: %d\n", i, DireccionLogica[i])
+		log.Printf("entrada nivel %d: %d\n", i, Paquete.DirLogica[i])
 
 	}
 
-	log.Printf("desplazamiento %d: \n", DireccionLogica[globals.ClientConfig.Number_of_levels+1])
+	log.Printf("desplazamiento %d: \n", Paquete.DirLogica[globals.ClientConfig.Number_of_levels+1])
 
-	var Traduccion globals.DireccionFisica = TraducirLogicaAFisica(DireccionLogica, globals.PunteroBase)
+	var Traduccion globals.DireccionFisica = TraducirLogicaAFisica(Paquete.DirLogica, globals.PunteroBase)
 
 	respuestaJSON, err := json.Marshal(Traduccion)
 	if err != nil {
@@ -136,7 +152,7 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 		return
 	}
 	if Traduccion.Direccion == -2 {
-		log.Printf("ERROR, envio un desplazamiento (%d) mayor al tam de pagina de la configuracion actual (%d)  \n", DireccionLogica[0], globals.ClientConfig.Page_size)
+		log.Printf("ERROR, envio un desplazamiento (%d) mayor al tam de pagina de la configuracion actual (%d)  \n", Paquete.DirLogica[0], globals.ClientConfig.Page_size)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -153,7 +169,7 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 // lee y devuelve a CPU lo que quiere de memoria principal
 func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request) {
 
-	var PaqueteDireccion globals.DFisica
+	var PaqueteDireccion globals.DireccionFisica
 	err := json.NewDecoder(r.Body).Decode(&PaqueteDireccion) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -161,7 +177,7 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	}
 
 	var ContenidoDireccion globals.BytePaquete
-	ContenidoDireccion.Info = globals.MemoriaPrincipal[PaqueteDireccion.DireccionFisica]
+	ContenidoDireccion.Info = globals.MemoriaPrincipal[PaqueteDireccion.Direccion]
 
 	respuestaJSON, err := json.Marshal(ContenidoDireccion)
 	if err != nil {
@@ -335,19 +351,20 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 
 	if err != nil {
 		log.Printf("Error al leer el archivo enviado por Kernel Pid: %d", Pid)
+		return
 	}
 
 	for i := 0; i < (len(buffer)); i++ {
 
 		if buffer[i] == 10 { //ASCII para \n
 			Contenido.Instrucciones = append(Contenido.Instrucciones, Line) //agrega la instruccion al slice de strings (donde cada elemento (cada string) es una instruccion)
-
 			Line = ""
 		}
 		Line += string(buffer[i]) //va armando un string caracter a caracter hasta formar una instruccion (cuando lee \n)
 
 	}
 	//	globals.MemoriaKernel[Pid].Instrucciones = Contenido.Instrucciones    esto no anda, hay que hacerlo con una copia //carga instrucciones al map global, lo que verdaderamente importa
+	auxiliares.ActualizarInstrucciones(Contenido, Pid) //esta funcion es la que hace que ande copiar el contenido en memoria
 
 	//creo una funcion para hacerlo porque sino rompeutilsMemoria
 	for j := 0; j < len(globals.MemoriaKernel[Pid].Instrucciones); j++ {
@@ -514,3 +531,15 @@ func ActualizarPaginaCompleta(PaginaNueva globals.Pagina, direccion int) {
 
 	}
 }
+
+/*
+func MemoryDump(pid int) {
+
+    file, err := os.Create(fmt.Sprintf("%s", globals.ClientConfig.Dump_path))
+
+    if err != nil {
+        log.Printf("ERROR AL CREAR EL ARCHIVO PARA EL DUMP \n")
+        return
+    }
+}
+*/

@@ -16,7 +16,11 @@ import (
 // switch para ver que hace dependiendo la instruccion:
 func Execute(detalle globals.Instruccion) {
 
+	log.Printf("hasta aca llego")
 	var memoryManagement mmu.MMU
+
+	// Nos va a llegar 1 string entero, entonces hay que buscar la forma de poder ir recorriendo ese string para asignar esas variables a cada variable de la struct
+	// del proceso.
 
 	switch detalle.InstructionType {
 	case "NOOP":

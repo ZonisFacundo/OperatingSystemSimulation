@@ -131,7 +131,7 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, cont
 
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/handshake", ip, puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/PCB", ip, puerto) //url del server
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
@@ -180,7 +180,6 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 	// paquete.Ip = ip
 	// paquete.Puerto = puerto
 	paquete.DirLogica = dirLogica
-	
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -190,7 +189,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/handshake", ip, puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/TRADUCCIONLOGICAAFISICA", ip, puerto) //url del server
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
