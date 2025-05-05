@@ -46,8 +46,10 @@ type PaqueteWrite struct {
 	Direccion int  `json:"address"`
 	Contenido byte `json:"content"`
 }
-type DFisica struct {
-	DireccionFisica int `json:"address"`
+type DireccionLogica struct {
+	Ip        string `json:"ip"`
+	Puerto    int    `json:"port"`
+	DirLogica []int  `json:"dir_logica"`
 }
 
 type BytePaquete struct {
