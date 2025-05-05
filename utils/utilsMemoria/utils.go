@@ -345,6 +345,7 @@ func EntraEnMemoria(tam int, pid int) int {
 }
 
 func LeerArchivoYCargarMap(FilePath string, Pid int) {
+
 	var buffer []byte
 	var err error
 	var Contenido globals.ProcesoEnMemoria //guardo lo que voy viendo del archivo organizadito para pasarselo a MemoriaKernel
@@ -417,7 +418,7 @@ func CrearEInicializarTablaDePaginas(PunteroANodo *globals.Nodo, nivel int) {
 /*
 que hace traducirlogicaafisica?
 
-recibe el slice de cpu
+recibe el slice de cpuS
 DireccionLogica[0] = desplazamiento
 DireccionLogica[1] = entrada nivel 1
 ...
