@@ -1,4 +1,5 @@
 {
+    "ip_cpu": "127.0.0.1",
     "port_cpu": 8004,
     "ip_memory": "127.0.0.1",
     "port_memory": 8002,

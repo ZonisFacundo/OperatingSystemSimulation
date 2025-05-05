@@ -36,7 +36,8 @@ func ConfigurarLogger(cpuId string) {
 }
 
 func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
-	var request HandshakeKERNEL
+	//var request HandshakeKERNEL
+	var request Proceso
 
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
 	if err != nil {
@@ -44,25 +45,25 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var respuesta Proceso
+	log.Printf("El Kernel envio PID: %d - PC: %d", request.Pid, request.Pc)
 
+	var respuesta RespuestaKernel
+	respuesta.Mensaje = "PC y PID recbidos correctamente"
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return
 	}
 
-	log.Printf("El Kernel envio PID: %d - PC: %d", respuesta.Pid, respuesta.Pc)
-
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 }
 
-func EnvioPortKernel(ip string, puerto int, instancia string, portcpu int) {
+func EnvioPortKernel(ip string, puerto int, instancia string, portcpu int, ipcpu string) {
 
 	var paquete HandshakeCPU
 
-	paquete.Ip = ip
-	paquete.Puerto = puerto
+	paquete.Ip = ipcpu
+	paquete.Puerto = portcpu
 	paquete.Instancia = instancia
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)

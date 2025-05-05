@@ -4,7 +4,7 @@ type Estado string
 
 type PCB struct {
 	Pid            int              `json:"pid"`
-	PC             int              `json:"PC"`
+	Pc             int              `json:"pc"`
 	EstadoActual   Estado           `json:"estadoActual"`
 	TamProceso     int              `json:"tamanioProceso"`
 	MetricaEstados map[Estado]int   `json:"metricaEstados"` //falta verlo
@@ -58,8 +58,8 @@ type PaqueteEnviadoKERNELaMemoria struct {
 }
 
 type PaqueteEnviadoKERNELaCPU struct {
-	Pid int `json:"pid"`
 	PC  int `json:"pc"`
+	Pid int `json:"pid"`
 }
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
@@ -82,7 +82,7 @@ type PaqueteRecibidoDeIO struct {
 }
 
 type PaqueteRecibido struct {
-	Mensaje string `json:"message"`
+	Mensaje string `json:"messageCPU"`
 }
 
 type PaqueteRecibidoDeCPU struct {

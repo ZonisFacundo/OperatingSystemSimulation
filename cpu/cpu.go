@@ -38,7 +38,7 @@ func main() {
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
 	globals.CargarConfig("./cpu/globals/config.json", instanceID)
 
-	utilsCPU.EnvioPortKernel(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id, globals.ClientConfig.Port_cpu)
+	utilsCPU.EnvioPortKernel(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id, globals.ClientConfig.Port_cpu, globals.ClientConfig.Ip_cpu)
 
 	fmt.Println("Entradas + Desplazamiento:", resultado)
 

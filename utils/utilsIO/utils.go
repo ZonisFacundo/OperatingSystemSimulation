@@ -143,6 +143,6 @@ func RetornoClienteKERNELServidorIO(w http.ResponseWriter, r *http.Request) {
 }
 
 func IniciarSleep(tiempo int) {
-	time.Sleep(time.Duration(tiempo) * time.Second)
+	time.Sleep(time.Duration(tiempo) * time.Millisecond)
 
 }
