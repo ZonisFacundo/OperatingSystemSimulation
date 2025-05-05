@@ -9,11 +9,14 @@ import (
 	"net/http"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
+	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 // switch para ver que hace dependiendo la instruccion:
 func Execute(detalle globals.Instruccion) {
+
+	var memoryManagement mmu.MMU
 
 	switch detalle.InstructionType {
 	case "NOOP":
@@ -25,45 +28,55 @@ func Execute(detalle globals.Instruccion) {
 
 		} else {
 			fmt.Println("Tiempo no especificado u acción incorrecta.")
+			detalle.Contexto = "Tiempo no especificado u acción incorrecta."
 		}
 
 	case "WRITE":
-		if detalle.Direccion != 0 || detalle.Datos != nil {
-			datosACopiar := detalle.Datos
-			direccionObtenida := detalle.Direccion
+		if detalle.DireccionLog != 0 || detalle.Datos != nil {
 
-			/*TraducirDireccion(direccionObtenida)*/
-			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionObtenida, *datosACopiar)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Datos, detalle.Direccion)
+			datosACopiar := detalle.Datos
+			direccionObtenida := detalle.DireccionFis //Traduzco la direccion específica acá.
+			
+			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
+			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
+			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *datosACopiar)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Datos, detalle.DireccionFis)
 		} else {
 			fmt.Println("WRITE inválido.")
+			detalle.Contexto = "WRITE inválido."
 		}
 
 	case "READ":
-		if detalle.Direccion != 0 || detalle.Tamaño != nil {
-			/*tamañoDet := detalle.Tamaño
-			direccionObtenida := detalle.Direccion
+		if detalle.DireccionLog != 0 || detalle.Tamaño != nil {
+			//tamañoDet := detalle.Tamaño
+			direccionObtenida := detalle.DireccionLog
 
-			TraducirDireccion(direccionObtenida)*/
-			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, detalle.Direccion, *detalle.Tamaño)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *detalle.Tamaño, detalle.Direccion)
+			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
+			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
+			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *detalle.Tamaño)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *detalle.Tamaño, detalle.DireccionLog)
 
 		} else {
 			fmt.Println("READ inválido.")
+			detalle.Contexto = "READ inválido."
 		}
 
 	case "GOTO":
 		if detalle.Valor != nil {
 			pcInstrNew := GOTO(detalle.ProcessValues.Pc, *detalle.Valor)
+
 			fmt.Println("PC actualizado en: ", pcInstrNew)
+
+			detalle.Contexto = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *detalle.Valor)
 
 		} else {
 			fmt.Println("Valor no modificado.")
+			detalle.Contexto = "Valor no modificado"
 		}
-
 		// LLamada a Kernel, debido a que son parte principalmente de interrupciones.
-
 	case "IO":
 	case "INIT_PROC":
 	case "DUMP_MEMORY":
@@ -74,14 +87,6 @@ func Execute(detalle globals.Instruccion) {
 	default:
 		fmt.Println("Instrucción inválida.")
 	}
-}
-
-func Noop(Tiempo int) int {
-	return Tiempo
-}
-
-func GOTO(pcInstr int, valor int) int {
-	return pcInstr + valor
 }
 
 /*
@@ -107,12 +112,6 @@ Read(direccion, tamaño){
         fmt.Println("READ:", datos)
         kernel.LoggearLectura(cpu.PID, datos)
 
-
-GOTO(valor){
-	pc = pc + valor //Actualiza el valor del PC sumandole el valor indicado.
-}
-
-
 // instrucciones que realiza kernel, la cpu no puede ejecutarlaS
 IO(tiempo){
 	... ¿interrupcion?
@@ -137,7 +136,7 @@ para simplificar la comprensión de los scripts, vamos a utilizar un nombre dife
 
 */
 
-func Write(ip string, port int, direccion int, datos string) {
+func Write(ip string, port int, direccion []int, datos string) {
 
 	var paquete utilsCPU.WriteStruct
 
@@ -197,7 +196,7 @@ func Write(ip string, port int, direccion int, datos string) {
 
 }
 
-func Read(ip string, port int, direccion int, tamaño int) {
+func Read(ip string, port int, direccion []int, tamaño int) {
 
 	var paquete utilsCPU.ReadStruct
 
