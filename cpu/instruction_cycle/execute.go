@@ -7,6 +7,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
@@ -22,8 +24,12 @@ func Execute(detalle globals.Instruccion) {
 	// Nos va a llegar 1 string entero, entonces hay que buscar la forma de poder ir recorriendo ese string para asignar esas variables a cada variable de la struct
 	// del proceso.
 
-	switch detalle.InstructionType {
-	case "NOOP":
+	partes := strings.Fields(detalle.InstructionType)
+
+	nombreInstruccion := partes[0]
+
+	switch nombreInstruccion {
+	case "NOOP": //?
 		if detalle.Tiempo != nil {
 			tiempoEjecucion := Noop(*detalle.Tiempo)
 			detalle.ProcessValues.Pc = detalle.ProcessValues.Pc + 1
@@ -36,15 +42,21 @@ func Execute(detalle globals.Instruccion) {
 		}
 
 	case "WRITE":
+		//detalle.DireccionLog = strconv.Atoi(partes[1])
+
 		if detalle.DireccionLog != 0 || detalle.Datos != nil {
 
-			datosACopiar := detalle.Datos
-			direccionObtenida := detalle.DireccionFis //Traduzco la direccion específica acá.
+			direccionObtenida, err := strconv.Atoi(partes[1]) //Traduzco la direccion específica acá.
+			datosACopiar := partes[2]
+
+			if err != nil {
+				fmt.Sprintln("WRITE inválido: Direccion no numérica.")
+			}
 
 			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
 			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 
-			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *datosACopiar)
+			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, datosACopiar)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Datos, detalle.DireccionFis)
 		} else {
 			fmt.Println("WRITE inválido.")
@@ -53,14 +65,19 @@ func Execute(detalle globals.Instruccion) {
 
 	case "READ":
 		if detalle.DireccionLog != 0 || detalle.Tamaño != nil {
-			//tamañoDet := detalle.Tamaño
-			direccionObtenida := detalle.DireccionLog
 
+			direccionObtenida, err := strconv.Atoi(partes[1])
+			tamañoDet, err2 := strconv.Atoi(partes[2])
+
+			if err != nil || err2 != nil {
+				fmt.Sprintln("READ inválido: Dirección o tamaño no numérico.")
+			}
 			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
+
 			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 
-			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *detalle.Tamaño)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *detalle.Tamaño, detalle.DireccionLog)
+			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, tamañoDet)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, tamañoDet, detalle.DireccionLog)
 
 		} else {
 			fmt.Println("READ inválido.")
