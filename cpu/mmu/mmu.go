@@ -51,7 +51,7 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU) []int {
 	}
 
 	desplazamiento := direccionLogica % memoryManagement.TamPagina
-	resultado := append([]int{desplazamiento}, entradas...) // agrego desplazamiento al principio del slice y concateno las entradas de nivel
+	resultado := append([]int{desplazamiento}, entradas...) // Agrego desplazamiento al principio del slice y concateno las entradas de nivel
 
 	// Retorno el array con las entradas de nivel + desplazamiento
 	
