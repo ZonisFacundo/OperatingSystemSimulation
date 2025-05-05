@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"time"
 
 	"github.com/sisoputnfrba/tp-golang/kernel/globals"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsKernel"
@@ -29,10 +28,12 @@ func main() {
 	utilsKernel.CrearPCB(tamanio, archivo)
 
 	go utilsKernel.IniciarPlanifcador()
-	go func() {
-		time.Sleep(4 * time.Second)
-		utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003, 0, 8)
-	}()
+	/*
+		go func() {
+			time.Sleep(4 * time.Second)
+			utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003, 0, 8, "impresora")
+		}()
+	*/
 	http.HandleFunc("/handshake", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /IO", utilsKernel.RetornoClienteIOServidorKERNEL)
 	http.HandleFunc("POST /handshake", utilsKernel.RetornoClienteCPUServidorKERNEL)

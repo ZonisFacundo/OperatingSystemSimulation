@@ -110,8 +110,8 @@ func RetornoClienteCPUServidorKERNEL2(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
-} // conexion kernel --> IO lado del cliente (kernel)
-func PeticionClienteKERNELServidorIO(ip string, puerto int, pid int, tiempo int) {
+}
+func PeticionClienteKERNELServidorIO(ip string, puerto int, pid int, tiempo int, nombre string) {
 
 	var paquete PaqueteEnviadoKERNELaIO
 	paquete.Pid = pid
@@ -147,7 +147,7 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int, pid int, tiempo int)
 
 	if respuestaJSON.StatusCode != http.StatusOK {
 
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		log.Printf("Status de respuesta del I/0 %s no fue la esperada.\n", nombre)
 		return
 	}
 	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
@@ -165,7 +165,7 @@ func PeticionClienteKERNELServidorIO(ip string, puerto int, pid int, tiempo int)
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	log.Printf("La respuesta del I/O %s fue: %s\n", nombre, respuesta.Mensaje)
 
 }
 func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
@@ -222,7 +222,7 @@ func PeticionClienteKERNELServidorMemoria(pcb PCB, ip string, puerto int) {
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
 	if respuestaJSON.StatusCode == http.StatusOK {
-		println("Se pasa el proceso a READY")
+		log.Printf("Se pasa el proceso PID: %d a READY", pcb.Pid)
 		PasarReady(pcb)
 	}
 
@@ -234,8 +234,8 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) {
 
 	var paquete PaqueteEnviadoKERNELaCPU
 
+	paquete.PC = pcb.Pc
 	paquete.Pid = pcb.Pid
-	paquete.PC = pcb.PC
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -266,7 +266,7 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) {
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
-
+		log.Printf("Código de respuesta del server: %d\n", respuestaJSON.StatusCode)
 		log.Printf("Status de respuesta el server no fue la esperada.\n")
 		return
 	}
@@ -294,7 +294,7 @@ func PeticionClienteKERNELServidorCPU(pcb PCB, cpu CPU) {
 func CrearPCB(tamanio int, archivo string) { //pid unico arranca de 0
 	ColaNew = append(ColaNew, PCB{
 		Pid:            ContadorPCB,
-		PC:             0,
+		Pc:             0,
 		EstadoActual:   "NEW",
 		TamProceso:     tamanio,
 		MetricaEstados: make(map[Estado]int),
@@ -317,9 +317,9 @@ func LeerConsola() string {
 func IniciarPlanifcador() {
 	for true {
 		text := LeerConsola()
+		log.Printf("Planificador de largo plazo ejecutando") //solo para saber que esta funcionando
 		for text == "\n" {
-
-			println("Planificador de largo plazo ejecutando") //solo para saber que esta funcionando
+			//log.Print("Planificador de largo plazo ejecutando, pero dentro de un for")
 			PlanificadorLargoPlazo()
 			PlanificadorCortoPlazo()
 			time.Sleep(5 * time.Second)
@@ -331,8 +331,6 @@ func PlanificadorLargoPlazo() {
 	if len(ColaNew) != 0 {
 		pcbChequear := CriterioColaNew()
 		PeticionClienteKERNELServidorMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
-	} else {
-		println("No hay procesos en cola NEW")
 	}
 }
 
@@ -341,14 +339,12 @@ func PlanificadorCortoPlazo() {
 		pcbChequear := CriterioColaReady()
 		CPUDisponible, noEsVacio := TraqueoCPU() //drakukeo en su defecto
 		if noEsVacio {
-			println("Proceso ejecutandose") //solo para saber que esta funcionando
-			pcbChequear.EstadoActual = "EXEC"
+			log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
+			PasarExec(pcbChequear)
 			CPUDisponible.Disponible = false
 			PeticionClienteKERNELServidorCPU(pcbChequear, CPUDisponible)
 
 		}
-	} else {
-		println("No hay procesos en cola READY")
 	}
 }
 
