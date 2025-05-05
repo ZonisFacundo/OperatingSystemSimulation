@@ -33,7 +33,6 @@ type PaqueteRecibidoMemoriadeKernel struct {
 */
 type respuestaalKernel struct {
 	Mensaje string `json:"message"`
-	Exito   bool   `json:"exito"`
 }
 type respuestaalCPU struct {
 	Mensaje string `json:"message"`
@@ -85,7 +84,6 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	if DondeGuardarProceso < 0 {
 		log.Printf("NO HAY ESPACIO EN MEMORIA PARA GUARDAR EL PROCESO \n")
 		respuestaKernel.Mensaje = "No hay espacio para guardar el proceso en memoria crack"
-		respuestaKernel.Exito = false //estamos probando esto como respuesta ademas del mesanje
 		respuestaJSON, err := json.Marshal(respuestaKernel)
 		if err != nil {
 			return
@@ -94,11 +92,10 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusInsufficientStorage) //http tiene un mensaje de error especificamente para esto, tremendo
 		w.Write(respuestaJSON)
 	} else {
-		
+
 		CrearProceso(PaqueteInfoProceso)
 
 		respuestaKernel.Mensaje = "Recibi de Kernel"
-		respuestaKernel.Exito = true //estamos probando esto como respuesta ademas del mesanje
 		respuestaJSON, err := json.Marshal(respuestaKernel)
 		if err != nil {
 			return
@@ -274,7 +271,7 @@ func EscanearMemoria() {
 /*
 ¿QUE HACE RESERVAR MEMORIA?
 
-reservar memoria basicamente recibe informacion sobre un proceso que quiere iniciar kernel y guarda en el map que tenemos con informacion basica de proceso 
+reservar memoria basicamente recibe informacion sobre un proceso que quiere iniciar kernel y guarda en el map que tenemos con informacion basica de proceso
 las paginas que este tiene reservada en memoria.
 */
 
