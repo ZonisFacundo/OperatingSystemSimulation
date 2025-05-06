@@ -25,19 +25,17 @@ func main() {
 		log.Fatalf("Tamaño inválido: %v", err)
 	}
 
-	utilsKernel.CrearPCB(tamanio, archivo)
-
-	go utilsKernel.IniciarPlanifcador()
+	go utilsKernel.IniciarPlanifcador(tamanio, archivo)
 	/*
 		go func() {
 			time.Sleep(4 * time.Second)
-			utilsKernel.PeticionClienteKERNELServidorIO("127.0.0.1", 8003, 0, 8, "impresora")
+			utilsKernel.UtilizarIO("127.0.0.1", 8003, 0, 8, "impresora")
 		}()
 	*/
-	http.HandleFunc("/handshake", utilsKernel.RetornoClienteIOServidorKERNEL)
-	http.HandleFunc("POST /IO", utilsKernel.RetornoClienteIOServidorKERNEL)
-	http.HandleFunc("POST /handshake", utilsKernel.RetornoClienteCPUServidorKERNEL)
-	http.HandleFunc("POST /PCB", utilsKernel.RetornoClienteCPUServidorKERNEL2)
+	//http.HandleFunc("/handshake", utilsKernel.RecibirDatosIO) no se porque esta esto por las dudas no lo borro
+	http.HandleFunc("POST /IO", utilsKernel.RecibirDatosIO)
+	http.HandleFunc("POST /handshake", utilsKernel.RecibirDatosCPU)
+	http.HandleFunc("POST /PCB", utilsKernel.RecibirProceso)
 	log.Printf("Servidor corriendo.\n")
 	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_kernel), nil)
 

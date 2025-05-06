@@ -57,6 +57,11 @@ type PaqueteEnviadoKERNELaMemoria struct {
 	Archivo    string `json:"file"`
 }
 
+type PaqueteEnviadoKERNELaMemoria2 struct {
+	Pid     int    `json:"pid"`
+	Mensaje string `json:"message"`
+}
+
 type PaqueteEnviadoKERNELaCPU struct {
 	PC  int `json:"pc"`
 	Pid int `json:"pid"`
@@ -93,5 +98,7 @@ type PaqueteRecibidoDeCPU struct {
 
 var ColaNew []PCB
 var ColaReady []PCB
+var ColaSuspReady []PCB
+var ColaExit []PCB
 var ContadorPCB int = 0
 var ListaCPU []CPU
