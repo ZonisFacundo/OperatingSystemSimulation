@@ -27,7 +27,7 @@ func Execute(detalle globals.Instruccion) {
 	partes := strings.Fields(detalle.InstructionType)
 
 	detalle.InstructionType = partes[0]
-	
+
 	switch detalle.InstructionType {
 
 	case "NOOP": //?
@@ -44,7 +44,6 @@ func Execute(detalle globals.Instruccion) {
 
 	case "WRITE":
 		detalle.DireccionLog, _ = strconv.Atoi(partes[1])
-		detalle.Datos = &partes[2]
 
 		if detalle.DireccionLog != 0 || detalle.Datos != nil {
 

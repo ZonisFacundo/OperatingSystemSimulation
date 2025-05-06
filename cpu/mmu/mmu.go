@@ -22,7 +22,7 @@ La TLB contará con la siguiente estructura base: [ página | marco ]*/
 	entrada_nivel_X := math.Floor(float64(nro_pagina)/float64(memoryManagement.cant_entradas_tabla ^ (memoryManagement.Niveles))) % float64(memoryManagement.cant_entradas_tabla) //X??
 	desplazamiento := direccionLogica % memoryManagement.TamPagina
 
-	//direction[] -> Memoria -> Tabla de Paginas -> 
+	//direction[] -> Memoria -> Tabla de Paginas ->
 }*/
 
 type MMU struct {
@@ -34,7 +34,9 @@ type MMU struct {
 }
 
 func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int {
+	
 	// Calcular el número de página
+	memoryManagement.TamPagina = 1000
 	nroPagina := direccionLogica / memoryManagement.TamPagina
 
 	// Crear un slice para guardar las entradas de las tablas de páginas
@@ -44,7 +46,7 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int
 	for x := 1; x <= memoryManagement.Niveles; x++ {
 		exp := memoryManagement.Niveles - x
 		divisor := int(math.Pow(float64(memoryManagement.Cant_entradas_tabla), float64(exp)))
-		
+
 		// Calculamos la entrada en el nivel X
 		entradaNivelX := (nroPagina / divisor) % memoryManagement.Cant_entradas_tabla
 		entradas[x-1] = entradaNivelX
@@ -54,7 +56,7 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int
 	resultado := append([]int{pid}, entradas...) // Agrego el pid al principio del slice y concateno las entradas de nivel
 
 	// Retorno el array con las entradas de nivel + desplazamiento
-	
+
 	return resultado
 
 }
