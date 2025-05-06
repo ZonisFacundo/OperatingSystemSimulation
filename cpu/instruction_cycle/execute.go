@@ -18,7 +18,6 @@ import (
 // switch para ver que hace dependiendo la instruccion:
 func Execute(detalle globals.Instruccion) {
 
-	log.Printf("hasta aca llego")
 	var memoryManagement mmu.MMU
 
 	// Nos va a llegar 1 string entero, entonces hay que buscar la forma de poder ir recorriendo ese string para asignar esas variables a cada variable de la struct
@@ -27,7 +26,7 @@ func Execute(detalle globals.Instruccion) {
 	partes := strings.Fields(detalle.InstructionType)
 
 	detalle.InstructionType = partes[0]
-	
+
 	switch detalle.InstructionType {
 
 	case "NOOP": //?
@@ -44,18 +43,18 @@ func Execute(detalle globals.Instruccion) {
 
 	case "WRITE":
 		detalle.DireccionLog, _ = strconv.Atoi(partes[1])
-		detalle.Datos = &partes[2]
+		// detalle.Datos = &partes[2]
 
-		if detalle.DireccionLog != 0 || detalle.Datos != nil {
+		if detalle.DireccionLog != 0 {
 
 			direccionObtenida := detalle.DireccionLog //Traduzco la direccion específica acá.
-			datosACopiar := detalle.Datos
+			datosACopiar := partes[2]
 
 			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement, detalle.ProcessValues.Pid)
 			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 
-			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *datosACopiar)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Datos, detalle.DireccionFis)
+			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, datosACopiar)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %s - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, datosACopiar, detalle.DireccionFis)
 		} else {
 			fmt.Println("WRITE inválido.")
 			detalle.Contexto = "WRITE inválido."

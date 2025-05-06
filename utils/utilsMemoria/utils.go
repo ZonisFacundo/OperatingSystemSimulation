@@ -54,7 +54,6 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
 
-	log.Printf("map, pid 0: %s\n", globals.MemoriaKernel[0].Instrucciones[0])
 	respuestaCpu.Mensaje = globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]
 	respuestaJSON, err := json.Marshal(respuestaCpu)
 	if err != nil {

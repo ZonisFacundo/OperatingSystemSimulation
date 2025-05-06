@@ -22,6 +22,7 @@ type Config struct {
 	Cache_delay       int    `json:"cache_delay"`
 	Log_level         string `json:"log_level"`
 	Instance_id       string `json:"instance_id"`
+	Page_size         int    `json:"size_page`
 }
 type Instruccion struct { // instruccion obtenida de memoria
 	ProcessValues   utilsCPU.Proceso      `json:"instruction"`  //Valores de PID y PC

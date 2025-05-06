@@ -29,8 +29,9 @@ type PaqueteRecibidoMemoriadeKernel struct {
 }
 
 type ProcesoEnMemoria struct {
-	Instrucciones []string `json:"instructions"`
-	TablaSimple   []int    `json:"tablasimple"` //basicamente la tabla de paginas simple para el proceso...
+	Instrucciones          []string `json:"instructions"`
+	TablaSimple            []int    `json:"tablasimple"` //basicamente la tabla de paginas simple para el proceso...
+	PunteroATablaDePaginas *Nodo    `json:"tabladepaginas"`
 }
 
 type Nodo struct {

@@ -26,8 +26,8 @@ func main() {
 
 	// Esto fue para probar la traduccion
 	mmU := mmu.MMU{
-		Niveles:             2,
-		TamPagina:           256,
+		Niveles: 2,
+		// TamPagina:           256,
 		Cant_entradas_tabla: 4,
 	}
 
