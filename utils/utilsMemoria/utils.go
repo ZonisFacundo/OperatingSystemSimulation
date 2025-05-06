@@ -134,32 +134,22 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 
 	for i := 0; i < globals.ClientConfig.Number_of_levels+1; i++ {
 		log.Printf("entrada nivel %d: %d\n", i, Paquete.DirLogica[i])
-
 	}
 
-	log.Printf("desplazamiento %d: \n", Paquete.DirLogica[globals.ClientConfig.Number_of_levels+1])
-
-	var Traduccion globals.DireccionFisica = TraducirLogicaAFisica(Paquete.DirLogica, globals.PunteroBase)
+	var Traduccion globals.Marco = TraducirLogicaAFisica(Paquete.DirLogica, globals.PunteroBase)
 
 	respuestaJSON, err := json.Marshal(Traduccion)
 	if err != nil {
 		return
 	}
 
-	if Traduccion.Direccion == -1 {
+	if Traduccion.Frame == -1 {
 		log.Printf("ERROR, envio una entrada mayor a la cantidad de entradas posibles en la configuracion actual \n")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if Traduccion.Direccion == -2 {
-		log.Printf("ERROR, envio un desplazamiento (%d) mayor al tam de pagina de la configuracion actual (%d)  \n", Paquete.DirLogica[0], globals.ClientConfig.Page_size)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
 
-	log.Printf("DIRECCION FISICA HALLADA:  %d: \n", Traduccion.Direccion)
-	log.Printf("MARCO:  %d: \n", Traduccion.Marco)
-	log.Printf("DESPLAZAMIENTO:  %d: \n", Traduccion.Desplazamiento)
+	log.Printf("MARCO:  %d: \n", Traduccion.Frame)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
@@ -415,51 +405,43 @@ func CrearEInicializarTablaDePaginas(PunteroANodo *globals.Nodo, nivel int) {
 que hace traducirlogicaafisica?
 
 recibe el slice de cpu
-DireccionLogica[0] = desplazamiento
+DireccionLogica[0] = pid
 DireccionLogica[1] = entrada nivel 1
 ...
 DireccionLogica[n] = entrada nivel n
 
-a partir de estos datos accede a la tabla de paginas y devuelve el marco asociado a tal direccion logica, ademas el desplazamiento en otro valor aparte.
-Tambien devuelvo la direccion en forma de bytes para que CPU use la que mas le guste
+a partir de estos datos accede a la tabla de paginas y devuelve el marco asociado a tal direccion logica
 */
-func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) globals.DireccionFisica {
+func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) globals.Marco {
 
-	var DireccionFisica globals.DireccionFisica
+	var MarcoAurelio globals.Marco
 
 	//VERIFICO SI LOS DATOS QUE MANDO CPU TIENEN SENTIDO (O SEA, NO HAY VALORES MAYORES A LOS DE LA CANTIDAD DE NIVELES/ENTRADAS/TAMDEPAGINA QUE TENEMOS DEFINIDOS)
 	for i := 1; i <= globals.ClientConfig.Number_of_levels; i++ { //arrancamos desde 1 porque en 0 esta el desplazamiento, nos fijamos si la entrada nivel n es mayor a la cantidad de entradas por tabla
 		if DireccionLogica[i] >= globals.ClientConfig.Entries_per_page {
-
-			DireccionFisica.Desplazamiento = -1
-			DireccionFisica.Marco = -1
-			DireccionFisica.Direccion = -1 //para marcar error
-			return DireccionFisica
+			MarcoAurelio.Frame = -1
+			return MarcoAurelio
 		}
 	}
 
 	if DireccionLogica[0] >= globals.ClientConfig.Page_size { //nos envio un desplazamiento dentro de la pagina mayor al tam de la pagina
-		DireccionFisica.Desplazamiento = -2
-		DireccionFisica.Marco = -2
-		DireccionFisica.Direccion = -2 //para marcar error
-		return DireccionFisica
+		MarcoAurelio.Frame = -2
+		return MarcoAurelio
 	}
 
 	//SI LLEGAMOS ACA, LO QUE ENVIO CPU TIENE SENTIDO
 
 	marco := AccedeAEntrada(DireccionLogica, 1, PunteroNodo)
 
-	DireccionFisica.Marco = marco
-	DireccionFisica.Desplazamiento = DireccionLogica[0]                                       //desplazamiento
-	DireccionFisica.Direccion = (marco * globals.ClientConfig.Page_size) + DireccionLogica[0] //tam de pagina * numero de pagina + desplazamiento dentro de pagina
+	MarcoAurelio.Frame = marco
 
-	return DireccionFisica
+	return MarcoAurelio
 
 }
 
 /*
 Direccion logica tiene la forma de
-DireccionLogica[0] = desplazamiento
+DireccionLogica[0] = pid
 DireccionLogica[1] = entrada nivel 1
 ...
 DireccionLogica[n] = entrada nivel n

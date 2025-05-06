@@ -37,10 +37,11 @@ type Nodo struct {
 	Siguiente []*Nodo `json:"node"`
 	Marco     []int   `json:"frame"`
 }
+type Marco struct {
+	Frame int `json:"frame"`
+}
 type DireccionFisica struct {
-	Marco          int `json:"frame"`
-	Desplazamiento int `json:"offset"`
-	Direccion      int `json:"address"`
+	Direccion int `json:"address"`
 }
 type PaqueteWrite struct {
 	Direccion int  `json:"address"`
