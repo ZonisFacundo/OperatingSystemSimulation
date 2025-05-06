@@ -26,9 +26,8 @@ func Execute(detalle globals.Instruccion) {
 
 	partes := strings.Fields(detalle.InstructionType)
 
-	nombreInstruccion := partes[0]
+	switch partes[0] {
 
-	switch nombreInstruccion {
 	case "NOOP": //?
 		if detalle.Tiempo != nil {
 			tiempoEjecucion := Noop(*detalle.Tiempo)
@@ -42,16 +41,12 @@ func Execute(detalle globals.Instruccion) {
 		}
 
 	case "WRITE":
-		//detalle.DireccionLog = strconv.Atoi(partes[1])
+		detalle.DireccionLog, _ = strconv.Atoi(partes[1])
 
 		if detalle.DireccionLog != 0 || detalle.Datos != nil {
 
-			direccionObtenida, err := strconv.Atoi(partes[1]) //Traduzco la direccion específica acá.
+			direccionObtenida, _ := strconv.Atoi(partes[1]) //Traduzco la direccion específica acá.
 			datosACopiar := partes[2]
-
-			if err != nil {
-				fmt.Sprintln("WRITE inválido: Direccion no numérica.")
-			}
 
 			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
 			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)

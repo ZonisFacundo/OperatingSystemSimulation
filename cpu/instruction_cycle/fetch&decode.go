@@ -98,6 +98,8 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 
 	globals.ID.InstructionType = respuesta.Mensaje
 
+	
+
 }
 
 /*
