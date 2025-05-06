@@ -38,6 +38,7 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int
 	memoryManagement.TamPagina = 1000
 
 	// Calcular el número de página
+	memoryManagement.TamPagina = 1000
 	nroPagina := direccionLogica / memoryManagement.TamPagina
 
 	// Crear un slice para guardar las entradas de las tablas de páginas
