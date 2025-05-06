@@ -33,7 +33,7 @@ type MMU struct {
 	TablasPaginas       map[int]int
 }
 
-func TraducirDireccion(direccionLogica int, memoryManagement MMU) []int {
+func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int {
 	// Calcular el número de página
 	nroPagina := direccionLogica / memoryManagement.TamPagina
 
@@ -50,8 +50,8 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU) []int {
 		entradas[x-1] = entradaNivelX
 	}
 
-	desplazamiento := direccionLogica % memoryManagement.TamPagina
-	resultado := append([]int{desplazamiento}, entradas...) // Agrego desplazamiento al principio del slice y concateno las entradas de nivel
+	//desplazamiento := direccionLogica % memoryManagement.TamPagina
+	resultado := append([]int{pid}, entradas...) // Agrego el pid al principio del slice y concateno las entradas de nivel
 
 	// Retorno el array con las entradas de nivel + desplazamiento
 	

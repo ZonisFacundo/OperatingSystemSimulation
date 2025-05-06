@@ -26,7 +26,9 @@ func Execute(detalle globals.Instruccion) {
 
 	partes := strings.Fields(detalle.InstructionType)
 
-	switch partes[0] {
+	detalle.InstructionType = partes[0]
+	
+	switch detalle.InstructionType {
 
 	case "NOOP": //?
 		if detalle.Tiempo != nil {
@@ -42,16 +44,17 @@ func Execute(detalle globals.Instruccion) {
 
 	case "WRITE":
 		detalle.DireccionLog, _ = strconv.Atoi(partes[1])
+		detalle.Datos = &partes[2]
 
 		if detalle.DireccionLog != 0 || detalle.Datos != nil {
 
-			direccionObtenida, _ := strconv.Atoi(partes[1]) //Traduzco la direccion específica acá.
-			datosACopiar := partes[2]
+			direccionObtenida := detalle.DireccionLog //Traduzco la direccion específica acá.
+			datosACopiar := detalle.Datos
 
-			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
+			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement, detalle.ProcessValues.Pid)
 			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 
-			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, datosACopiar)
+			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *datosACopiar)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Datos, detalle.DireccionFis)
 		} else {
 			fmt.Println("WRITE inválido.")
@@ -59,23 +62,23 @@ func Execute(detalle globals.Instruccion) {
 		}
 
 	case "READ":
+		detalle.DireccionLog, _ = strconv.Atoi(partes[1])
+		tamanio, _ := strconv.Atoi(partes[2])
+		detalle.Tamaño = &tamanio
+
 		if detalle.DireccionLog != 0 || detalle.Tamaño != nil {
 
-			direccionObtenida, err := strconv.Atoi(partes[1])
-			tamañoDet, err2 := strconv.Atoi(partes[2])
+			direccionObtenida := detalle.DireccionLog
+			tamañoDet := detalle.Tamaño
 
-			if err != nil || err2 != nil {
-				fmt.Sprintln("READ inválido: Dirección o tamaño no numérico.")
-			}
-			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
-
+			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement, detalle.ProcessValues.Pid)
 			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 
-			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, tamañoDet)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, tamañoDet, detalle.DireccionLog)
+			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *tamañoDet)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *tamañoDet, detalle.DireccionLog)
 
 		} else {
-			fmt.Println("READ inválido.")
+			fmt.Sprintln("READ inválido.")
 			detalle.Contexto = "READ inválido."
 		}
 

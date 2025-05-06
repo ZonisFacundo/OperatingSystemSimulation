@@ -32,7 +32,7 @@ func main() {
 	}
 
 	dirLogica := 1800
-	resultado := mmu.TraducirDireccion(dirLogica, mmU)
+	resultado := mmu.TraducirDireccion(dirLogica, mmU, globals.Instruction.Pid)
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
