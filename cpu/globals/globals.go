@@ -9,6 +9,7 @@ import (
 )
 
 type Config struct {
+	Ip_cpu            string `json:"ip_cpu"`
 	Port_cpu          int    `json:"port_cpu"`
 	Ip_memory         string `json:"ip_memory"`
 	Port_memory       int    `json:"port_memory"`
@@ -21,6 +22,7 @@ type Config struct {
 	Cache_delay       int    `json:"cache_delay"`
 	Log_level         string `json:"log_level"`
 	Instance_id       string `json:"instance_id"`
+	Page_size         int    `json:"size_page`
 }
 type Instruccion struct { // instruccion obtenida de memoria
 	ProcessValues   utilsCPU.Proceso      `json:"instruction"`  //Valores de PID y PC

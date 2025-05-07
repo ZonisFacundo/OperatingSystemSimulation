@@ -4,7 +4,7 @@ type Estado string
 
 type PCB struct {
 	Pid            int              `json:"pid"`
-	PC             int              `json:"PC"`
+	Pc             int              `json:"pc"`
 	EstadoActual   Estado           `json:"estadoActual"`
 	TamProceso     int              `json:"tamanioProceso"`
 	MetricaEstados map[Estado]int   `json:"metricaEstados"` //falta verlo
@@ -57,13 +57,22 @@ type PaqueteEnviadoKERNELaMemoria struct {
 	Archivo    string `json:"file"`
 }
 
+type PaqueteEnviadoKERNELaMemoria2 struct {
+	Pid     int    `json:"pid"`
+	Mensaje string `json:"message"`
+}
+
 type PaqueteEnviadoKERNELaCPU struct {
-	Pid int `json:"pid"`
 	PC  int `json:"pc"`
+	Pid int `json:"pid"`
 }
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
-	Tiempo  int    `json:"tiempo"`
+}
+
+type PaqueteEnviadoKERNELaIO struct {
+	Pid    int `json:"pid"`
+	Tiempo int `json:"tiempo"`
 }
 
 type RespuestaalCPU struct {
@@ -78,7 +87,7 @@ type PaqueteRecibidoDeIO struct {
 }
 
 type PaqueteRecibido struct {
-	Mensaje string `json:"message"`
+	Mensaje string `json:"messageCPU"`
 }
 
 type PaqueteRecibidoDeCPU struct {
@@ -89,5 +98,7 @@ type PaqueteRecibidoDeCPU struct {
 
 var ColaNew []PCB
 var ColaReady []PCB
+var ColaSuspReady []PCB
+var ColaExit []PCB
 var ContadorPCB int = 0
 var ListaCPU []CPU

@@ -33,7 +33,6 @@ type PaqueteRecibidoMemoriadeKernel struct {
 */
 type respuestaalKernel struct {
 	Mensaje string `json:"message"`
-	Exito   bool   `json:"exito"`
 }
 type respuestaalCPU struct {
 	Mensaje string `json:"message"`
@@ -55,7 +54,6 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
 
-	log.Printf("map, pid 0: %s\n", globals.MemoriaKernel[0].Instrucciones[0])
 	respuestaCpu.Mensaje = globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]
 	respuestaJSON, err := json.Marshal(respuestaCpu)
 	if err != nil {
@@ -88,7 +86,6 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	if DondeGuardarProceso < 0 {
 		log.Printf("NO HAY ESPACIO EN MEMORIA PARA GUARDAR EL PROCESO \n")
 		respuestaKernel.Mensaje = "No hay espacio para guardar el proceso en memoria crack"
-		respuestaKernel.Exito = false //estamos probando esto como respuesta ademas del mesanje
 		respuestaJSON, err := json.Marshal(respuestaKernel)
 		if err != nil {
 			return
@@ -113,7 +110,6 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		CrearProceso(PaqueteInfoProceso)
 
 		respuestaKernel.Mensaje = "Recibi de Kernel"
-		respuestaKernel.Exito = true //estamos probando esto como respuesta ademas del mesanje
 		respuestaJSON, err := json.Marshal(respuestaKernel)
 		if err != nil {
 			return
@@ -137,32 +133,22 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 
 	for i := 0; i < globals.ClientConfig.Number_of_levels+1; i++ {
 		log.Printf("entrada nivel %d: %d\n", i, Paquete.DirLogica[i])
-
 	}
 
-	log.Printf("desplazamiento %d: \n", Paquete.DirLogica[globals.ClientConfig.Number_of_levels+1])
-
-	var Traduccion globals.DireccionFisica = TraducirLogicaAFisica(Paquete.DirLogica, globals.PunteroBase)
+	var Traduccion globals.Marco = TraducirLogicaAFisica(Paquete.DirLogica, globals.PunteroBase)
 
 	respuestaJSON, err := json.Marshal(Traduccion)
 	if err != nil {
 		return
 	}
 
-	if Traduccion.Direccion == -1 {
+	if Traduccion.Frame == -1 {
 		log.Printf("ERROR, envio una entrada mayor a la cantidad de entradas posibles en la configuracion actual \n")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if Traduccion.Direccion == -2 {
-		log.Printf("ERROR, envio un desplazamiento (%d) mayor al tam de pagina de la configuracion actual (%d)  \n", Paquete.DirLogica[0], globals.ClientConfig.Page_size)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
 
-	log.Printf("DIRECCION FISICA HALLADA:  %d: \n", Traduccion.Direccion)
-	log.Printf("MARCO:  %d: \n", Traduccion.Marco)
-	log.Printf("DESPLAZAMIENTO:  %d: \n", Traduccion.Desplazamiento)
+	log.Printf("MARCO:  %d: \n", Traduccion.Frame)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
@@ -386,6 +372,17 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 	//llevamos contenido del archivo al map
 	LeerArchivoYCargarMap((paquete).Archivo, (paquete).Pid)
+
+	//ojo aca, tengo que hacer estas maniobras porque no me deja asignarle de una un solo campo del struct al map... (ignorar)
+	//creamos un puntero que apunte a la base de la tabla de paginas del proceso (un nodo), luego inicializamos la tabla de paginas
+	aux := globals.MemoriaKernel[paquete.Pid]
+	aux.PunteroATablaDePaginas = new(globals.Nodo)
+	globals.MemoriaKernel[paquete.Pid] = aux
+	CrearEInicializarTablaDePaginas(globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas, 0)
+	//ahora nos queda asignarle los marcos correspondientes al proceso segun la tabla de paginas simple que ya tenemos creada
+
+	var PunteroAux *globals.Nodo = globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
+	AsignarValoresATablaDePaginas(paquete.Pid, 0, PunteroAux)
 	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
 
 }
@@ -418,52 +415,49 @@ func CrearEInicializarTablaDePaginas(PunteroANodo *globals.Nodo, nivel int) {
 /*
 que hace traducirlogicaafisica?
 
+<<<<<<< HEAD
 recibe el slice de cpuS
 DireccionLogica[0] = desplazamiento
+=======
+recibe el slice de cpu
+DireccionLogica[0] = pid
+>>>>>>> main
 DireccionLogica[1] = entrada nivel 1
 ...
 DireccionLogica[n] = entrada nivel n
 
-a partir de estos datos accede a la tabla de paginas y devuelve el marco asociado a tal direccion logica, ademas el desplazamiento en otro valor aparte.
-Tambien devuelvo la direccion en forma de bytes para que CPU use la que mas le guste
+a partir de estos datos accede a la tabla de paginas y devuelve el marco asociado a tal direccion logica
 */
-func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) globals.DireccionFisica {
+func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) globals.Marco {
 
-	var DireccionFisica globals.DireccionFisica
+	var MarcoAurelio globals.Marco
 
 	//VERIFICO SI LOS DATOS QUE MANDO CPU TIENEN SENTIDO (O SEA, NO HAY VALORES MAYORES A LOS DE LA CANTIDAD DE NIVELES/ENTRADAS/TAMDEPAGINA QUE TENEMOS DEFINIDOS)
 	for i := 1; i <= globals.ClientConfig.Number_of_levels; i++ { //arrancamos desde 1 porque en 0 esta el desplazamiento, nos fijamos si la entrada nivel n es mayor a la cantidad de entradas por tabla
 		if DireccionLogica[i] >= globals.ClientConfig.Entries_per_page {
-
-			DireccionFisica.Desplazamiento = -1
-			DireccionFisica.Marco = -1
-			DireccionFisica.Direccion = -1 //para marcar error
-			return DireccionFisica
+			MarcoAurelio.Frame = -1
+			return MarcoAurelio
 		}
 	}
 
 	if DireccionLogica[0] >= globals.ClientConfig.Page_size { //nos envio un desplazamiento dentro de la pagina mayor al tam de la pagina
-		DireccionFisica.Desplazamiento = -2
-		DireccionFisica.Marco = -2
-		DireccionFisica.Direccion = -2 //para marcar error
-		return DireccionFisica
+		MarcoAurelio.Frame = -2
+		return MarcoAurelio
 	}
 
 	//SI LLEGAMOS ACA, LO QUE ENVIO CPU TIENE SENTIDO
 
 	marco := AccedeAEntrada(DireccionLogica, 1, PunteroNodo)
 
-	DireccionFisica.Marco = marco
-	DireccionFisica.Desplazamiento = DireccionLogica[0]                                       //desplazamiento
-	DireccionFisica.Direccion = (marco * globals.ClientConfig.Page_size) + DireccionLogica[0] //tam de pagina * numero de pagina + desplazamiento dentro de pagina
+	MarcoAurelio.Frame = marco
 
-	return DireccionFisica
+	return MarcoAurelio
 
 }
 
 /*
 Direccion logica tiene la forma de
-DireccionLogica[0] = desplazamiento
+DireccionLogica[0] = pid
 DireccionLogica[1] = entrada nivel 1
 ...
 DireccionLogica[n] = entrada nivel n
@@ -535,6 +529,40 @@ func ActualizarPaginaCompleta(PaginaNueva globals.Pagina, direccion int) {
 
 	}
 }
+
+var contador int = 0 //lo uso para contar donde estamos parados en la tabla de paginas global (la del map del proceso)
+func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo) {
+
+	if nivel == globals.ClientConfig.Number_of_levels { //significa que ya estamos parados en el nivel que contiene los marcos
+		for j := 0; j < globals.ClientConfig.Entries_per_page; j++ {
+
+			if contador <= len(globals.MemoriaKernel[pid].TablaSimple) {
+				(*PunteroAux).Marco[j] = globals.MemoriaKernel[pid].TablaSimple[contador]
+				log.Printf("llene este valor     %d       , es una de las paginas que tiene, una de la tabla que printie arriba /n", (*PunteroAux).Marco[nivel])
+				contador++
+			} else {
+				log.Printf("en principio, tabla de paginas del proceso fue llenada correctamente... (utils.go AsignarValoresATablaDePaginas\n")
+				contador = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior
+				return
+			}
+
+		}
+
+	} else {
+
+		for i := 0; i < globals.ClientConfig.Entries_per_page; i++ {
+			log.Printf("\n\n\n DIRECCION: (*PunteroAux).Siguiente[i]   i: %d      contador: %d \n\n\n", i, contador)
+			AsignarValoresATablaDePaginas(pid, nivel+1, (*PunteroAux).Siguiente[i])
+
+		}
+
+	}
+
+}
+
+//cambiar 			if contador <= len(globals.MemoriaKernel[pid].TablaSimple) {
+//a menor solo
+//cambiar las llamadas de las funciones actualizar einicializar de 0 a 1
 
 /*
 func MemoryDump(pid int) {

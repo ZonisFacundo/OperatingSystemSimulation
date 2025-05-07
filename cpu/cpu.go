@@ -26,19 +26,19 @@ func main() {
 
 	// Esto fue para probar la traduccion
 	mmU := mmu.MMU{
-		Niveles:             2,
-		TamPagina:           256,
+		Niveles: 2,
+		// TamPagina:           256,
 		Cant_entradas_tabla: 4,
 	}
 
 	dirLogica := 1800
-	resultado := mmu.TraducirDireccion(dirLogica, mmU)
+	resultado := mmu.TraducirDireccion(dirLogica, mmU, globals.Instruction.Pid)
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
 	globals.CargarConfig("./cpu/globals/config.json", instanceID)
 
-	utilsCPU.EnvioPortKernel(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id, globals.ClientConfig.Port_cpu)
+	utilsCPU.EnvioPortKernel(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id, globals.ClientConfig.Port_cpu, globals.ClientConfig.Ip_cpu)
 
 	fmt.Println("Entradas + Desplazamiento:", resultado)
 

@@ -7,6 +7,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
@@ -16,14 +18,18 @@ import (
 // switch para ver que hace dependiendo la instruccion:
 func Execute(detalle globals.Instruccion) {
 
-	log.Printf("hasta aca llego")
 	var memoryManagement mmu.MMU
 
 	// Nos va a llegar 1 string entero, entonces hay que buscar la forma de poder ir recorriendo ese string para asignar esas variables a cada variable de la struct
 	// del proceso.
 
+	partes := strings.Fields(detalle.InstructionType)
+
+	detalle.InstructionType = partes[0]
+
 	switch detalle.InstructionType {
-	case "NOOP":
+
+	case "NOOP": //?
 		if detalle.Tiempo != nil {
 			tiempoEjecucion := Noop(*detalle.Tiempo)
 			detalle.ProcessValues.Pc = detalle.ProcessValues.Pc + 1
@@ -36,34 +42,42 @@ func Execute(detalle globals.Instruccion) {
 		}
 
 	case "WRITE":
-		if detalle.DireccionLog != 0 || detalle.Datos != nil {
+		detalle.DireccionLog, _ = strconv.Atoi(partes[1])
+		// detalle.Datos = &partes[2]
 
-			datosACopiar := detalle.Datos
-			direccionObtenida := detalle.DireccionFis //Traduzco la direccion específica acá.
+		if detalle.DireccionLog != 0 {
 
-			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
+			direccionObtenida := detalle.DireccionLog //Traduzco la direccion específica acá.
+			datosACopiar := partes[2]
+
+			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement, detalle.ProcessValues.Pid)
 			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 
-			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *datosACopiar)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Datos, detalle.DireccionFis)
+			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, datosACopiar)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %s - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, datosACopiar, detalle.DireccionFis)
 		} else {
 			fmt.Println("WRITE inválido.")
 			detalle.Contexto = "WRITE inválido."
 		}
 
 	case "READ":
-		if detalle.DireccionLog != 0 || detalle.Tamaño != nil {
-			//tamañoDet := detalle.Tamaño
-			direccionObtenida := detalle.DireccionLog
+		detalle.DireccionLog, _ = strconv.Atoi(partes[1])
+		tamanio, _ := strconv.Atoi(partes[2])
+		detalle.Tamaño = &tamanio
 
-			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement)
+		if detalle.DireccionLog != 0 || detalle.Tamaño != nil {
+
+			direccionObtenida := detalle.DireccionLog
+			tamañoDet := detalle.Tamaño
+
+			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement, detalle.ProcessValues.Pid)
 			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 
-			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *detalle.Tamaño)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *detalle.Tamaño, detalle.DireccionLog)
+			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *tamañoDet)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *tamañoDet, detalle.DireccionLog)
 
 		} else {
-			fmt.Println("READ inválido.")
+			fmt.Sprintln("READ inválido.")
 			detalle.Contexto = "READ inválido."
 		}
 
@@ -80,9 +94,10 @@ func Execute(detalle globals.Instruccion) {
 			fmt.Println("Valor no modificado.")
 			detalle.Contexto = "Valor no modificado"
 		}
+
 		// LLamada a Kernel, debido a que son parte principalmente de interrupciones.
 	case "IO":
-	case "INIT_PROC":
+	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
 	case "DUMP_MEMORY":
 	case "EXIT":
 		fmt.Println("Nada que hacer.")

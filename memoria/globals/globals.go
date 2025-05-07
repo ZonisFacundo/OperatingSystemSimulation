@@ -29,18 +29,20 @@ type PaqueteRecibidoMemoriadeKernel struct {
 }
 
 type ProcesoEnMemoria struct {
-	Instrucciones []string `json:"instructions"`
-	TablaSimple   []int    `json:"tablasimple"` //basicamente la tabla de paginas simple para el proceso...
+	Instrucciones          []string `json:"instructions"`
+	TablaSimple            []int    `json:"tablasimple"` //basicamente la tabla de paginas simple para el proceso...
+	PunteroATablaDePaginas *Nodo    `json:"tabladepaginas"`
 }
 
 type Nodo struct {
 	Siguiente []*Nodo `json:"node"`
 	Marco     []int   `json:"frame"`
 }
+type Marco struct {
+	Frame int `json:"frame"`
+}
 type DireccionFisica struct {
-	Marco          int `json:"frame"`
-	Desplazamiento int `json:"offset"`
-	Direccion      int `json:"address"`
+	Direccion int `json:"address"`
 }
 type PaqueteWrite struct {
 	Direccion int  `json:"address"`

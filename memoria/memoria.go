@@ -1,5 +1,11 @@
 package main
 
+/*
+SI DE CAUSALIDAD VES QUE LAS COSAS NO ANDAN CUANDO CAMBIAS
+VALORES EN EL CONFIG
+ES PORQUE POR AHI EN CPU ESTAN HARDCODEANDO VALORES (TAM PAGINA) PARA PROBARLO
+POR SI NOS OLVIDAMOS
+*/
 import (
 	"fmt"
 	"log"
@@ -20,9 +26,7 @@ func main() {
 	auxiliares.MostrarPaginasDisponibles()
 	//auxiliares.Mostrarmemoria()
 
-	globals.PunteroBase = new(globals.Nodo)
-	utilsMemoria.CrearEInicializarTablaDePaginas(globals.PunteroBase, 1) //cuidado con esta cte, no creo que moleste porque no se vuelve a llamar a esta funcion
-
+	auxiliares.MostrarMemoriaKernel()
 	//http.HandleFunc("POST /READ", utilsMemoria.RetornoClienteCPUServidorMEMORIARead)
 	//http.HandleFunc("POST /WRITE", utilsMemoria.RetornoClienteCPUServidorMEMORIAWrite)
 	http.HandleFunc("POST /TRADUCCIONLOGICAAFISICA", utilsMemoria.RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica)
@@ -30,5 +34,4 @@ func main() {
 	http.HandleFunc("POST /KERNELMEMORIA", utilsMemoria.RetornoClienteKernelServidorMEMORIA)
 	log.Printf("Servidor corriendo (Memoria) en puerto %d.\n", globals.ClientConfig.Port_memory)
 	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_memory), nil)
-	
 }

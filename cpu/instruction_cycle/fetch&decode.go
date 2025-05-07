@@ -97,7 +97,6 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 	log.Printf("Instruction given: %s\n", respuesta.Mensaje) // Nos manda memoria la instrucción.
 
 	globals.ID.InstructionType = respuesta.Mensaje
-
 }
 
 /*

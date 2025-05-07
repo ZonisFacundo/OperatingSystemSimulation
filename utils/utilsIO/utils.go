@@ -22,24 +22,14 @@ type RespuestaHandshakeKernel struct { // aca va el formato que va a tener lo qu
 }
 
 type PaqueteRecibidoIO struct {
-	Mensaje string `json:"message"`
-	Tiempo  int    `json:"tiempo"`
+	Pid    int `json:"pid"`
+	Tiempo int `json:"tiempo"`
 }
 
 type PaqueteRespuestaKERNEL struct {
 	Mensaje string `json:"message"`
 }
 
-/*
-func ConfigurarLogger() {
-	logFile, err := os.OpenFile("io.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
-	if err != nil {
-		panic(err)
-	}
-	mw := io.MultiWriter(os.Stdout, logFile)
-	log.SetOutput(mw)
-}
-*/
 /*
 conexion entre IO (Client) con Kernel (Server)
 enviamos handshake con datos del modulo y esperamos respuesta
@@ -124,7 +114,6 @@ func PeticionClienteIOServidorKERNEL(nombre string, ipKernel string, puertoKerne
 func RetornoClienteKERNELServidorIO(w http.ResponseWriter, r *http.Request) {
 
 	var request PaqueteRecibidoIO
-	log.Printf("llegue.\n")
 
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
 
@@ -133,12 +122,12 @@ func RetornoClienteKERNELServidorIO(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("I/O Iniciado.\n")
+	log.Printf("## PID: %d - Inicio de IO - Tiempo: %d", request.Pid, request.Tiempo)
 	IniciarSleep(request.Tiempo)
 
 	//Leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("El kernel nos envio esto: %s\n", request.Mensaje)
-	log.Printf("I/O Finalizado. \n")
+
+	log.Printf("## PID: %d - Fin de IO", request.Pid)
 	//Respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 
 	var respuestaIO PaqueteRespuestaKERNEL
@@ -154,6 +143,6 @@ func RetornoClienteKERNELServidorIO(w http.ResponseWriter, r *http.Request) {
 }
 
 func IniciarSleep(tiempo int) {
-	time.Sleep(time.Duration(tiempo) * time.Second)
+	time.Sleep(time.Duration(tiempo) * time.Millisecond)
 
 }
