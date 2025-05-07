@@ -222,12 +222,35 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 		return
 	}
 
-	var respuesta RespuestaalCPU
-	err = json.Unmarshal(body, &respuesta)
+	var frame MarcoDeMemoria
+	err = json.Unmarshal(body, &frame)
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
 	}
 
-	log.Printf("Enviado todo a Memoria.")
+	log.Printf("Recibido de memoria el frame: %d", frame.Frame)
 
 }
+
+/*func RecibirMarcoDePagina(w http.ResponseWriter, r *http.Request) {
+
+	var request FrameDePagina
+
+	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("MEMORIA envia: %d ", request.Frame)
+
+	var respuesta RespuestaMemFrame
+	respuesta.Mensaje = "Frame recbido correctamente"
+	respuestaJSON, err := json.Marshal(respuesta)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+}*/

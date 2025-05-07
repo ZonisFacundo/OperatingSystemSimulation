@@ -31,11 +31,11 @@ type PackageFinEjecucion struct {
 
 type WriteStruct struct {
 	Datos     string `json:"datos"`
-	Direccion []int  `json:"adress"`
+	Direccion int    `json:"adress"`
 }
 type ReadStruct struct {
-	Tamaño    int   `json:"datos"`
-	Direccion []int `json:"adress"`
+	Tamaño    int `json:"datos"`
+	Direccion int `json:"adress"`
 }
 
 type HandshakeKERNEL struct {
@@ -54,3 +54,8 @@ type EnvioDirLogicaAMemoria struct {
 	Puerto    int    `json:"port"`
 	DirLogica []int  `json:"dir_logica"`
 }
+
+type MarcoDeMemoria struct {
+	Frame int `json:"marco"`
+}
+
