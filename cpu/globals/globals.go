@@ -30,11 +30,13 @@ type Instruccion struct { // instruccion obtenida de memoria
 	DireccionLog    int                   `json:"adress_log"`
 	DireccionFis    int                   `json:"adress_fis"` //Para Read and Write -> Dirección lógica que pasa memoria.
 	InstructionType string                `json:"message"`    //Contexto de la ejecución, es decir, la string que entra en el execute.
-	Valor           *int                  `json:"value"`      //Parámetro para GOTO
-	Tamaño          *int                  `json:"size"`       //Parámetro para el READ e INIT_PROC.
-	Tiempo          *int                  `json:"time"`       //Parámetro para NOOP.
-	Datos           *string               `json:"datos"`
+	Valor           int                   `json:"value"`      //Parámetro para GOTO
+	Tamaño          int                   `json:"size"`       //Parámetro para el READ e INIT_PROC.
+	Tiempo          int                   `json:"time"`       //Parámetro para NOOP.
+	Datos           string                `json:"datos"`
 	Contexto        string                `json:"context"`
+	Frame           int                   `json:"frame"`
+	Desplazamiento int `json:"desplazamiento"` 
 }
 
 var Instruction utilsCPU.Proceso

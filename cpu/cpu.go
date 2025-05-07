@@ -47,6 +47,7 @@ func main() {
 	go http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
 
 	instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+	instruction_cycle.Decode(globals.ID)
 	instruction_cycle.Execute(globals.ID)
 
 	utilsCPU.FinEjecucion(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Instance_id, globals.InstruccionDetalle.Contexto)
