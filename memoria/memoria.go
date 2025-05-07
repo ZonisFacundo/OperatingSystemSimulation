@@ -26,9 +26,7 @@ func main() {
 	auxiliares.MostrarPaginasDisponibles()
 	//auxiliares.Mostrarmemoria()
 
-	globals.PunteroBase = new(globals.Nodo)
-	utilsMemoria.CrearEInicializarTablaDePaginas(globals.PunteroBase, 1) //cuidado con esta cte, no creo que moleste porque no se vuelve a llamar a esta funcion
-
+	auxiliares.MostrarMemoriaKernel()
 	//http.HandleFunc("POST /READ", utilsMemoria.RetornoClienteCPUServidorMEMORIARead)
 	//http.HandleFunc("POST /WRITE", utilsMemoria.RetornoClienteCPUServidorMEMORIAWrite)
 	http.HandleFunc("POST /TRADUCCIONLOGICAAFISICA", utilsMemoria.RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica)

@@ -371,6 +371,17 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 	//llevamos contenido del archivo al map
 	LeerArchivoYCargarMap((paquete).Archivo, (paquete).Pid)
+
+	//ojo aca, tengo que hacer estas maniobras porque no me deja asignarle de una un solo campo del struct al map... (ignorar)
+	//creamos un puntero que apunte a la base de la tabla de paginas del proceso (un nodo), luego inicializamos la tabla de paginas
+	aux := globals.MemoriaKernel[paquete.Pid]
+	aux.PunteroATablaDePaginas = new(globals.Nodo)
+	globals.MemoriaKernel[paquete.Pid] = aux
+	CrearEInicializarTablaDePaginas(globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas, 1)
+	//ahora nos queda asignarle los marcos correspondientes al proceso segun la tabla de paginas simple que ya tenemos creada
+
+	var PunteroAux *globals.Nodo = nil //es necesario enviar un puntero auxiliar por parametro en esta funcion
+	AsignarValoresATablaDePaginas(paquete.Pid, 1, PunteroAux)
 	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
 
 }
@@ -511,6 +522,36 @@ func ActualizarPaginaCompleta(PaginaNueva globals.Pagina, direccion int) {
 		}
 
 	}
+}
+
+var contador int = 0 //lo uso para contar donde estamos parados en la tabla de paginas global (la del map del proceso)
+func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo) {
+
+	if nivel == globals.ClientConfig.Number_of_levels { //significa que ya estamos parados en el nivel que contiene los marcos
+		for j := 0; j < globals.ClientConfig.Entries_per_page; j++ {
+
+			if contador <= len(globals.MemoriaKernel[pid].TablaSimple) {
+				(*PunteroAux).Marco[j] = globals.MemoriaKernel[pid].TablaSimple[contador]
+				log.Printf("llene este valor     %d       , es una de las paginas que tiene, una de la tabla que printie arriba /n", (*PunteroAux).Marco[nivel])
+				contador++
+			} else {
+				log.Printf("en principio, tabla de paginas del proceso fue llenada correctamente... (utils.go AsignarValoresATablaDePaginas\n")
+				contador = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior
+				return
+			}
+
+		}
+
+	} else {
+
+		for i := 0; i < globals.ClientConfig.Entries_per_page; i++ {
+
+			AsignarValoresATablaDePaginas(pid, nivel+1, (*PunteroAux).Siguiente[i])
+
+		}
+
+	}
+
 }
 
 /*
