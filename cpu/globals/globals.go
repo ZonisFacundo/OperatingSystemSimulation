@@ -36,7 +36,7 @@ type Instruccion struct { // instruccion obtenida de memoria
 	Datos           string                `json:"datos"`
 	Contexto        string                `json:"context"`
 	Frame           int                   `json:"frame"`
-	Desplazamiento int `json:"desplazamiento"` 
+	Desplazamiento  int                   `json:"desplazamiento"`
 }
 
 var Instruction utilsCPU.Proceso
