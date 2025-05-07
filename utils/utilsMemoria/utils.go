@@ -131,7 +131,7 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 		return
 	}
 
-	for i := 0; i < globals.ClientConfig.Number_of_levels+1; i++ {
+	for i := 0; i < globals.ClientConfig.Number_of_levels; i++ { //puede ser que tenga que ser +1 el numberoflevels
 		log.Printf("entrada nivel %d: %d\n", i, Paquete.DirLogica[i])
 	}
 
@@ -382,6 +382,8 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
 	AsignarValoresATablaDePaginas(paquete.Pid, 0, PunteroAux)
+	contador = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior (es la unica varialbe global de utils)
+
 	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
 
 }
@@ -530,13 +532,11 @@ func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo)
 	if nivel == globals.ClientConfig.Number_of_levels { //significa que ya estamos parados en el nivel que contiene los marcos
 		for j := 0; j < globals.ClientConfig.Entries_per_page; j++ {
 
-			if contador <= len(globals.MemoriaKernel[pid].TablaSimple) {
+			if contador < len(globals.MemoriaKernel[pid].TablaSimple) {
 				(*PunteroAux).Marco[j] = globals.MemoriaKernel[pid].TablaSimple[contador]
-				log.Printf("llene este valor     %d       , es una de las paginas que tiene, una de la tabla que printie arriba /n", (*PunteroAux).Marco[nivel])
+				log.Printf("llene este valor     %d       , es una de las paginas que tiene, una de la tabla que printie arriba /n", (*PunteroAux).Marco[j])
 				contador++
 			} else {
-				log.Printf("en principio, tabla de paginas del proceso fue llenada correctamente... (utils.go AsignarValoresATablaDePaginas\n")
-				contador = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior
 				return
 			}
 
@@ -545,13 +545,11 @@ func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo)
 	} else {
 
 		for i := 0; i < globals.ClientConfig.Entries_per_page; i++ {
-			log.Printf("\n\n\n DIRECCION: (*PunteroAux).Siguiente[i]   i: %d      contador: %d \n\n\n", i, contador)
 			AsignarValoresATablaDePaginas(pid, nivel+1, (*PunteroAux).Siguiente[i])
 
 		}
 
 	}
-
 }
 
 //cambiar 			if contador <= len(globals.MemoriaKernel[pid].TablaSimple) {
