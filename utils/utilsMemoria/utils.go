@@ -377,11 +377,11 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	aux := globals.MemoriaKernel[paquete.Pid]
 	aux.PunteroATablaDePaginas = new(globals.Nodo)
 	globals.MemoriaKernel[paquete.Pid] = aux
-	CrearEInicializarTablaDePaginas(globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas, 1)
+	CrearEInicializarTablaDePaginas(globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas, 0)
 	//ahora nos queda asignarle los marcos correspondientes al proceso segun la tabla de paginas simple que ya tenemos creada
 
-	var PunteroAux *globals.Nodo = nil //es necesario enviar un puntero auxiliar por parametro en esta funcion
-	AsignarValoresATablaDePaginas(paquete.Pid, 1, PunteroAux)
+	var PunteroAux *globals.Nodo = globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
+	AsignarValoresATablaDePaginas(paquete.Pid, 0, PunteroAux)
 	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
 
 }
@@ -545,7 +545,7 @@ func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo)
 	} else {
 
 		for i := 0; i < globals.ClientConfig.Entries_per_page; i++ {
-
+			log.Printf("\n\n\n DIRECCION: (*PunteroAux).Siguiente[i]   i: %d      contador: %d \n\n\n", i, contador)
 			AsignarValoresATablaDePaginas(pid, nivel+1, (*PunteroAux).Siguiente[i])
 
 		}
@@ -553,6 +553,10 @@ func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo)
 	}
 
 }
+
+//cambiar 			if contador <= len(globals.MemoriaKernel[pid].TablaSimple) {
+//a menor solo
+//cambiar las llamadas de las funciones actualizar einicializar de 0 a 1
 
 /*
 func MemoryDump(pid int) {
