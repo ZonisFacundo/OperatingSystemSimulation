@@ -34,7 +34,7 @@ type Instruccion struct { // instruccion obtenida de memoria
 	Tamaño          int                   `json:"size"`       //Parámetro para el READ e INIT_PROC.
 	Tiempo          int                   `json:"time"`       //Parámetro para NOOP.
 	Datos           string                `json:"datos"`
-	Contexto        string                `json:"context"`
+	Syscall         string                `json:"syscall"`
 	Frame           int                   `json:"frame"`
 	Desplazamiento  int                   `json:"desplazamiento"`
 }
