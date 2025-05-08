@@ -112,13 +112,13 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 			MandarProcesoAIO(ioServidor)
 		} else {
 			FinalizarProceso(PCBUtilizar)
-		}
+		} //remplanificar
 	case "EXIT":
 		FinalizarProceso(PCBUtilizar)
 	case "DUMP_MEMORY":
-		log.Printf("El proceso PID: %d pidio un dump de memoria", request.Pid) //CAMBIAR
+		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	case "INIT_PROC":
-		log.Printf("El proceso PID: %d pidio un init proc", request.Pid) //CAMBIAR
+		CrearPCB(request.Parametro1, request.Parametro2)
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -566,4 +566,70 @@ func MandarProcesoAIO(io IO) {
 		io.ColaProcesos = io.ColaProcesos[1:]
 
 	}
+}
+
+func DumpDelProceso(pcb PCB, ip string, puerto int) {
+
+	var paquete PaqueteEnviadoKERNELaMemoria2
+	paquete.Pid = pcb.Pid
+	paquete.Mensaje = fmt.Sprintf("El proceso PID: %d  requiere que hace haga un DUMP del mismo", pcb.Pid)
+
+	PasarBlocked(pcb)
+
+	PaqueteFormatoJson, err := json.Marshal(paquete)
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al convertir a json.")
+		return
+	}
+	cliente := http.Client{} //crea un "cliente"
+
+	url := fmt.Sprintf("http://%s:%d/KERNELMEMORIADUMP", ip, puerto) //url del server
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al generar la peticion al server.\n")
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
+
+	respuestaJSON, err := cliente.Do(req)
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+
+	}
+
+	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+
+	log.Printf("Conexion establecida con exito \n")
+	//pasamos de JSON a formato bytes lo que nos paso el paquete
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	//pasamos la respuesta de JSON a formato paquete que nos mando el server
+
+	var respuesta PaqueteRecibidoDeMemoria //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
+	if err != nil {
+		log.Printf("Error al decodificar el JSON.\n")
+		return
+	}
+
+	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+
+	if respuestaJSON.StatusCode == http.StatusOK {
+		log.Printf("Se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
+		PasarReady(pcb)
+	} else {
+		log.Printf("No se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
+		FinalizarProceso(pcb)
+	}
+
 }
