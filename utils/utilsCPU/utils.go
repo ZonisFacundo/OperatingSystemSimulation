@@ -116,13 +116,15 @@ func EnvioPortKernel(ip string, puerto int, instancia string, portcpu int, ipcpu
 
 }
 
-func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, contexto string) {
+func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, syscall string, parametro1 int, parametro2 string) { // si no reciben parametros que sean  0 y "" que nosostros ahi no los usamos
 	var paquete PackageFinEjecucion
 
 	paquete.Pid = pid
 	paquete.Pc = pc
-	paquete.Contexto = contexto
-	paquete.Instancia = instancia
+	paquete.Syscall = syscall
+	paquete.InstanciaCPU = instancia
+	paquete.Parametro1 = parametro1
+	paquete.Parametro2 = parametro2
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {

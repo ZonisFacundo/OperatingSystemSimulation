@@ -26,7 +26,7 @@ func Execute(detalle globals.Instruccion) {
 
 		} else {
 			fmt.Println("Tiempo no especificado u acción incorrecta.")
-			detalle.Contexto = "Tiempo no especificado u acción incorrecta."
+			detalle.Syscall = "Tiempo no especificado u acción incorrecta."
 		}
 
 	case "WRITE":
@@ -37,7 +37,7 @@ func Execute(detalle globals.Instruccion) {
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %s - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Datos, globals.ID.DireccionFis)
 		} else {
 			fmt.Println("WRITE inválido.")
-			detalle.Contexto = "WRITE inválido."
+			detalle.Syscall = "WRITE inválido."
 		}
 
 	case "READ":
@@ -49,7 +49,7 @@ func Execute(detalle globals.Instruccion) {
 
 		} else {
 			fmt.Sprintln("READ inválido.")
-			detalle.Contexto = "READ inválido."
+			detalle.Syscall = "READ inválido."
 		}
 
 	case "GOTO":
@@ -58,12 +58,12 @@ func Execute(detalle globals.Instruccion) {
 
 			fmt.Println("PC actualizado en: ", pcInstrNew)
 
-			detalle.Contexto = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
+			detalle.Syscall = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, pcInstrNew)
 
 		} else {
 			fmt.Println("Valor no modificado.")
-			detalle.Contexto = "Valor no modificado"
+			detalle.Syscall = "Valor no modificado"
 		}
 
 	// LLamada a Kernel, debido a que son parte principalmente de interrupciones.

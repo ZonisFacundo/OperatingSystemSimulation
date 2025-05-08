@@ -34,7 +34,9 @@ func RecibirDatosIO(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("El cliente nos mando esto: \n nombre: %s  \n puerto: %d \n IP: %s \n", request.Nombre, request.Puerto, request.Ip)
+	log.Printf("El cliente nos mando esto: \n nombre: %s  \n puerto: %d \n IP: %s \n", request.Nombre, request.Puerto, request.Ip) //capaz que hay que sacarlo
+
+	CrearStructIO(request.Ip, request.Puerto, request.Nombre)
 
 	//Respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaIO RespuestaalIO
@@ -48,6 +50,7 @@ func RecibirDatosIO(w http.ResponseWriter, r *http.Request) {
 	w.Write(respuestaJSON)
 
 }
+
 func RecibirDatosCPU(w http.ResponseWriter, r *http.Request) {
 
 	var request HandshakepaqueteCPU
@@ -87,7 +90,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("contexto de devolucion del proceso: %s", request.Contexto)
+	log.Printf("contexto de devolucion del proceso: %s", request.Syscall)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuesta RespuestaalCPU
@@ -97,21 +100,33 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("Conexion establecida con exito \n")
-	cpuServidor := ObtenerCpu(request.Instancia)
+	cpuServidor := ObtenerCpu(request.InstanciaCPU)
 	cpuServidor.Disponible = true
-
-	if request.Contexto == "RUNNING" {
-		//hacer algo a chequear
-	} else {
-		//cambiar estado de pcb
-
+	PCBUtilizar := ObtenerPCB(request.Pid)
+	switch request.Syscall {
+	case "I/O":
+		if ExisteIO(request.Parametro2) {
+			ioServidor := ObtenerIO(request.Parametro2)
+			AgregarColaIO(ioServidor, PCBUtilizar.Pid, request.Parametro1)
+			PasarBlocked(PCBUtilizar)
+			MandarProcesoAIO(ioServidor)
+		} else {
+			FinalizarProceso(PCBUtilizar)
+		}
+	case "EXIT":
+		FinalizarProceso(PCBUtilizar)
+	case "DUMP_MEMORY":
+		log.Printf("El proceso PID: %d pidio un dump de memoria", request.Pid) //CAMBIAR
+	case "INIT_PROC":
+		log.Printf("El proceso PID: %d pidio un init proc", request.Pid) //CAMBIAR
 	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
 }
-func UtilizarIO(ip string, puerto int, pid int, tiempo int, nombre string) {
+
+func UtilizarIO(ioServer IO, pid int, tiempo int) {
 
 	var paquete PaqueteEnviadoKERNELaIO
 	paquete.Pid = pid
@@ -125,7 +140,7 @@ func UtilizarIO(ip string, puerto int, pid int, tiempo int, nombre string) {
 	}
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/KERNELIO", ip, puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/KERNELIO", ioServer.Ip, ioServer.Port) //url del server
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
@@ -147,7 +162,7 @@ func UtilizarIO(ip string, puerto int, pid int, tiempo int, nombre string) {
 
 	if respuestaJSON.StatusCode != http.StatusOK {
 
-		log.Printf("Status de respuesta del I/0 %s no fue la esperada.\n", nombre)
+		log.Printf("Status de respuesta del I/0 %s no fue la esperada.\n", ioServer.Instancia)
 		return
 	}
 	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
@@ -165,9 +180,11 @@ func UtilizarIO(ip string, puerto int, pid int, tiempo int, nombre string) {
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del I/O %s fue: %s\n", nombre, respuesta.Mensaje)
+	log.Printf("La respuesta del I/O %s fue: %s\n", ioServer.Instancia, respuesta.Mensaje)
+	MandarProcesoAIO(ioServer)
 
 }
+
 func ConsultarProcesoConMemoria(pcb PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
@@ -343,6 +360,7 @@ func InformarMemoriaFinProceso(pcb PCB, ip string, puerto int) {
 		return
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	PlanificadorLargoPlazo()
 
 }
 
@@ -422,8 +440,15 @@ func PasarReady(pcb PCB) {
 }
 
 func PasarExec(pcb PCB) {
+	ListaExec = append(ListaExec, pcb)
 	ColaReady = removerPCB(ColaReady, pcb)
 	pcb.EstadoActual = "EXECUTE"
+}
+
+func PasarBlocked(pcb PCB) {
+	ColaBlock = append(ColaBlock, pcb)
+	ListaExec = removerPCB(ListaExec, pcb)
+	pcb.EstadoActual = "BLOCKED"
 }
 
 func removerPCB(cola []PCB, pcb PCB) []PCB {
@@ -463,7 +488,7 @@ func TraqueoCPU() (CPU, bool) {
 		}
 	}
 	return CPU{}, false
-}
+} //Nos dice si hay CPU disponibles
 
 func crearStructCPU(ip string, puerto int, instancia string) {
 	ListaCPU = append(ListaCPU, CPU{
@@ -481,12 +506,64 @@ func ObtenerCpu(instancia string) CPU {
 		}
 	}
 	return CPU{}
-}
+} //Nos dice que instancia de CPU es
 
 func FinalizarProceso(pcb PCB) {
 	log.Printf("El proceso PID: %d termino su ejecucion y se paso a EXIT", pcb.Pid)
 	pcb.EstadoActual = "EXIT"
 	ColaExit = append(ColaExit, pcb) //es un esquema de como podria finalizar el proceso, puede cambiarse esto
 	InformarMemoriaFinProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
-	PlanificadorLargoPlazo() // esto seria porque se libera el espacio de memoria y capaz se podria ejecutar otro proceso
+}
+
+func CrearStructIO(ip string, puerto int, instancia string) {
+	ListaIO = append(ListaIO, IO{
+		Ip:           ip,
+		Port:         puerto,
+		Instancia:    instancia,
+		ColaProcesos: []PCBIO{},
+		Disponible:   true,
+	})
+}
+
+func ObtenerIO(instancia string) IO {
+	for _, io := range ListaIO {
+		if io.Instancia == instancia {
+			return io
+		}
+	}
+	return IO{}
+}
+
+func ExisteIO(instancia string) bool {
+	for _, io := range ListaIO {
+		if io.Instancia == instancia {
+			return true
+		}
+	}
+	return false
+}
+
+func AgregarColaIO(io IO, pid int, tiempo int) {
+	io.ColaProcesos = append(io.ColaProcesos, PCBIO{
+		Pid:    pid,
+		Tiempo: tiempo,
+	})
+}
+
+func ObtenerPCB(pid int) PCB {
+	for _, pcb := range ListaExec {
+		if pcb.Pid == pid {
+			return pcb
+		}
+	}
+	return PCB{}
+}
+
+func MandarProcesoAIO(io IO) {
+	if io.Disponible {
+		io.Disponible = false
+		go UtilizarIO(io, io.ColaProcesos[0].Pid, io.ColaProcesos[0].Tiempo)
+		io.ColaProcesos = io.ColaProcesos[1:]
+
+	}
 }

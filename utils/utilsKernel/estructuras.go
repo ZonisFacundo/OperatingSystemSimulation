@@ -27,6 +27,19 @@ type CPU struct {
 	Disponible bool   `json:"disponible"`
 }
 
+type IO struct {
+	Ip           string  `json:"ip"`
+	Port         int     `json:"port"`
+	Instancia    string  `json:"instancia"`
+	Disponible   bool    `json:"disponible"`
+	ColaProcesos []PCBIO `json:"colaprocesos"`
+}
+
+type PCBIO struct {
+	Pid    int `json:"pid"`
+	Tiempo int `json:"tiempo"`
+}
+
 type HandshakepaqueteIO struct {
 	Nombre string `json:"name"`
 	Ip     string `json:"ip"`
@@ -40,10 +53,12 @@ type HandshakepaqueteCPU struct {
 }
 
 type HandshakepaqueteCPUPCB struct {
-	Pid       string `json:"pid"`
-	Pc        int    `json:"pc"`
-	Contexto  string `json:"contexto"`
-	Instancia string `json:"instancia"`
+	Pid          int    `json:"pid"`
+	Pc           int    `json:"pc"`
+	Syscall      string `json:"syscall"`
+	Parametro1   int    `json:"parametro1"`
+	Parametro2   string `json:"parametro2"`
+	InstanciaCPU string `json:"instanciaCPU"`
 }
 
 type HandshakepaqueteKERNEL struct {
@@ -98,7 +113,11 @@ type PaqueteRecibidoDeCPU struct {
 
 var ColaNew []PCB
 var ColaReady []PCB
+var ListaExec []PCB
+var ColaBlock []PCB
+var ColaSuspBlock []PCB
 var ColaSuspReady []PCB
 var ColaExit []PCB
 var ContadorPCB int = 0
 var ListaCPU []CPU
+var ListaIO []IO
