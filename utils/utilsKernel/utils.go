@@ -629,7 +629,7 @@ func DumpDelProceso(pcb PCB, ip string, puerto int) {
 		PasarReady(pcb)
 	} else {
 		log.Printf("No se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
-		FinalizarProceso(pcb)
+		FinalizarProceso(pcb) //Mando a exit al proceso
 	}
 
 }
