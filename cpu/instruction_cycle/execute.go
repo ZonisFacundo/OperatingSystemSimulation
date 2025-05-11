@@ -47,7 +47,7 @@ func Execute(detalle globals.Instruccion) {
 
 		if globals.ID.DireccionFis != 0 {
 
-			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
+			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Tamaño, globals.ID.DireccionFis)
 
 		} else {
@@ -114,11 +114,11 @@ func Execute(detalle globals.Instruccion) {
 	}
 }
 
-func Write(ip string, port int, direccion int, datos string) {
+func Write(ip string, port int, direccion int, contenido string) {
 
 	var paquete utilsCPU.WriteStruct
 
-	paquete.Datos = datos
+	paquete.Contenido = contenido
 	paquete.Direccion = direccion
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
@@ -175,11 +175,10 @@ func Write(ip string, port int, direccion int, datos string) {
 	globals.ID.DireccionLog = respuesta.Mensaje
 }
 
-func Read(ip string, port int, direccion int, tamaño int) {
+func Read(ip string, port int, direccion int) {
 
 	var paquete utilsCPU.ReadStruct
 
-	paquete.Tamaño = tamaño
 	paquete.Direccion = direccion
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
@@ -231,6 +230,6 @@ func Read(ip string, port int, direccion int, tamaño int) {
 		return
 	}
 
-	log.Printf("Valor en memoria: %s\n", respuesta.ValorInstruccion) // Nos devuelve memoria el mensaje de escritura.
+	log.Printf("Valor en memoria: %s\n", respuesta.Info) // Nos devuelve memoria el mensaje de escritura.
 
 }

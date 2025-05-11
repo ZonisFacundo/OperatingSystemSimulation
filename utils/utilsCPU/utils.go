@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	
 )
 
 /*
@@ -180,8 +181,8 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 
 	var paquete EnvioDirLogicaAMemoria
 
-	// paquete.Ip = ip
-	// paquete.Puerto = puerto
+	paquete.Ip = ip
+	paquete.Puerto = puerto
 	paquete.DirLogica = dirLogica
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)

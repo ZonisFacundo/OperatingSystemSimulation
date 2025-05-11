@@ -141,6 +141,8 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 		return
 	}
 
+	log.Printf("entro aca")
+
 	for i := 0; i < globals.ClientConfig.Number_of_levels; i++ { //puede ser que tenga que ser +1 el numberoflevels
 		log.Printf("entrada nivel %d: %d\n", i, Paquete.DirLogica[i])
 	}

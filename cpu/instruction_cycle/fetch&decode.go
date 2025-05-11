@@ -22,7 +22,7 @@ type PaqueteRecibidoWRITE struct {
 	Mensaje int `json:"message"`
 }
 type PaqueteRecibidoREAD struct {
-	ValorInstruccion string `json:"message"`
+	Info string `json:"info"`
 }
 
 func Fetch(pid int, pc int, ip string, puerto int) {
@@ -118,7 +118,11 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.Datos = instruccion.Datos
 
 		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
+
+		log.Printf("direccion: %d", direccionAEnviar)
+
 		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
 		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
 
 	case "GOTO":
@@ -141,8 +145,9 @@ func Decode(instruccion globals.Instruccion) {
 
 	default:
 		log.Printf("Nada que modificar, continua la ejecución.")
-		Execute(instruccion)
+		//Execute(instruccion)
 	}
+
 	// READ & WRITE -> Traduzco -> Execute
 	// Else -> Execute
 }

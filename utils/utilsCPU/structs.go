@@ -32,11 +32,10 @@ type PackageFinEjecucion struct {
 }
 
 type WriteStruct struct {
-	Datos     string `json:"datos"`
 	Direccion int    `json:"adress"`
+	Contenido string `json:"content"`
 }
 type ReadStruct struct {
-	Tamaño    int `json:"datos"`
 	Direccion int `json:"adress"`
 }
 
