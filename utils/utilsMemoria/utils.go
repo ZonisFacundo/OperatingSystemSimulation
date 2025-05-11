@@ -140,10 +140,7 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	for i := 0; i < globals.ClientConfig.Number_of_levels; i++ { //puede ser que tenga que ser +1 el numberoflevels
-		log.Printf("entrada nivel %d: %d\n", i, Paquete.DirLogica[i])
-	}
+	globals.PunteroBase = globals.MemoriaKernel[Paquete.DirLogica[0]].PunteroATablaDePaginas
 
 	var Traduccion globals.Marco = TraducirLogicaAFisica(Paquete.DirLogica, globals.PunteroBase)
 
@@ -447,7 +444,7 @@ func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) glo
 	var MarcoAurelio globals.Marco
 
 	//VERIFICO SI LOS DATOS QUE MANDO CPU TIENEN SENTIDO (O SEA, NO HAY VALORES MAYORES A LOS DE LA CANTIDAD DE NIVELES/ENTRADAS/TAMDEPAGINA QUE TENEMOS DEFINIDOS)
-	for i := 1; i <= globals.ClientConfig.Number_of_levels; i++ { //arrancamos desde 1 porque en 0 esta el desplazamiento, nos fijamos si la entrada nivel n es mayor a la cantidad de entradas por tabla
+	for i := 1; i <= len(DireccionLogica)-1; i++ { //arrancamos desde 1 porque en 0 esta el desplazamiento, nos fijamos si la entrada nivel n es mayor a la cantidad de entradas por tabla
 		if DireccionLogica[i] >= globals.ClientConfig.Entries_per_page {
 			MarcoAurelio.Frame = -1
 			return MarcoAurelio
