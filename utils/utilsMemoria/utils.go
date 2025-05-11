@@ -81,11 +81,21 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo con esta ruta: %s \n", (PaqueteInfoProceso).Pid, (PaqueteInfoProceso).TamProceso, (PaqueteInfoProceso.Archivo))
 
 	//el kernel quiere saber si podemos guardar eso en memoria, para eso vamos a consultar el espacio que tenemos
-	DondeGuardarProceso = EntraEnMemoria(PaqueteInfoProceso.TamProceso, PaqueteInfoProceso.Pid) //devuelve menor a 0 si no entra en memoria el proceso
+	DondeGuardarProceso = EntraEnMemoriaYVerificaSiYaExiste(PaqueteInfoProceso.TamProceso, PaqueteInfoProceso.Pid) //devuelve menor a 0 si no entra en memoria el proceso
 
-	if DondeGuardarProceso < 0 {
+	if DondeGuardarProceso == -1 {
 		log.Printf("NO HAY ESPACIO EN MEMORIA PARA GUARDAR EL PROCESO \n")
 		respuestaKernel.Mensaje = "No hay espacio para guardar el proceso en memoria crack"
+		respuestaJSON, err := json.Marshal(respuestaKernel)
+		if err != nil {
+			return
+		}
+
+		w.WriteHeader(http.StatusInsufficientStorage) //http tiene un mensaje de error especificamente para esto, tremendo
+		w.Write(respuestaJSON)
+	} else if DondeGuardarProceso == -2 {
+		log.Printf("YA EXISTE UN PROCESO CON ESE PID  \n")
+		respuestaKernel.Mensaje = "YA EXISTE UN PROCESO CON ESE PID\n"
 		respuestaJSON, err := json.Marshal(respuestaKernel)
 		if err != nil {
 			return
@@ -288,13 +298,13 @@ func ReservarMemoria(tam int, pid int) int {
 	frames.TablaSimple = make([]int, 0) //inicializa el slice donde vamos a guardar la tabla de paginas simple para el proceso
 
 	var PaginasEncontradas int = 0
-	if EntraEnMemoria(tam, pid) >= 0 {
+	if EntraEnMemoriaYVerificaSiYaExiste(tam, pid) >= 0 {
 		for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
 
 			if globals.PaginasDisponibles[i] == 0 {
 				PaginasEncontradas++
 				frames.TablaSimple = append(frames.TablaSimple, i)
-				globals.PaginasDisponibles[i] = 1 //reservamos la pagina (podemos hacerlo ya que se llamo a EntraEnMemoria anteriormente)
+				globals.PaginasDisponibles[i] = 1 //reservamos la pagina (podemos hacerlo ya que se llamo a EntraEnMemoriaYVerificaSiYaExiste anteriormente)
 
 				if PaginasEncontradas == int(PaginasNecesarias) {
 					auxiliares.ActualizarTablaSimple(frames, pid)
@@ -309,8 +319,14 @@ func ReservarMemoria(tam int, pid int) int {
 	return -1
 }
 
-func EntraEnMemoria(tam int, pid int) int {
+func EntraEnMemoriaYVerificaSiYaExiste(tam int, pid int) int {
 
+	for key, _ := range globals.MemoriaKernel {
+		if key == pid {
+			log.Printf("UN PROCESO CON PID: %d ya existe, no se puede crear el proceso", pid)
+			return -2
+		}
+	}
 	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
 	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
 
@@ -382,6 +398,8 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
 	AsignarValoresATablaDePaginas(paquete.Pid, 0, PunteroAux)
+	ActualizarPaginasDisponibles() //actualiza que paginas estan disponibles en este momento
+
 	contador = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior (es la unica varialbe global de utils)
 
 	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
@@ -526,7 +544,13 @@ func ActualizarPaginaCompleta(PaginaNueva globals.Pagina, direccion int) {
 	}
 }
 
+/*
+que hace AsignarValoresATablaDePaginas
+
+mira los valores que hay en la tabla de paginas simple del proceso y actualiza los de la tabla de paginas de verdad
+*/
 var contador int = 0 //lo uso para contar donde estamos parados en la tabla de paginas global (la del map del proceso)
+
 func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo) {
 
 	if nivel == globals.ClientConfig.Number_of_levels { //significa que ya estamos parados en el nivel que contiene los marcos
@@ -549,6 +573,18 @@ func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo)
 
 		}
 
+	}
+}
+func ActualizarPaginasDisponibles() {
+
+	//recorro el map de memoria kernel (donte tenemos la tabla simple de cada proceso, basicamente la posita de que proceso tiene cada pagina sale de ahi)
+	for _, value := range globals.MemoriaKernel { //que hace range? es literalmente un for, en cada iteración, cambia el valor de key y value, los cuales vas a usar para laburar dentro del range tal como si fuera un for con sintaxis media rara.
+
+		for j := 0; j < len(value.TablaSimple); j++ {
+			if value.TablaSimple[j] > 0 { //solo entramos si el valor es positivo, si es negativo significa que el proceso finalizo o esta en disco, porque la estructura no la borramos por si vuelve de disco a MP
+				globals.PaginasDisponibles[value.TablaSimple[j]] = 1 //ej: si el proceso 4 tiene reservada las paginas [12, 23]  vamos a entrar a las posiciones del array de paginas disponibles y cambiamos la posicion 12 con un 1 y la del 23 con un 1 tambien, dando a entender que estan ocupadas. repetimos eso con todos los procesos que estan en este momento en memoria
+			}
+		}
 	}
 }
 
