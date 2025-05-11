@@ -15,6 +15,9 @@ import (
 // switch para ver que hace dependiendo la instruccion:
 func Execute(detalle globals.Instruccion) {
 
+	log.Printf("type: %s", globals.ID.InstructionType)
+	log.Printf("value: %d", globals.ID.Valor)
+
 	switch detalle.InstructionType {
 
 	case "NOOP": //?
@@ -53,26 +56,58 @@ func Execute(detalle globals.Instruccion) {
 		}
 
 	case "GOTO":
-		if detalle.Valor != 0 {
-			pcInstrNew := GOTO(detalle.ProcessValues.Pc, detalle.Valor)
 
-			fmt.Println("PC actualizado en: ", pcInstrNew)
+		pcInstrNew := GOTO(detalle.ProcessValues.Pc, detalle.Valor)
 
-			detalle.Syscall = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, pcInstrNew)
+		fmt.Println("PC actualizado en: ", pcInstrNew)
 
-		} else {
-			fmt.Println("Valor no modificado.")
-			detalle.Syscall = "Valor no modificado"
-		}
+		detalle.Syscall = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, pcInstrNew)
 
-	// LLamada a Kernel, debido a que son parte principalmente de interrupciones.
-	case "IO":
+	// SYSCALLS.
+
+	case "IO": //IO(Dispositivo y tiempo)
+		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		utilsCPU.FinEjecucion(globals.ClientConfig.Ip_kernel,
+			globals.ClientConfig.Port_kernel,
+			globals.Instruction.Pid,
+			globals.Instruction.Pc,
+			globals.ClientConfig.Instance_id,
+			globals.InstruccionDetalle.InstructionType,
+			globals.InstruccionDetalle.Parametro1,
+			globals.InstruccionDetalle.Parametro2)
+
 	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
-	case "DUMP_MEMORY":
+		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		utilsCPU.FinEjecucion(globals.ClientConfig.Ip_kernel,
+			globals.ClientConfig.Port_kernel,
+			globals.Instruction.Pid, globals.Instruction.Pc,
+			globals.ClientConfig.Instance_id,
+			globals.InstruccionDetalle.Syscall,
+			globals.InstruccionDetalle.Parametro1,
+			globals.InstruccionDetalle.Parametro2)
+
+	case "DUMP_MEMORY": //
+		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		utilsCPU.FinEjecucion(globals.ClientConfig.Ip_kernel,
+			globals.ClientConfig.Port_kernel,
+			globals.Instruction.Pid,
+			globals.Instruction.Pc,
+			globals.ClientConfig.Instance_id,
+			globals.InstruccionDetalle.Syscall,
+			0,
+			"")
+
 	case "EXIT":
-		fmt.Println("Nada que hacer.")
-		return
+		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		utilsCPU.FinEjecucion(globals.ClientConfig.Ip_kernel,
+			globals.ClientConfig.Port_kernel,
+			globals.Instruction.Pid,
+			globals.Instruction.Pc,
+			globals.ClientConfig.Instance_id,
+			globals.InstruccionDetalle.Syscall,
+			0,
+			"")
 
 	default:
 		fmt.Println("Instrucción inválida.")

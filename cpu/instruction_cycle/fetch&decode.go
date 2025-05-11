@@ -94,13 +94,19 @@ func Decode(instruccion globals.Instruccion) {
 
 	instruccion.InstructionType = partesDelString[0]
 
+	globals.ID.InstructionType = instruccion.InstructionType
+
 	// Instruccion ¿tipo?
 	switch instruccion.InstructionType {
+
 	case "READ":
 		instruccion.DireccionLog, _ = strconv.Atoi(partesDelString[1])
 		instruccion.Tamaño, _ = strconv.Atoi(partesDelString[2])
 
-		direccionAEnviar := mmu.TraducirDireccion(instruccion.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
+		globals.ID.DireccionLog = instruccion.DireccionLog
+		globals.ID.Tamaño = instruccion.Tamaño
+
+		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
 		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
 
@@ -108,11 +114,33 @@ func Decode(instruccion globals.Instruccion) {
 		instruccion.DireccionLog, _ = strconv.Atoi(partesDelString[1])
 		instruccion.Datos = partesDelString[2]
 
-		direccionAEnviar := mmu.TraducirDireccion(instruccion.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
+		globals.ID.DireccionLog = instruccion.DireccionLog
+		globals.ID.Datos = instruccion.Datos
+
+		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
 		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
 
+	case "GOTO":
+		instruccion.Valor, _ = strconv.Atoi(partesDelString[1])
+		globals.ID.Valor = instruccion.Valor
+
+	case "IO":
+		instruccion.Parametro1, _ = strconv.Atoi(partesDelString[2])
+		instruccion.Parametro2 = partesDelString[1]
+
+		globals.ID.Parametro1 = instruccion.Parametro1
+		globals.ID.Parametro2 = instruccion.Parametro2
+
+	case "INIT_PROC":
+		instruccion.Parametro1, _ = strconv.Atoi(partesDelString[2])
+		instruccion.Parametro2 = partesDelString[1]
+
+		globals.ID.Parametro1 = instruccion.Parametro1
+		globals.ID.Parametro2 = instruccion.Parametro2
+
 	default:
+		log.Printf("Nada que modificar, continua la ejecución.")
 		Execute(instruccion)
 	}
 	// READ & WRITE -> Traduzco -> Execute

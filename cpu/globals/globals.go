@@ -29,7 +29,7 @@ type Instruccion struct { // instruccion obtenida de memoria
 	Interrup        utilsCPU.Interrupcion `json:"interruption"` //Valores de la interrupción.
 	DireccionLog    int                   `json:"adress_log"`
 	DireccionFis    int                   `json:"adress_fis"` //Para Read and Write -> Dirección lógica que pasa memoria.
-	InstructionType string                `json:"message"`    //Contexto de la ejecución, es decir, la string que entra en el execute.
+	InstructionType string                `json:"type"`       //Contexto de la ejecución, es decir, la string que entra en el execute.
 	Valor           int                   `json:"value"`      //Parámetro para GOTO
 	Tamaño          int                   `json:"size"`       //Parámetro para el READ e INIT_PROC.
 	Tiempo          int                   `json:"time"`       //Parámetro para NOOP.
@@ -37,6 +37,8 @@ type Instruccion struct { // instruccion obtenida de memoria
 	Syscall         string                `json:"syscall"`
 	Frame           int                   `json:"frame"`
 	Desplazamiento  int                   `json:"desplazamiento"`
+	Parametro1      int                   `json:"parametro1"`
+	Parametro2      string                `json:"parametro2"`
 }
 
 var Instruction utilsCPU.Proceso
