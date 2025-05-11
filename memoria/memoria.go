@@ -24,7 +24,7 @@ func main() {
 	utilsMemoria.InicializarPaginasDisponibles()
 	//utilsMemoria.EscanearMemoria() DEPRECADO
 
-	go auxiliares.MostrarPaginasDisponiblesCada10segundos()
+	//go auxiliares.MostrarPaginasDisponiblesCada10segundos()
 	//auxiliares.Mostrarmemoria()
 
 	auxiliares.MostrarMemoriaKernel()
