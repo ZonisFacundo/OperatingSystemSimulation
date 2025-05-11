@@ -36,10 +36,13 @@ type MMU struct {
 
 func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int {
 
-	memoryManagement.TamPagina = 1000
+	//memoryManagement.TamPagina = 1000
 
 	// Calcular el número de página
 	memoryManagement.TamPagina = 1000
+	memoryManagement.Niveles = 2
+	memoryManagement.Cant_entradas_tabla = 4
+
 	nroPagina := direccionLogica / memoryManagement.TamPagina
 
 	// Crear un slice para guardar las entradas de las tablas de páginas

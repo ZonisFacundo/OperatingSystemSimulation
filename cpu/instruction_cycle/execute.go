@@ -40,6 +40,7 @@ func Execute(detalle globals.Instruccion) {
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %s - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Datos, globals.ID.DireccionFis)
 		} else {
 			fmt.Println("WRITE inválido.")
+			
 			detalle.Syscall = "WRITE inválido."
 		}
 
@@ -52,6 +53,7 @@ func Execute(detalle globals.Instruccion) {
 
 		} else {
 			fmt.Sprintln("READ inválido.")
+
 			detalle.Syscall = "READ inválido."
 		}
 
