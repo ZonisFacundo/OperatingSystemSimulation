@@ -8,15 +8,16 @@ import (
 
 	//"encoding/json"
 	"net/http"
-	//"time"
 
 	//"github.com/sisoputnfrba/tp-golang/estructurasKernel"
 	"fmt"
 	"os"
 	"strconv"
+	"sync"
 )
 
 func main() {
+	var wg sync.WaitGroup
 	globals.CargarConfig("./kernel/globals/config.json")
 	utilsKernel.ConfigurarLogger()
 	archivo := os.Args[1]
@@ -26,17 +27,12 @@ func main() {
 	}
 
 	go utilsKernel.IniciarPlanifcador(tamanio, archivo)
-	/*
-		go func() {
-			time.Sleep(4 * time.Second)
-			utilsKernel.UtilizarIO("127.0.0.1", 8003, 0, 8, "impresora")
-		}()
-	*/
+
 	//http.HandleFunc("/handshake", utilsKernel.RecibirDatosIO) no se porque esta esto por las dudas no lo borro
 	http.HandleFunc("POST /IO", utilsKernel.RecibirDatosIO)
 	http.HandleFunc("POST /handshake", utilsKernel.RecibirDatosCPU)
 	http.HandleFunc("POST /PCB", utilsKernel.RecibirProceso)
 	log.Printf("Servidor corriendo.\n")
 	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_kernel), nil)
-
+	wg.Wait()
 }

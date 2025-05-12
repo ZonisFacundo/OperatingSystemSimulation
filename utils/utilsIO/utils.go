@@ -12,12 +12,12 @@ import (
 )
 
 type Handshakepaquete struct {
-	Nombre string `json:"name"` //lo de name, ip, port es como va a construir el json la maquina cuando lo pasemos a json
-	Ip     string `json:"ip"`   // es fundamental ponerlo
+	Nombre string `json:"name"`
+	Ip     string `json:"ip"`
 	Puerto int    `json:"port"`
 }
 
-type RespuestaHandshakeKernel struct { // aca va el formato que va a tener lo que esperas del server
+type RespuestaHandshakeKernel struct {
 	Mensaje string `json:"message"`
 }
 
@@ -30,11 +30,6 @@ type PaqueteRespuestaKERNEL struct {
 	Mensaje string `json:"message"`
 }
 
-/*
-conexion entre IO (Client) con Kernel (Server)
-enviamos handshake con datos del modulo y esperamos respuesta
-*/
-
 func ConfigurarLogger(ioId string) {
 	logFileName := fmt.Sprintf("IO-%s.log", ioId)
 	logFile, err := os.OpenFile(logFileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
@@ -45,7 +40,6 @@ func ConfigurarLogger(ioId string) {
 	mw := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(mw)
 
-	//prefija cada línea de log con el ioname:
 	log.SetPrefix(fmt.Sprintf("[IO-%s] ", ioId))
 }
 
@@ -58,25 +52,23 @@ func PeticionClienteIOServidorKERNEL(nombre string, ipKernel string, puertoKerne
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		//aca tiene que haber un logger
 		log.Printf("error al convertir a json")
 		return
 	}
-	cliente := http.Client{} //crea un "cliente"
+	cliente := http.Client{}
 
-	url := fmt.Sprintf("http://%s:%d/IO", ipKernel, puertoKernel) //url del server
+	url := fmt.Sprintf("http://%s:%d/IO", ipKernel, puertoKernel)
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson))
 
 	if err != nil {
-		//aca tiene que haber un logger
 		log.Printf("error al generar la peticion al server")
 		return
 	}
 
-	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
+	req.Header.Set("Content-Type", "application/json")
 
-	respuestaJSON, err := cliente.Do(req) //recibe la respuesta del server
+	respuestaJSON, err := cliente.Do(req)
 
 	if err != nil {
 		log.Printf("Error al recibir respuesta.\n")
@@ -89,20 +81,17 @@ func PeticionClienteIOServidorKERNEL(nombre string, ipKernel string, puertoKerne
 		log.Printf("Status de respuesta el server no fue la esperada.\n")
 		return
 	}
-	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+	defer respuestaJSON.Body.Close()
 
 	log.Printf("Conexion establecida con exito \n")
-	//pasamos de JSON a formato bytes lo que nos paso el paquete
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
 		return
 	}
 
-	//pasamos la respuesta de JSON a formato paquete que nos mando el server
-
-	var respuesta RespuestaHandshakeKernel //para eso declaramos una variable con el struct que esperamos que nos envie el server
-	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
+	var respuesta RespuestaHandshakeKernel
+	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
 		log.Printf("Error al decodificar el JSON")
 		return
@@ -115,7 +104,7 @@ func RetornoClienteKERNELServidorIO(w http.ResponseWriter, r *http.Request) {
 
 	var request PaqueteRecibidoIO
 
-	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
+	err := json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -125,10 +114,7 @@ func RetornoClienteKERNELServidorIO(w http.ResponseWriter, r *http.Request) {
 	log.Printf("## PID: %d - Inicio de IO - Tiempo: %d", request.Pid, request.Tiempo)
 	IniciarSleep(request.Tiempo)
 
-	//Leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-
 	log.Printf("## PID: %d - Fin de IO", request.Pid)
-	//Respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 
 	var respuestaIO PaqueteRespuestaKERNEL
 	respuestaIO.Mensaje = "I/O Finalizado"
