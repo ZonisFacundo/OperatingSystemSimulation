@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
-	"github.com/sisoputnfrba/tp-golang/cpu/instruction_cycle"
 	//"github.com/sisoputnfrba/tp-golang/cpu/mmu"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
@@ -25,7 +24,6 @@ func main() {
 	instanceID := os.Args[1]
 
 	// Esto fue para probar la traduccion
-	
 
 	// dirLogica := 1800
 	// resultado := mmu.TraducirDireccion(dirLogica, mmU, globals.Instruction.Pid)
@@ -40,12 +38,12 @@ func main() {
 
 	http.HandleFunc("/KERNELCPU", utilsCPU.RecibirPCyPID)
 	log.Printf("Servidor corriendo, esperando PID y PC de Kernel.")
-	go http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
-
-	instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
-	instruction_cycle.Decode(globals.ID)
-	instruction_cycle.Execute(globals.ID)
-
+	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
+	/*
+		instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+		instruction_cycle.Decode(globals.ID)
+		instruction_cycle.Execute(globals.ID)
+	*/
 	wg.Wait()
 
 }
