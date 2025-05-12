@@ -26,6 +26,12 @@ type PaqueteRecibidoMemoriadeKernel struct {
 	Archivo    string `json:"file"`
 }
 
+// Hice este struct para la respuesta generica (Santi)
+type PaqueteRecibidoMemoriadeKernel2 struct {
+	Pid     int    `json:"pid"`
+	Mensaje string `json:"message"`
+}
+
 /*
 	type respuestaalKernel struct {
 		Mensaje string `json:"message"`
@@ -600,3 +606,26 @@ func MemoryDump(pid int) {
     }
 }
 */
+
+// Esta seria una respuesta generica (Santi)
+func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
+
+	//Este paquete lo unico q recibe es el pid para hacerle el dump junto a un mensaje
+	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
+	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var respuesta respuestaalKernel
+
+	respuestaJSON, err := json.Marshal(respuesta)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
