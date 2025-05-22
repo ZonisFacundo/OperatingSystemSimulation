@@ -406,10 +406,6 @@ func IniciarPlanifcador(tamanio int, archivo string) {
 		if text == "\n" {
 			log.Printf("Planificador de largo plazo ejecutando")
 			CrearPCB(tamanio, archivo)
-			time.Sleep(5 * time.Second)
-			CrearPCB(tamanio, archivo)
-			time.Sleep(5 * time.Second)
-			CrearPCB(tamanio, archivo)
 			break
 		}
 	}
