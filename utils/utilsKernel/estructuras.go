@@ -7,14 +7,16 @@ import (
 type Estado string
 
 type PCB struct {
-	Pid            int                  `json:"pid"`
-	Pc             int                  `json:"pc"`
-	EstadoActual   Estado               `json:"estadoActual"`
-	TamProceso     int                  `json:"tamanioProceso"`
-	MetricaEstados map[Estado]int       `json:"metricaEstados"`
-	TiempoLlegada  map[Estado]time.Time `json:"tiempoLLegada"`
-	TiempoEstados  map[Estado]int64     `json:"tiempoEstados"` // falta verlo un abrazo
-	Archivo        string               `json:"file"`
+	Pid                int                  `json:"pid"`
+	Pc                 int                  `json:"pc"`
+	EstadoActual       Estado               `json:"estadoActual"`
+	TamProceso         int                  `json:"tamanioProceso"`
+	MetricaEstados     map[Estado]int       `json:"metricaEstados"`
+	TiempoLlegada      map[Estado]time.Time `json:"tiempoLLegada"`
+	TiempoEstados      map[Estado]int64     `json:"tiempoEstados"`
+	Archivo            string               `json:"file"`
+	RafagaAnterior     int                  `json:"rafagaAnterior"` //capaz dsp lo cambiamos a time xd
+	EstimacionAnterior int                  `json:"estimacionAnterior"`
 }
 
 /*

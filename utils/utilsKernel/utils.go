@@ -413,10 +413,10 @@ func IniciarPlanifcador(tamanio int, archivo string) {
 
 func PlanificadorLargoPlazo() {
 	if len(ColaSuspReady) != 0 {
-		pcbChequear := CriterioColaSuspReady()
+		pcbChequear := CriterioParaReady(ColaSuspReady)
 		ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	} else if len(ColaNew) != 0 {
-		pcbChequear := CriterioColaNew()
+		pcbChequear := CriterioParaReady(ColaNew)
 		ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	}
 }
@@ -443,6 +443,31 @@ func FIFO(cola []*PCB) *PCB {
 	return pcb
 }
 
+func ProcesoMasChicoPrimero(cola []*PCB) *PCB {
+	if len(cola) == 0 {
+		return &PCB{}
+	}
+	pcbTamanioMinimo := cola[0]
+	for _, pcb := range cola {
+		if pcb.TamProceso <= pcbTamanioMinimo.TamProceso {
+			pcbTamanioMinimo = pcb
+		}
+	}
+	return pcbTamanioMinimo
+}
+
+func SjfSinDesalojo() *PCB {
+	if len(ColaReady) == 0 {
+		return &PCB{}
+	}
+	pcbTamanioMinimo := ColaReady[0]
+	for _, pcb := range ColaReady {
+		if pcb.TamProceso <= pcbTamanioMinimo.TamProceso {
+			pcbTamanioMinimo = pcb
+		}
+	}
+	return pcbTamanioMinimo
+}
 func PasarReady(pcb *PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado READY  \n", pcb.Pid, pcb.EstadoActual)
 	ColaReady = append(ColaReady, pcb)
@@ -487,18 +512,13 @@ func removerPCB(cola []*PCB, pcb *PCB) []*PCB {
 	return cola
 }
 
-func CriterioColaNew() *PCB {
+func CriterioParaReady(cola []*PCB) *PCB {
 	if globals.ClientConfig.Ready_ingress_algorithm == "FIFO" {
-		return FIFO(ColaNew)
+		return FIFO(cola)
+	} else {
+		return ProcesoMasChicoPrimero(cola)
 	}
-	return FIFO(ColaNew) //esto no va asi pero es para que no de error
-}
 
-func CriterioColaSuspReady() *PCB {
-	if globals.ClientConfig.Ready_ingress_algorithm == "FIFO" {
-		return FIFO(ColaSuspReady)
-	}
-	return FIFO(ColaSuspReady) //esto no va asi pero es para que no de error
 }
 
 func CriterioColaReady() *PCB {
