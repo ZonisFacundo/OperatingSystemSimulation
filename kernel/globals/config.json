@@ -1,10 +1,12 @@
 {
     "ip_memory": "127.0.0.1",
     "port_memory": 8002,
+    "ip_kernel": "127.0.0.1",
     "port_kernel": 8001,
     "scheduler_algorithm": "FIFO",
     "ready_ingress_algorithm": "PMCP",
+    "alpha": 0.5,
+    "initial_estimate": 10000,
     "suspension_time": 4500,
-    "log_level": "EXAMPLE",
-    "ip_cpu": "127.0.0.1"
+    "log_level": "DEBUG"
 }
