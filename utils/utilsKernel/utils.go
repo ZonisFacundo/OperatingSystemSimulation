@@ -105,6 +105,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	PCBUtilizar := ObtenerPCB(request.Pid)
 	switch request.Syscall {
 	case "I/O":
+		//interrumpir
 		if ExisteIO(request.Parametro2) {
 			ioServidor := ObtenerIO(request.Parametro2)
 			AgregarColaIO(ioServidor, PCBUtilizar.Pid, request.Parametro1)
@@ -116,6 +117,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		} //remplanificar
 		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
 	case "EXIT":
+		//interumpir
 		FinalizarProceso(PCBUtilizar)
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
 	case "DUMP_MEMORY":
@@ -423,7 +425,7 @@ func PlanificadorLargoPlazo() {
 
 func PlanificadorCortoPlazo() {
 	if len(ColaReady) != 0 {
-		pcbChequear := CriterioColaReady()
+		pcbChequear, hayDesalojo := CriterioColaReady()
 		CPUDisponible, noEsVacio := TraqueoCPU() //drakukeo en su defecto
 		if noEsVacio {
 			log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
@@ -431,6 +433,8 @@ func PlanificadorCortoPlazo() {
 			CPUDisponible.Disponible = false
 			EnviarProcesoACPU(pcbChequear, CPUDisponible)
 
+		} else if hayDesalojo {
+			//la rafaga del pcb es menor
 		}
 	}
 }
@@ -460,14 +464,40 @@ func SjfSinDesalojo() *PCB {
 	if len(ColaReady) == 0 {
 		return &PCB{}
 	}
-	pcbTamanioMinimo := ColaReady[0]
+	pcbEstimacionMinima := ColaReady[0]
 	for _, pcb := range ColaReady {
-		if pcb.TamProceso <= pcbTamanioMinimo.TamProceso {
-			pcbTamanioMinimo = pcb
+		if calcularRafagaEstimada(pcb) <= calcularRafagaEstimada(pcbEstimacionMinima) {
+			pcbEstimacionMinima = pcb
 		}
 	}
-	return pcbTamanioMinimo
+	pcbEstimacionMinima.EstimacionAnterior = calcularRafagaEstimada(pcbEstimacionMinima)
+	return pcbEstimacionMinima
 }
+
+func SjfConDesalojo() *PCB {
+	return SjfSinDesalojo()
+}
+
+func rafagaMasLargaDeLosCPU() (*PCB, *CPU) {
+	if len(ListaExec) == 0 {
+		return &PCB{}, &CPU{}
+	}
+	pcbEstimacionMasLarga := ListaExec[0]
+	for _, pcb := range ListaExec {
+		if pcb.EstimacionAnterior >= pcbEstimacionMasLarga.EstimacionAnterior {
+			pcbEstimacionMasLarga = pcb
+		}
+	}
+	//pcbEstimacionMinima.EstimacionAnterior = calcularRafagaEstimada(pcbEstimacionMinima)
+	cpuConLaRafagaLarga := ObtenerCpuEnFuncionDelPid(pcbEstimacionMasLarga.Pid)
+
+	return pcbEstimacionMasLarga, &cpuConLaRafagaLarga
+}
+
+func calcularRafagaEstimada(pcb *PCB) int {
+	return globals.ClientConfig.Alpha*pcb.EstimacionAnterior + (1-globals.ClientConfig.Alpha)*globals.ClientConfig.Initial_estimate
+}
+
 func PasarReady(pcb *PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado READY  \n", pcb.Pid, pcb.EstadoActual)
 	ColaReady = append(ColaReady, pcb)
@@ -521,11 +551,14 @@ func CriterioParaReady(cola []*PCB) *PCB {
 
 }
 
-func CriterioColaReady() *PCB {
+func CriterioColaReady() (*PCB, bool) {
 	if globals.ClientConfig.Scheduler_algorithm == "FIFO" {
-		return FIFO(ColaReady)
+		return FIFO(ColaReady), false
+	} else if globals.ClientConfig.Scheduler_algorithm == "SJF" {
+		return SjfSinDesalojo(), false
+	} else {
+		return SjfConDesalojo(), true
 	}
-	return FIFO(ColaReady) //esto no va asi pero es para que no de error
 }
 
 func TraqueoCPU() (*CPU, bool) {
@@ -549,6 +582,15 @@ func crearStructCPU(ip string, puerto int, instancia string) {
 func ObtenerCpu(instancia string) CPU {
 	for _, cpu := range ListaCPU {
 		if cpu.Instancia == instancia {
+			return cpu
+		}
+	}
+	return CPU{}
+} //Nos dice que instancia de CPU es
+
+func ObtenerCpuEnFuncionDelPid(pid int) CPU {
+	for _, cpu := range ListaCPU {
+		if cpu.Pid == pid {
 			return cpu
 		}
 	}
@@ -624,7 +666,7 @@ func DumpDelProceso(pcb *PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria2
 	paquete.Pid = pcb.Pid
-	paquete.Mensaje = fmt.Sprintf("El proceso PID: %d  requiere que hace haga un DUMP del mismo", pcb.Pid)
+	paquete.Mensaje = fmt.Sprintf("El proceso PID: %d  requiere que se haga un DUMP del mismo", pcb.Pid)
 
 	PasarBlocked(pcb)
 

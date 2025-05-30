@@ -32,6 +32,7 @@ type CPU struct {
 	Port       int    `json:"port"`
 	Instancia  string `json:"instancia"`
 	Disponible bool   `json:"disponible"`
+	Pid        int    `json:"pid"` //Lo agregue porque no sabemos q cpu ejecuta q proceso
 }
 
 type IO struct {
