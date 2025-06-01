@@ -7,36 +7,23 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
+	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
-
-type Instruccion struct { // instruccion obtenida de memoria
-	ProcessValues   utilsCPU.Proceso      `json:"instruction"`  //Valores de PID y PC
-	Interrup        utilsCPU.Interrupcion `json:"interruption"` //Valores de la interrupción.
-	Direccion       int                   `json:"adress"`       //Para Read and Write -> Dirección lógica que pasa memoria.
-	InstructionType string                `json:"message"`      //Contexto de la ejecución, es decir, la string que entra en el execute.
-	Valor           *int                  `json:"value"`        //Parámetro para GOTO
-	Tamaño          *int                  `json:"size"`         //Parámetro para el READ e INIT_PROC.
-	Tiempo          *int                  `json:"time"`         //Parámetro para NOOP.
-	Datos           *string               `json:"datos"`        //Parámetro para el WRITE.
-}
 
 type PaqueteRecibidoMemoria struct {
 	Mensaje string `json:"message"`
 }
 type PaqueteRecibidoWRITE struct {
-	Mensaje string `json:"message"`
+	Mensaje int `json:"message"`
 }
 type PaqueteRecibidoREAD struct {
-	ValorInstruccion string `json:"message"`
+	Info string `json:"info"`
 }
-
-/*
-Fetch
-La primera etapa del ciclo consiste en buscar la próxima instrucción a ejecutar. En este trabajo práctico cada instrucción deberá ser pedida al módulo Memoria
-utilizando el Program Counter (también llamado Instruction Pointer) que representa el número de instrucción a buscar relativo al hilo en ejecución.*/
 
 func Fetch(pid int, pc int, ip string, puerto int) {
 
@@ -99,11 +86,68 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 	globals.ID.InstructionType = respuesta.Mensaje
 }
 
-/*
-Decode
-Esta etapa consiste en interpretar qué instrucción es la que se va a ejecutar y si la misma requiere de una traducción de dirección lógica a dirección física.
-*/
+func Decode(instruccion globals.Instruccion) {
 
-func Decode() {
+	var memoryManagement mmu.MMU
 
+	partesDelString := strings.Fields(instruccion.InstructionType)
+
+	instruccion.InstructionType = partesDelString[0]
+
+	globals.ID.InstructionType = instruccion.InstructionType
+
+	// Instruccion ¿tipo?
+	switch instruccion.InstructionType {
+
+	case "READ":
+		instruccion.DireccionLog, _ = strconv.Atoi(partesDelString[1])
+		instruccion.Tamaño, _ = strconv.Atoi(partesDelString[2])
+
+		globals.ID.DireccionLog = instruccion.DireccionLog
+		globals.ID.Tamaño = instruccion.Tamaño
+
+		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
+		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+
+	case "WRITE":
+		instruccion.DireccionLog, _ = strconv.Atoi(partesDelString[1])
+		instruccion.Datos = partesDelString[2]
+
+		globals.ID.DireccionLog = instruccion.DireccionLog
+		globals.ID.Datos = instruccion.Datos
+
+		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
+
+		log.Printf("direccion: %d", direccionAEnviar)
+
+		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
+		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+
+	case "GOTO":
+		instruccion.Valor, _ = strconv.Atoi(partesDelString[1])
+		globals.ID.Valor = instruccion.Valor
+
+	case "IO":
+		instruccion.Parametro1, _ = strconv.Atoi(partesDelString[2])
+		instruccion.Parametro2 = partesDelString[1]
+
+		globals.ID.Parametro1 = instruccion.Parametro1
+		globals.ID.Parametro2 = instruccion.Parametro2
+
+	case "INIT_PROC":
+		instruccion.Parametro1, _ = strconv.Atoi(partesDelString[2])
+		instruccion.Parametro2 = partesDelString[1]
+
+		globals.ID.Parametro1 = instruccion.Parametro1
+		globals.ID.Parametro2 = instruccion.Parametro2
+
+	default:
+		log.Printf("Nada que modificar, continua la ejecución.")
+		//Execute(instruccion)
+	}
+
+	// READ & WRITE -> Traduzco -> Execute
+	// Else -> Execute
 }

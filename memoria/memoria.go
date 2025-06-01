@@ -23,12 +23,13 @@ func main() {
 	utilsMemoria.InicializarMemoria()
 	utilsMemoria.InicializarPaginasDisponibles()
 	//utilsMemoria.EscanearMemoria() DEPRECADO
-	auxiliares.MostrarPaginasDisponibles()
+
+	//go auxiliares.MostrarPaginasDisponiblesCada10segundos()
 	//auxiliares.Mostrarmemoria()
 
 	auxiliares.MostrarMemoriaKernel()
-	//http.HandleFunc("POST /READ", utilsMemoria.RetornoClienteCPUServidorMEMORIARead)
-	//http.HandleFunc("POST /WRITE", utilsMemoria.RetornoClienteCPUServidorMEMORIAWrite)
+	http.HandleFunc("POST /READ", utilsMemoria.RetornoClienteCPUServidorMEMORIARead)
+	http.HandleFunc("POST /WRITE", utilsMemoria.RetornoClienteCPUServidorMEMORIAWrite)
 	http.HandleFunc("POST /TRADUCCIONLOGICAAFISICA", utilsMemoria.RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica)
 	http.HandleFunc("GET /INSTRUCCIONES", utilsMemoria.RetornoClienteCPUServidorMEMORIA)
 	http.HandleFunc("POST /KERNELMEMORIA", utilsMemoria.RetornoClienteKernelServidorMEMORIA)

@@ -23,19 +23,20 @@ type HandshakeMemory struct {
 }
 
 type PackageFinEjecucion struct {
-	Pid       int    `json:"pid"`
-	Pc        int    `json:"pc"`
-	Contexto  string `json:"context"`
-	Instancia string `json:"instance_id"`
+	Pid          int    `json:"pid"`
+	Pc           int    `json:"pc"`
+	Syscall      string `json:"syscall"`
+	Parametro1   int    `json:"parametro1"`
+	Parametro2   string `json:"parametro2"`
+	InstanciaCPU string `json:"instanciaCPU"`
 }
 
 type WriteStruct struct {
-	Datos     string `json:"datos"`
-	Direccion []int  `json:"adress"`
+	Direccion int    `json:"adress"`
+	Contenido string `json:"content"`
 }
 type ReadStruct struct {
-	Tamaño    int   `json:"datos"`
-	Direccion []int `json:"adress"`
+	Direccion int `json:"adress"`
 }
 
 type HandshakeKERNEL struct {
@@ -53,4 +54,8 @@ type EnvioDirLogicaAMemoria struct {
 	Ip        string `json:"ip"`
 	Puerto    int    `json:"port"`
 	DirLogica []int  `json:"dir_logica"`
+}
+
+type MarcoDeMemoria struct {
+	Frame int `json:"marco"`
 }

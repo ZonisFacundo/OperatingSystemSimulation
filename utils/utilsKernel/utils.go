@@ -34,7 +34,9 @@ func RecibirDatosIO(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("El cliente nos mando esto: \n nombre: %s  \n puerto: %d \n IP: %s \n", request.Nombre, request.Puerto, request.Ip)
+	log.Printf("El cliente nos mando esto: \n nombre: %s  \n puerto: %d \n IP: %s \n", request.Nombre, request.Puerto, request.Ip) //capaz que hay que sacarlo
+
+	CrearStructIO(request.Ip, request.Puerto, request.Nombre)
 
 	//Respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaIO RespuestaalIO
@@ -48,6 +50,7 @@ func RecibirDatosIO(w http.ResponseWriter, r *http.Request) {
 	w.Write(respuestaJSON)
 
 }
+
 func RecibirDatosCPU(w http.ResponseWriter, r *http.Request) {
 
 	var request HandshakepaqueteCPU
@@ -87,7 +90,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("contexto de devolucion del proceso: %s", request.Contexto)
+	log.Printf("contexto de devolucion del proceso: %s", request.Syscall)
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuesta RespuestaalCPU
@@ -97,21 +100,40 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("Conexion establecida con exito \n")
-	cpuServidor := ObtenerCpu(request.Instancia)
+	cpuServidor := ObtenerCpu(request.InstanciaCPU)
 	cpuServidor.Disponible = true
-
-	if request.Contexto == "RUNNING" {
-		//hacer algo a chequear
-	} else {
-		//cambiar estado de pcb
-
+	PCBUtilizar := ObtenerPCB(request.Pid)
+	switch request.Syscall {
+	case "I/O":
+		//interrumpir
+		if ExisteIO(request.Parametro2) {
+			ioServidor := ObtenerIO(request.Parametro2)
+			AgregarColaIO(ioServidor, PCBUtilizar.Pid, request.Parametro1)
+			PasarBlocked(PCBUtilizar)
+			log.Printf("## (<%d>) - Bloqueado por IO: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
+			MandarProcesoAIO(ioServidor)
+		} else {
+			FinalizarProceso(PCBUtilizar)
+		} //remplanificar
+		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
+	case "EXIT":
+		//interumpir
+		FinalizarProceso(PCBUtilizar)
+		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
+	case "DUMP_MEMORY":
+		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
+	case "INIT_PROC":
+		CrearPCB(request.Parametro1, request.Parametro2)
+		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
 	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
 }
-func UtilizarIO(ip string, puerto int, pid int, tiempo int, nombre string) {
+
+func UtilizarIO(ioServer IO, pid int, tiempo int) {
 
 	var paquete PaqueteEnviadoKERNELaIO
 	paquete.Pid = pid
@@ -125,7 +147,7 @@ func UtilizarIO(ip string, puerto int, pid int, tiempo int, nombre string) {
 	}
 	cliente := http.Client{} //crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/KERNELIO", ip, puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/KERNELIO", ioServer.Ip, ioServer.Port) //url del server
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
@@ -147,7 +169,8 @@ func UtilizarIO(ip string, puerto int, pid int, tiempo int, nombre string) {
 
 	if respuestaJSON.StatusCode != http.StatusOK {
 
-		log.Printf("Status de respuesta del I/0 %s no fue la esperada.\n", nombre)
+		log.Printf("Status de respuesta del I/0 %s no fue la esperada.\n", ioServer.Instancia)
+		FinalizarProcesosIO(&ioServer)
 		return
 	}
 	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
@@ -165,10 +188,12 @@ func UtilizarIO(ip string, puerto int, pid int, tiempo int, nombre string) {
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del I/O %s fue: %s\n", nombre, respuesta.Mensaje)
+	log.Printf("La respuesta del I/O %s fue: %s\n", ioServer.Instancia, respuesta.Mensaje)
+	MandarProcesoAIO(ioServer)
 
 }
-func ConsultarProcesoConMemoria(pcb PCB, ip string, puerto int) {
+
+func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
 	paquete.Pid = pcb.Pid
@@ -230,7 +255,7 @@ func ConsultarProcesoConMemoria(pcb PCB, ip string, puerto int) {
 
 }
 
-func EnviarProcesoACPU(pcb PCB, cpu CPU) {
+func EnviarProcesoACPU(pcb *PCB, cpu *CPU) {
 
 	var paquete PaqueteEnviadoKERNELaCPU
 
@@ -291,7 +316,7 @@ func EnviarProcesoACPU(pcb PCB, cpu CPU) {
 
 }
 
-func InformarMemoriaFinProceso(pcb PCB, ip string, puerto int) {
+func InformarMemoriaFinProceso(pcb *PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria2
 	paquete.Pid = pcb.Pid
@@ -343,19 +368,27 @@ func InformarMemoriaFinProceso(pcb PCB, ip string, puerto int) {
 		return
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	PlanificadorLargoPlazo()
+	PlanificadorCortoPlazo()
 
 }
 
 func CrearPCB(tamanio int, archivo string) { //pid unico arranca de 0
-	ColaNew = append(ColaNew, PCB{
+	pcbUsar := &PCB{
 		Pid:            ContadorPCB,
 		Pc:             0,
 		EstadoActual:   "NEW",
 		TamProceso:     tamanio,
 		MetricaEstados: make(map[Estado]int),
+		TiempoLlegada:  make(map[Estado]time.Time),
 		TiempoEstados:  make(map[Estado]int64),
 		Archivo:        archivo,
-	})
+	}
+	ColaNew = append(ColaNew, pcbUsar)
+
+	log.Printf("## (<%d>) Se crea el proceso - Estado: NEW \n", pcbUsar.Pid)
+	pcbUsar.MetricaEstados["NEW"]++
+	pcbUsar.TiempoLlegada["NEW"] = time.Now()
 	ContadorPCB++
 	PlanificadorLargoPlazo()
 }
@@ -372,30 +405,27 @@ func LeerConsola() string {
 func IniciarPlanifcador(tamanio int, archivo string) {
 	for true {
 		text := LeerConsola()
-		log.Printf("Planificador de largo plazo ejecutando") //solo para saber que esta funcionando
-		CrearPCB(tamanio, archivo)
-		for text == "\n" {
-			//log.Print("Planificador de largo plazo ejecutando, pero dentro de un for")
-			//PlanificadorLargoPlazo()
-			PlanificadorCortoPlazo()
-			time.Sleep(5 * time.Second)
+		if text == "\n" {
+			log.Printf("Planificador de largo plazo ejecutando")
+			CrearPCB(tamanio, archivo)
+			break
 		}
 	}
 }
 
 func PlanificadorLargoPlazo() {
 	if len(ColaSuspReady) != 0 {
-		pcbChequear := CriterioColaSuspReady()
+		pcbChequear := CriterioParaReady(ColaSuspReady)
 		ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	} else if len(ColaNew) != 0 {
-		pcbChequear := CriterioColaNew()
+		pcbChequear := CriterioParaReady(ColaNew)
 		ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	}
 }
 
 func PlanificadorCortoPlazo() {
 	if len(ColaReady) != 0 {
-		pcbChequear := CriterioColaReady()
+		pcbChequear, hayDesalojo := CriterioColaReady()
 		CPUDisponible, noEsVacio := TraqueoCPU() //drakukeo en su defecto
 		if noEsVacio {
 			log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
@@ -403,30 +433,107 @@ func PlanificadorCortoPlazo() {
 			CPUDisponible.Disponible = false
 			EnviarProcesoACPU(pcbChequear, CPUDisponible)
 
+		} else if hayDesalojo {
+			//la rafaga del pcb es menor
 		}
 	}
 }
 
-func FIFO(cola []PCB) PCB {
+func FIFO(cola []*PCB) *PCB {
 	if len(cola) == 0 {
-		return PCB{}
+		return &PCB{}
 	}
 	pcb := cola[0]
 	return pcb
 }
 
-func PasarReady(pcb PCB) {
+func ProcesoMasChicoPrimero(cola []*PCB) *PCB {
+	if len(cola) == 0 {
+		return &PCB{}
+	}
+	pcbTamanioMinimo := cola[0]
+	for _, pcb := range cola {
+		if pcb.TamProceso <= pcbTamanioMinimo.TamProceso {
+			pcbTamanioMinimo = pcb
+		}
+	}
+	return pcbTamanioMinimo
+}
+
+func SjfSinDesalojo() *PCB {
+	if len(ColaReady) == 0 {
+		return &PCB{}
+	}
+	pcbEstimacionMinima := ColaReady[0]
+	for _, pcb := range ColaReady {
+		if calcularRafagaEstimada(pcb) <= calcularRafagaEstimada(pcbEstimacionMinima) {
+			pcbEstimacionMinima = pcb
+		}
+	}
+	pcbEstimacionMinima.EstimacionAnterior = calcularRafagaEstimada(pcbEstimacionMinima)
+	return pcbEstimacionMinima
+}
+
+func SjfConDesalojo() *PCB {
+	return SjfSinDesalojo()
+}
+
+func rafagaMasLargaDeLosCPU() (*PCB, *CPU) {
+	if len(ListaExec) == 0 {
+		return &PCB{}, &CPU{}
+	}
+	pcbEstimacionMasLarga := ListaExec[0]
+	for _, pcb := range ListaExec {
+		if pcb.EstimacionAnterior >= pcbEstimacionMasLarga.EstimacionAnterior {
+			pcbEstimacionMasLarga = pcb
+		}
+	}
+	//pcbEstimacionMinima.EstimacionAnterior = calcularRafagaEstimada(pcbEstimacionMinima)
+	cpuConLaRafagaLarga := ObtenerCpuEnFuncionDelPid(pcbEstimacionMasLarga.Pid)
+
+	return pcbEstimacionMasLarga, &cpuConLaRafagaLarga
+}
+
+func calcularRafagaEstimada(pcb *PCB) int {
+	return globals.ClientConfig.Alpha*pcb.EstimacionAnterior + (1-globals.ClientConfig.Alpha)*globals.ClientConfig.Initial_estimate
+}
+
+func PasarReady(pcb *PCB) {
+	log.Printf("## (<%d>) Pasa del estado %s al estado READY  \n", pcb.Pid, pcb.EstadoActual)
 	ColaReady = append(ColaReady, pcb)
 	ColaNew = removerPCB(ColaNew, pcb)
+	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "READY"
+	pcb.MetricaEstados["READY"]++
+	pcb.TiempoLlegada["READY"] = time.Now()
+
+	PlanificadorCortoPlazo()
 }
 
-func PasarExec(pcb PCB) {
+func PasarExec(pcb *PCB) {
+	log.Printf("## (<%d>) Pasa del estado %s al estado EXECUTE \n", pcb.Pid, pcb.EstadoActual)
+	ListaExec = append(ListaExec, pcb)
 	ColaReady = removerPCB(ColaReady, pcb)
+	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "EXECUTE"
+	pcb.TiempoLlegada["EXECUTE"] = time.Now()
+	pcb.MetricaEstados["EXECUTE"]++
+
 }
 
-func removerPCB(cola []PCB, pcb PCB) []PCB {
+func PasarBlocked(pcb *PCB) {
+	log.Printf("## (<%d>) Pasa del estado %s al estado BLOCKED \n", pcb.Pid, pcb.EstadoActual)
+	ColaBlock = append(ColaBlock, pcb)
+	ListaExec = removerPCB(ListaExec, pcb)
+	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
+	pcb.EstadoActual = "BLOCKED"
+	pcb.MetricaEstados["BLOCKED"]++
+	pcb.TiempoLlegada["BLOCKED"] = time.Now()
+
+	PlanificadorCortoPlazo()
+}
+
+func removerPCB(cola []*PCB, pcb *PCB) []*PCB {
 	for i, item := range cola {
 		if item.Pid == pcb.Pid {
 			return append(cola[:i], cola[1+i:]...)
@@ -435,35 +542,33 @@ func removerPCB(cola []PCB, pcb PCB) []PCB {
 	return cola
 }
 
-func CriterioColaNew() PCB {
+func CriterioParaReady(cola []*PCB) *PCB {
 	if globals.ClientConfig.Ready_ingress_algorithm == "FIFO" {
-		return FIFO(ColaNew)
+		return FIFO(cola)
+	} else {
+		return ProcesoMasChicoPrimero(cola)
 	}
-	return FIFO(ColaNew) //esto no va asi pero es para que no de error
+
 }
 
-func CriterioColaSuspReady() PCB {
-	if globals.ClientConfig.Ready_ingress_algorithm == "FIFO" {
-		return FIFO(ColaSuspReady)
-	}
-	return FIFO(ColaSuspReady) //esto no va asi pero es para que no de error
-}
-
-func CriterioColaReady() PCB {
+func CriterioColaReady() (*PCB, bool) {
 	if globals.ClientConfig.Scheduler_algorithm == "FIFO" {
-		return FIFO(ColaNew)
+		return FIFO(ColaReady), false
+	} else if globals.ClientConfig.Scheduler_algorithm == "SJF" {
+		return SjfSinDesalojo(), false
+	} else {
+		return SjfConDesalojo(), true
 	}
-	return FIFO(ColaNew) //esto no va asi pero es para que no de error
 }
 
-func TraqueoCPU() (CPU, bool) {
-	for _, CPU := range ListaCPU {
-		if CPU.Disponible {
-			return CPU, true
+func TraqueoCPU() (*CPU, bool) {
+	for i := range ListaCPU {
+		if ListaCPU[i].Disponible {
+			return &ListaCPU[i], true
 		}
 	}
-	return CPU{}, false
-}
+	return nil, false
+} //Esto busca un cpu disponible
 
 func crearStructCPU(ip string, puerto int, instancia string) {
 	ListaCPU = append(ListaCPU, CPU{
@@ -481,12 +586,164 @@ func ObtenerCpu(instancia string) CPU {
 		}
 	}
 	return CPU{}
-}
+} //Nos dice que instancia de CPU es
 
-func FinalizarProceso(pcb PCB) {
-	log.Printf("El proceso PID: %d termino su ejecucion y se paso a EXIT", pcb.Pid)
+func ObtenerCpuEnFuncionDelPid(pid int) CPU {
+	for _, cpu := range ListaCPU {
+		if cpu.Pid == pid {
+			return cpu
+		}
+	}
+	return CPU{}
+} //Nos dice que instancia de CPU es
+
+func FinalizarProceso(pcb *PCB) {
+	log.Printf("El proceso PID: %d termino su ejecucion y se paso a EXIT \n", pcb.Pid)
 	pcb.EstadoActual = "EXIT"
+	pcb.MetricaEstados["EXIT"]++
 	ColaExit = append(ColaExit, pcb) //es un esquema de como podria finalizar el proceso, puede cambiarse esto
 	InformarMemoriaFinProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
-	PlanificadorLargoPlazo() // esto seria porque se libera el espacio de memoria y capaz se podria ejecutar otro proceso
+	log.Printf("## (<%d>) - Finaliza el proceso \n", pcb.Pid)
+	//Métricas de Estado: “## (<PID>) - Métricas de estado: NEW (NEW_COUNT) (NEW_TIME), READY (READY_COUNT) (READY_TIME), …”
+	log.Printf("## (<%d>) - Métricas de estado: NEW NEW_COUNT: %d NEW_TIME: %d, READY READY_COUNT: %d READY_TIME: %d, EXECUTE EXECUTE_COUNT: %d EXECUTE_TIME: %d, BLOCKED BLOCKED_COUNT: %d BLOCKED_TIME: %d", pcb.Pid, pcb.MetricaEstados["NEW"], pcb.TiempoEstados["NEW"], pcb.MetricaEstados["READY"], pcb.TiempoEstados["READY"], pcb.MetricaEstados["EXECUTE"], pcb.TiempoEstados["EXECUTE"], pcb.MetricaEstados["BLOCKED"], pcb.TiempoEstados["BLOCKED"])
+
+}
+
+func CrearStructIO(ip string, puerto int, instancia string) {
+	ListaIO = append(ListaIO, IO{
+		Ip:           ip,
+		Port:         puerto,
+		Instancia:    instancia,
+		ColaProcesos: []PCBIO{},
+		Disponible:   true,
+	})
+}
+
+func ObtenerIO(instancia string) IO {
+	for _, io := range ListaIO {
+		if io.Instancia == instancia {
+			return io
+		}
+	}
+	return IO{}
+}
+
+func ExisteIO(instancia string) bool {
+	for _, io := range ListaIO {
+		if io.Instancia == instancia {
+			return true
+		}
+	}
+	return false
+}
+
+func AgregarColaIO(io IO, pid int, tiempo int) {
+	io.ColaProcesos = append(io.ColaProcesos, PCBIO{
+		Pid:    pid,
+		Tiempo: tiempo,
+	})
+}
+
+func ObtenerPCB(pid int) *PCB {
+	for _, pcb := range ListaExec {
+		if pcb.Pid == pid {
+			return pcb
+		}
+	}
+	return &PCB{}
+}
+
+func MandarProcesoAIO(io IO) {
+	if io.Disponible {
+		io.Disponible = false
+		go UtilizarIO(io, io.ColaProcesos[0].Pid, io.ColaProcesos[0].Tiempo)
+		io.ColaProcesos = io.ColaProcesos[1:]
+
+	}
+}
+
+func DumpDelProceso(pcb *PCB, ip string, puerto int) {
+
+	var paquete PaqueteEnviadoKERNELaMemoria2
+	paquete.Pid = pcb.Pid
+	paquete.Mensaje = fmt.Sprintf("El proceso PID: %d  requiere que se haga un DUMP del mismo", pcb.Pid)
+
+	PasarBlocked(pcb)
+
+	PaqueteFormatoJson, err := json.Marshal(paquete)
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al convertir a json.")
+		return
+	}
+	cliente := http.Client{} //crea un "cliente"
+
+	url := fmt.Sprintf("http://%s:%d/KERNELMEMORIADUMP", ip, puerto) //url del server
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al generar la peticion al server.\n")
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
+
+	respuestaJSON, err := cliente.Do(req)
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+
+	}
+
+	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+
+	log.Printf("Conexion establecida con exito \n")
+	//pasamos de JSON a formato bytes lo que nos paso el paquete
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	//pasamos la respuesta de JSON a formato paquete que nos mando el server
+
+	var respuesta PaqueteRecibidoDeMemoria //para eso declaramos una variable con el struct que esperamos que nos envie el server
+	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
+	if err != nil {
+		log.Printf("Error al decodificar el JSON.\n")
+		return
+	}
+
+	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+
+	if respuestaJSON.StatusCode == http.StatusOK {
+		log.Printf("Se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
+		PasarReady(pcb)
+	} else {
+		log.Printf("No se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
+		FinalizarProceso(pcb) //Mando a exit al proceso
+	}
+
+}
+
+func FinalizarProcesosIO(io *IO) {
+	for _, proceso := range io.ColaProcesos {
+		pcb := ObtenerPCB(proceso.Pid)
+		if pcb != nil {
+			log.Printf("El proceso PID: %d  no pudo ser atendido por el I/O %s y se pasa a EXIT", pcb.Pid, io.Instancia)
+			FinalizarProceso(pcb)
+		}
+	}
+	ListaIO = removerIO(io) //alto gil
+}
+
+func removerIO(io *IO) []IO {
+	for i, item := range ListaIO {
+		if item.Instancia == io.Instancia {
+			return append(ListaIO[:i], ListaIO[1+i:]...)
+		}
+	}
+	return ListaIO
 }

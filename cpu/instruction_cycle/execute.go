@@ -7,159 +7,120 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
-	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 // switch para ver que hace dependiendo la instruccion:
 func Execute(detalle globals.Instruccion) {
 
-	var memoryManagement mmu.MMU
-
-	// Nos va a llegar 1 string entero, entonces hay que buscar la forma de poder ir recorriendo ese string para asignar esas variables a cada variable de la struct
-	// del proceso.
-
-	partes := strings.Fields(detalle.InstructionType)
-
-	detalle.InstructionType = partes[0]
+	log.Printf("type: %s", globals.ID.InstructionType)
+	log.Printf("value: %d", globals.ID.Valor)
 
 	switch detalle.InstructionType {
 
 	case "NOOP": //?
-		if detalle.Tiempo != nil {
-			tiempoEjecucion := Noop(*detalle.Tiempo)
+		if detalle.Tiempo != 0 {
+			tiempoEjecucion := NOOP(detalle.Tiempo)
 			detalle.ProcessValues.Pc = detalle.ProcessValues.Pc + 1
 			fmt.Printf("NOOP ejecutado con tiempo:%d , y actualizado el PC:%d.\n", tiempoEjecucion, detalle.ProcessValues.Pc)
 			log.Printf("## PID: %d - Ejecutando -> TYPE: %s ", detalle.ProcessValues.Pid, detalle.InstructionType)
 
 		} else {
 			fmt.Println("Tiempo no especificado u acción incorrecta.")
-			detalle.Contexto = "Tiempo no especificado u acción incorrecta."
+			detalle.Syscall = "Tiempo no especificado u acción incorrecta."
 		}
 
 	case "WRITE":
-		detalle.DireccionLog, _ = strconv.Atoi(partes[1])
-		// detalle.Datos = &partes[2]
 
-		if detalle.DireccionLog != 0 {
+		if globals.ID.DireccionFis != 0 { //Ésta habria que imprimir
+			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
 
-			direccionObtenida := detalle.DireccionLog //Traduzco la direccion específica acá.
-			datosACopiar := partes[2]
-
-			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement, detalle.ProcessValues.Pid)
-			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
-
-			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, datosACopiar)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %s - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, datosACopiar, detalle.DireccionFis)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %s - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Datos, globals.ID.DireccionFis)
 		} else {
 			fmt.Println("WRITE inválido.")
-			detalle.Contexto = "WRITE inválido."
+			
+			detalle.Syscall = "WRITE inválido."
 		}
 
 	case "READ":
-		detalle.DireccionLog, _ = strconv.Atoi(partes[1])
-		tamanio, _ := strconv.Atoi(partes[2])
-		detalle.Tamaño = &tamanio
 
-		if detalle.DireccionLog != 0 || detalle.Tamaño != nil {
+		if globals.ID.DireccionFis != 0 {
 
-			direccionObtenida := detalle.DireccionLog
-			tamañoDet := detalle.Tamaño
-
-			direccionAEnviar := mmu.TraducirDireccion(direccionObtenida, memoryManagement, detalle.ProcessValues.Pid)
-			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
-
-			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar, *tamañoDet)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *tamañoDet, detalle.DireccionLog)
+			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis)
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Tamaño, globals.ID.DireccionFis)
 
 		} else {
 			fmt.Sprintln("READ inválido.")
-			detalle.Contexto = "READ inválido."
+
+			detalle.Syscall = "READ inválido."
 		}
 
 	case "GOTO":
-		if detalle.Valor != nil {
-			pcInstrNew := GOTO(detalle.ProcessValues.Pc, *detalle.Valor)
 
-			fmt.Println("PC actualizado en: ", pcInstrNew)
+		pcInstrNew := GOTO(detalle.ProcessValues.Pc, detalle.Valor)
 
-			detalle.Contexto = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, *detalle.Valor)
+		fmt.Println("PC actualizado en: ", pcInstrNew)
 
-		} else {
-			fmt.Println("Valor no modificado.")
-			detalle.Contexto = "Valor no modificado"
-		}
+		detalle.Syscall = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, pcInstrNew)
 
-		// LLamada a Kernel, debido a que son parte principalmente de interrupciones.
-	case "IO":
+	// SYSCALLS.
+
+	case "IO": //IO(Dispositivo y tiempo)
+		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		utilsCPU.FinEjecucion(globals.ClientConfig.Ip_kernel,
+			globals.ClientConfig.Port_kernel,
+			globals.Instruction.Pid,
+			globals.Instruction.Pc,
+			globals.ClientConfig.Instance_id,
+			globals.InstruccionDetalle.InstructionType,
+			globals.InstruccionDetalle.Parametro1,
+			globals.InstruccionDetalle.Parametro2)
+
 	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
-	case "DUMP_MEMORY":
+		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		utilsCPU.FinEjecucion(globals.ClientConfig.Ip_kernel,
+			globals.ClientConfig.Port_kernel,
+			globals.Instruction.Pid, globals.Instruction.Pc,
+			globals.ClientConfig.Instance_id,
+			globals.InstruccionDetalle.Syscall,
+			globals.InstruccionDetalle.Parametro1,
+			globals.InstruccionDetalle.Parametro2)
+
+	case "DUMP_MEMORY": //
+		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		utilsCPU.FinEjecucion(globals.ClientConfig.Ip_kernel,
+			globals.ClientConfig.Port_kernel,
+			globals.Instruction.Pid,
+			globals.Instruction.Pc,
+			globals.ClientConfig.Instance_id,
+			globals.InstruccionDetalle.Syscall,
+			0,
+			"")
+
 	case "EXIT":
-		fmt.Println("Nada que hacer.")
-		return
+		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		utilsCPU.FinEjecucion(globals.ClientConfig.Ip_kernel,
+			globals.ClientConfig.Port_kernel,
+			globals.Instruction.Pid,
+			globals.Instruction.Pc,
+			globals.ClientConfig.Instance_id,
+			globals.InstruccionDetalle.Syscall,
+			0,
+			"")
 
 	default:
 		fmt.Println("Instrucción inválida.")
 	}
 }
 
-/*
-
-Write(direccion, datos){
-	escribe los datos en la direccion especifica, primero voy a tener que traducir la dir. lógica y luego,
-	voy a tener que acceder a esa dirección (No se como) y voy a tener que escribir esos datos
-	en esa dirección// datos string
-	+1 PC
-}
-
-Read(direccion, tamaño){
-	printf(direccion,direccion.tamaño) //Lee la dirección , e imprime en pantalla el tamaño de esa dirección con log obligatorio
-	+1 PC
-}
-    case "READ":
-        if instr.Direccion == 0 || instr.Tamaño == nil {
-            fmt.Println("READ mal formada")
-            return
-        }
-        dirFisica := cpu.TraducirDireccion(instr.Direccion)
-        datos := cpu.Memoria.Leer(dirFisica, *instr.Tamaño)
-        fmt.Println("READ:", datos)
-        kernel.LoggearLectura(cpu.PID, datos)
-
-// instrucciones que realiza kernel, la cpu no puede ejecutarlaS
-IO(tiempo){
-	... ¿interrupcion?
-	pc ++
-}
-INIT_PROC(archivoInstr, tamaño){
-	... "la hace kernel"
-	pc ++
-}
-DUMP_MEMORY(){
-	retornarPIDAKernel(detalle.pid)
-	pc ++
-}
-EXIT(){
-	...
-	pc ++
-}
-
-Las siguientes instrucciones se considerarán Syscalls, ya que las mismas no pueden ser resueltas por la CPU y
-depende de la acción del Kernel para su realización, a diferencia de la vida real donde la llamada es a una única instrucción,
-para simplificar la comprensión de los scripts, vamos a utilizar un nombre diferente para cada Syscall.
-
-*/
-
-func Write(ip string, port int, direccion []int, datos string) {
+func Write(ip string, port int, direccion int, contenido string) {
 
 	var paquete utilsCPU.WriteStruct
 
-	paquete.Datos = datos
+	paquete.Contenido = contenido
 	paquete.Direccion = direccion
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
@@ -211,15 +172,15 @@ func Write(ip string, port int, direccion []int, datos string) {
 		return
 	}
 
-	log.Printf("Respuesta de Memoria: %s\n", respuesta.Mensaje) // Nos devuelve memoria el mensaje de escritura.
+	log.Printf("Respuesta de Memoria: %d\n", respuesta.Mensaje) // Nos devuelve memoria el mensaje de escritura.
 
+	globals.ID.DireccionLog = respuesta.Mensaje
 }
 
-func Read(ip string, port int, direccion []int, tamaño int) {
+func Read(ip string, port int, direccion int) {
 
 	var paquete utilsCPU.ReadStruct
 
-	paquete.Tamaño = tamaño
 	paquete.Direccion = direccion
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
@@ -271,6 +232,6 @@ func Read(ip string, port int, direccion []int, tamaño int) {
 		return
 	}
 
-	log.Printf("Valor en memoria: %s\n", respuesta.ValorInstruccion) // Nos devuelve memoria el mensaje de escritura.
+	log.Printf("Valor en memoria: %s\n", respuesta.Info) // Nos devuelve memoria el mensaje de escritura.
 
 }

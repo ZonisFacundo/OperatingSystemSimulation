@@ -1,15 +1,22 @@
 package utilsKernel
 
+import (
+	"time"
+)
+
 type Estado string
 
 type PCB struct {
-	Pid            int              `json:"pid"`
-	Pc             int              `json:"pc"`
-	EstadoActual   Estado           `json:"estadoActual"`
-	TamProceso     int              `json:"tamanioProceso"`
-	MetricaEstados map[Estado]int   `json:"metricaEstados"` //falta verlo
-	TiempoEstados  map[Estado]int64 `json:"tiempoEstados"`  // falta verlo un abrazo
-	Archivo        string           `json:"file"`
+	Pid                int                  `json:"pid"`
+	Pc                 int                  `json:"pc"`
+	EstadoActual       Estado               `json:"estadoActual"`
+	TamProceso         int                  `json:"tamanioProceso"`
+	MetricaEstados     map[Estado]int       `json:"metricaEstados"`
+	TiempoLlegada      map[Estado]time.Time `json:"tiempoLLegada"`
+	TiempoEstados      map[Estado]int64     `json:"tiempoEstados"`
+	Archivo            string               `json:"file"`
+	RafagaAnterior     int                  `json:"rafagaAnterior"` //capaz dsp lo cambiamos a time xd
+	EstimacionAnterior int                  `json:"estimacionAnterior"`
 }
 
 /*
@@ -25,6 +32,20 @@ type CPU struct {
 	Port       int    `json:"port"`
 	Instancia  string `json:"instancia"`
 	Disponible bool   `json:"disponible"`
+	Pid        int    `json:"pid"` //Lo agregue porque no sabemos q cpu ejecuta q proceso
+}
+
+type IO struct {
+	Ip           string  `json:"ip"`
+	Port         int     `json:"port"`
+	Instancia    string  `json:"instancia"`
+	Disponible   bool    `json:"disponible"`
+	ColaProcesos []PCBIO `json:"colaprocesos"`
+}
+
+type PCBIO struct {
+	Pid    int `json:"pid"`
+	Tiempo int `json:"tiempo"`
 }
 
 type HandshakepaqueteIO struct {
@@ -40,10 +61,12 @@ type HandshakepaqueteCPU struct {
 }
 
 type HandshakepaqueteCPUPCB struct {
-	Pid       string `json:"pid"`
-	Pc        int    `json:"pc"`
-	Contexto  string `json:"contexto"`
-	Instancia string `json:"instancia"`
+	Pid          int    `json:"pid"`
+	Pc           int    `json:"pc"`
+	Syscall      string `json:"syscall"`
+	Parametro1   int    `json:"parametro1"`
+	Parametro2   string `json:"parametro2"`
+	InstanciaCPU string `json:"instanciaCPU"`
 }
 
 type HandshakepaqueteKERNEL struct {
@@ -96,9 +119,13 @@ type PaqueteRecibidoDeCPU struct {
 	Pc      int    `json:"pc"`
 }
 
-var ColaNew []PCB
-var ColaReady []PCB
-var ColaSuspReady []PCB
-var ColaExit []PCB
+var ColaNew []*PCB
+var ColaReady []*PCB
+var ListaExec []*PCB
+var ColaBlock []*PCB
+var ColaSuspBlock []*PCB
+var ColaSuspReady []*PCB
+var ColaExit []*PCB
 var ContadorPCB int = 0
 var ListaCPU []CPU
+var ListaIO []IO

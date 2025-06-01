@@ -28,6 +28,20 @@ func MostrarPaginasDisponibles() {
 	}
 }
 
+func MostrarPaginasDisponiblesCada10segundos() {
+
+	for { //equivalente a while true
+		fmt.Printf("SI VALE 1 ESTA OCUPADO, SI VALE 0 ESTA DESOCUPADO\n\n")
+
+		for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ {
+
+			fmt.Printf("MARCO NUMERO %d: \t%d\n", i, globals.PaginasDisponibles[i])
+		}
+
+		time.Sleep(10 * time.Second)
+	}
+
+}
 func MostrarMemoriaKernel() {
 
 	for i := 0; i < len(globals.MemoriaKernel); i++ {
