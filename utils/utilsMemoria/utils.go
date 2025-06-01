@@ -635,3 +635,68 @@ func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r 
 	w.Write(respuestaJSON)
 
 }
+
+/*
+Que hace LIberarTablASimple?
+cambia el valor a -1 de todas las paginas asociadas al proceso la tabla simple del proceso que le pases por parametro
+*/
+func LiberarTablaSimple(pid int) {
+
+	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
+
+		globals.MemoriaKernel[pid].TablaSimple[i] = -1
+	}
+}
+
+/*
+Que hace CambiarAMenos1TodasLasTablas
+
+cambia a -1 toda la data relacionada a paginas del proceso, o sea, lo borras/mandas a swap, entonces tenes que llamar a esta funcion poruqe sino queda como si siguiera en memoria
+*/
+func CambiarAMenos1TodasLasTablas(pid int) {
+	LiberarTablaSimple(pid)
+	ActualizarPaginasDisponibles()
+
+	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
+	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
+}
+
+/*
+cambia a -1 la info del proceso a finalizar y printea las metricas del proceso
+*/
+func FinalizarProceso(pid int) {
+	CambiarAMenos1TodasLasTablas(pid)
+	fmt.Printf("ACA SE PRINTEAN LAS METRICAS DEL PROCESO, NOS FALTA CALCULAR ESO!! \n")
+	//printear metricas
+	//llamar una funcion que reinicie las metricas del proceso a 0 por si se crea un proceso con ese pid
+}
+
+/*
+Que hace MemoryDump?
+copia el contenido de todas las paginas del proceso y las pega en un archivo
+*/
+
+func MemoryDump(pid int) {
+
+	file, err := os.Create(fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid)) //crea archivo para el dump
+
+	if err != nil {
+		log.Printf("error al crear el archivo para el dump de pid %d \n", pid)
+	}
+
+	buffer := make([]byte, globals.ClientConfig.Page_size) //contiene el contenido de una pagina entera
+
+	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
+		for j := 0; j < globals.ClientConfig.Page_size; j++ {
+			//buffer[j] = append(buffer, globals.MemoriaPrincipal[((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j])
+			buffer[j] = globals.MemoriaPrincipal[((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j]
+		}
+		bytesEscritos, err := file.Write(buffer)
+		if err != nil {
+			log.Printf("error al escribir en el archivo\n")
+		}
+		log.Printf("%d fueron escritos en la ultima iteracion\n", bytesEscritos)
+
+	}
+	defer file.Close()
+}
