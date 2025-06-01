@@ -15,8 +15,8 @@ type PCB struct {
 	TiempoLlegada      map[Estado]time.Time `json:"tiempoLLegada"`
 	TiempoEstados      map[Estado]int64     `json:"tiempoEstados"`
 	Archivo            string               `json:"file"`
-	RafagaAnterior     int                  `json:"rafagaAnterior"` //capaz dsp lo cambiamos a time xd
-	EstimacionAnterior int                  `json:"estimacionAnterior"`
+	RafagaAnterior     float32              `json:"rafagaAnterior"` //capaz dsp lo cambiamos a time xd
+	EstimacionAnterior float32              `json:"estimacionAnterior"`
 }
 
 /*
