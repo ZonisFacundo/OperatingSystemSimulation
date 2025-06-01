@@ -32,11 +32,6 @@ type PaqueteRecibidoMemoriadeKernel2 struct {
 	Mensaje string `json:"message"`
 }
 
-/*
-	type respuestaalKernel struct {
-		Mensaje string `json:"message"`
-	}
-*/
 type respuestaalKernel struct {
 	Mensaje string `json:"message"`
 }
@@ -207,6 +202,32 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 	rta.Mensaje = "OK\n"
 
 	respuestaJSON, err := json.Marshal(rta)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
+
+// Esta seria una respuesta generica (Santi)
+func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
+
+	//Este paquete lo unico q recibe es el pid para hacerle el dump junto a un mensaje
+	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
+	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	MemoryDump(paqueteDeKernel.Pid)
+
+	var respuesta respuestaalKernel
+	respuesta.Mensaje = "listo \n"
+
+	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return
 	}
@@ -594,41 +615,6 @@ func ActualizarPaginasDisponibles() {
 //cambiar 			if contador <= len(globals.MemoriaKernel[pid].TablaSimple) {
 //a menor solo
 //cambiar las llamadas de las funciones actualizar einicializar de 0 a 1
-
-/*
-func MemoryDump(pid int) {
-
-    file, err := os.Create(fmt.Sprintf("%s", globals.ClientConfig.Dump_path))
-
-    if err != nil {
-        log.Printf("ERROR AL CREAR EL ARCHIVO PARA EL DUMP \n")
-        return
-    }
-}
-*/
-
-// Esta seria una respuesta generica (Santi)
-func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
-
-	//Este paquete lo unico q recibe es el pid para hacerle el dump junto a un mensaje
-	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
-	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	var respuesta respuestaalKernel
-
-	respuestaJSON, err := json.Marshal(respuesta)
-	if err != nil {
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(respuestaJSON)
-
-}
 
 /*
 Que hace LIberarTablASimple?

@@ -28,6 +28,8 @@ func main() {
 	//auxiliares.Mostrarmemoria()
 
 	auxiliares.MostrarMemoriaKernel()
+
+	http.HandleFunc("POST /DUMP", utilsMemoria.RetornoClienteKernelServidorMemoriaDumpDelProceso)
 	http.HandleFunc("POST /READ", utilsMemoria.RetornoClienteCPUServidorMEMORIARead)
 	http.HandleFunc("POST /WRITE", utilsMemoria.RetornoClienteCPUServidorMEMORIAWrite)
 	http.HandleFunc("POST /TRADUCCIONLOGICAAFISICA", utilsMemoria.RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica)
