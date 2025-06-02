@@ -22,6 +22,7 @@ func main() {
 
 	utilsMemoria.InicializarMemoria()
 	utilsMemoria.InicializarPaginasDisponibles()
+	utilsMemoria.InicializarSwap()
 	//utilsMemoria.EscanearMemoria() DEPRECADO
 
 	//go auxiliares.MostrarPaginasDisponiblesCada10segundos()
@@ -35,6 +36,7 @@ func main() {
 	*/
 	auxiliares.MostrarMemoriaKernel()
 
+	http.HandleFunc("POST /SWAPADISCO", utilsMemoria.RetornoClienteKernelServidorMemoriaSwapADisco)
 	http.HandleFunc("POST /KERNELMEMORIADUMP", utilsMemoria.RetornoClienteKernelServidorMemoriaDumpDelProceso)
 	http.HandleFunc("POST /READ", utilsMemoria.RetornoClienteCPUServidorMEMORIARead)
 	http.HandleFunc("POST /WRITE", utilsMemoria.RetornoClienteCPUServidorMEMORIAWrite)

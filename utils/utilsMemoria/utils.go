@@ -362,11 +362,37 @@ func EntraEnMemoriaYVerificaSiYaExiste(tam int, pid int) int {
 
 			if PaginasEncontradas == int(PaginasNecesarias) {
 
-				return 1 //devuelvo numero positivo para indicar que fue entra
+				return 1 //devuelvo numero positivo para indicar que  entra
 			}
 		}
 	}
 	return -1 //no entra en memoria
+}
+
+/*
+	QUE HACE ENTRAENMEMORIA?
+
+lo mismo que el anterior pero no verifica si ya existe proceso con ese pid
+se fija si se encuentra disponible el tam necesario
+*/
+func EntraEnMemoria(tam int) int {
+	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
+	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
+
+	var PaginasEncontradas int = 0
+
+	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles para ver si entran todas las paginas del proceso
+
+		if globals.PaginasDisponibles[i] == 0 {
+			PaginasEncontradas++
+
+			if PaginasEncontradas == int(PaginasNecesarias) {
+
+				return 1 //devuelvo numero positivo para indicar que  entra
+			}
+		}
+	}
+	return -2 //no entra en memoria
 }
 
 func LeerArchivoYCargarMap(FilePath string, Pid int) {
@@ -401,6 +427,7 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 
 }
 
+// todo lo necesario para crear un proceso nuevo
 func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	if ReservarMemoria(paquete.TamProceso, paquete.Pid) < 0 { //ReservarMemoria devuelve <0 si hubo un error, si no hubieron errores actualiza el map y reserva la memoria para el proceso
 
