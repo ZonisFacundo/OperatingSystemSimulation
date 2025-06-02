@@ -211,7 +211,6 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 }
 
-// Esta seria una respuesta generica (Santi)
 func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
 
 	//Este paquete lo unico q recibe es el pid para hacerle el dump junto a un mensaje
@@ -657,6 +656,8 @@ copia el contenido de todas las paginas del proceso y las pega en un archivo
 */
 
 func MemoryDump(pid int) {
+
+	//time stamp ---> timestamp := time.Now().Unix() // Ej: 1686835231     ?????
 
 	file, err := os.Create(fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid)) //crea archivo para el dump
 
