@@ -494,7 +494,7 @@ func rafagaMasLargaDeLosCPU() (*PCB, *CPU) {
 	return pcbEstimacionMasLarga, &cpuConLaRafagaLarga
 }
 
-func calcularRafagaEstimada(pcb *PCB) int {
+func calcularRafagaEstimada(pcb *PCB) float32 {
 	return globals.ClientConfig.Alpha*pcb.EstimacionAnterior + (1-globals.ClientConfig.Alpha)*globals.ClientConfig.Initial_estimate
 }
 

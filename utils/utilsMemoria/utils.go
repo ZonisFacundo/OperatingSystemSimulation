@@ -32,11 +32,6 @@ type PaqueteRecibidoMemoriadeKernel2 struct {
 	Mensaje string `json:"message"`
 }
 
-/*
-	type respuestaalKernel struct {
-		Mensaje string `json:"message"`
-	}
-*/
 type respuestaalKernel struct {
 	Mensaje string `json:"message"`
 }
@@ -216,6 +211,31 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 }
 
+func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
+
+	//Este paquete lo unico q recibe es el pid para hacerle el dump junto a un mensaje
+	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
+	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	MemoryDump(paqueteDeKernel.Pid)
+
+	var respuesta respuestaalKernel
+	respuesta.Mensaje = "listo \n"
+
+	respuestaJSON, err := json.Marshal(respuesta)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
+
 /*
 /
 /
@@ -342,11 +362,37 @@ func EntraEnMemoriaYVerificaSiYaExiste(tam int, pid int) int {
 
 			if PaginasEncontradas == int(PaginasNecesarias) {
 
-				return 1 //devuelvo numero positivo para indicar que fue entra
+				return 1 //devuelvo numero positivo para indicar que  entra
 			}
 		}
 	}
 	return -1 //no entra en memoria
+}
+
+/*
+	QUE HACE ENTRAENMEMORIA?
+
+lo mismo que el anterior pero no verifica si ya existe proceso con ese pid
+se fija si se encuentra disponible el tam necesario
+*/
+func EntraEnMemoria(tam int) int {
+	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
+	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
+
+	var PaginasEncontradas int = 0
+
+	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles para ver si entran todas las paginas del proceso
+
+		if globals.PaginasDisponibles[i] == 0 {
+			PaginasEncontradas++
+
+			if PaginasEncontradas == int(PaginasNecesarias) {
+
+				return 1 //devuelvo numero positivo para indicar que  entra
+			}
+		}
+	}
+	return -2 //no entra en memoria
 }
 
 func LeerArchivoYCargarMap(FilePath string, Pid int) {
@@ -382,6 +428,7 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 
 }
 
+// todo lo necesario para crear un proceso nuevo
 func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	if ReservarMemoria(paquete.TamProceso, paquete.Pid) < 0 { //ReservarMemoria devuelve <0 si hubo un error, si no hubieron errores actualiza el map y reserva la memoria para el proceso
 
@@ -602,41 +649,6 @@ func ActualizarPaginasDisponibles() {
 //cambiar las llamadas de las funciones actualizar einicializar de 0 a 1
 
 /*
-func MemoryDump(pid int) {
-
-    file, err := os.Create(fmt.Sprintf("%s", globals.ClientConfig.Dump_path))
-
-    if err != nil {
-        log.Printf("ERROR AL CREAR EL ARCHIVO PARA EL DUMP \n")
-        return
-    }
-}
-*/
-
-// Esta seria una respuesta generica (Santi)
-func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
-
-	//Este paquete lo unico q recibe es el pid para hacerle el dump junto a un mensaje
-	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
-	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	var respuesta respuestaalKernel
-
-	respuestaJSON, err := json.Marshal(respuesta)
-	if err != nil {
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(respuestaJSON)
-
-}
-
-/*
 Que hace LIberarTablASimple?
 cambia el valor a -1 de todas las paginas asociadas al proceso la tabla simple del proceso que le pases por parametro
 */
@@ -677,6 +689,8 @@ copia el contenido de todas las paginas del proceso y las pega en un archivo
 */
 
 func MemoryDump(pid int) {
+
+	//time stamp ---> timestamp := time.Now().Unix() // Ej: 1686835231     ?????
 
 	file, err := os.Create(fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid)) //crea archivo para el dump
 
