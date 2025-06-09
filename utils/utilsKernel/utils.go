@@ -102,7 +102,8 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Conexion establecida con exito \n")
 	cpuServidor := ObtenerCpu(request.InstanciaCPU)
 	cpuServidor.Disponible = true
-	PCBUtilizar := ObtenerPCB(request.Pid)
+	PCBUtilizar := ObtenerPCB(cpuServidor.Pid) // ya no hace falta porque esta en el struct
+	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
 	switch request.Syscall {
 	case "I/O":
 		//interrumpir
@@ -121,11 +122,13 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		FinalizarProceso(PCBUtilizar)
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
 	case "DUMP_MEMORY":
-		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory) //revisar
 		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
 	case "INIT_PROC":
 		CrearPCB(request.Parametro1, request.Parametro2)
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
+		cpuServidor.Disponible = false
+		EnviarProcesoACPU(PCBUtilizar, &cpuServidor)
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -375,14 +378,17 @@ func InformarMemoriaFinProceso(pcb *PCB, ip string, puerto int) {
 
 func CrearPCB(tamanio int, archivo string) { //pid unico arranca de 0
 	pcbUsar := &PCB{
-		Pid:            ContadorPCB,
-		Pc:             0,
-		EstadoActual:   "NEW",
-		TamProceso:     tamanio,
-		MetricaEstados: make(map[Estado]int),
-		TiempoLlegada:  make(map[Estado]time.Time),
-		TiempoEstados:  make(map[Estado]int64),
-		Archivo:        archivo,
+		Pid:                ContadorPCB,
+		Pc:                 0,
+		EstadoActual:       "NEW",
+		TamProceso:         tamanio,
+		MetricaEstados:     make(map[Estado]int),
+		TiempoLlegada:      make(map[Estado]time.Time),
+		TiempoEstados:      make(map[Estado]int64),
+		Archivo:            archivo,
+		TiempoEnvioExc:     time.Now(),
+		RafagaAnterior:     0,
+		EstimacionAnterior: globals.ClientConfig.Initial_estimate,
 	}
 	ColaNew = append(ColaNew, pcbUsar)
 
@@ -415,10 +421,10 @@ func IniciarPlanifcador(tamanio int, archivo string) {
 
 func PlanificadorLargoPlazo() {
 	if len(ColaSuspReady) != 0 {
-		pcbChequear := CriterioParaReady(ColaSuspReady)
+		pcbChequear := CriterioColaNew(ColaSuspReady)
 		ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	} else if len(ColaNew) != 0 {
-		pcbChequear := CriterioParaReady(ColaNew)
+		pcbChequear := CriterioColaNew(ColaNew)
 		ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	}
 }
@@ -431,10 +437,11 @@ func PlanificadorCortoPlazo() {
 			log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
 			PasarExec(pcbChequear)
 			CPUDisponible.Disponible = false
+			CPUDisponible.Pid = pcbChequear.Pid //le asigno el pid al cpu que lo va a ejecutar
 			EnviarProcesoACPU(pcbChequear, CPUDisponible)
 
 		} else if hayDesalojo {
-			//la rafaga del pcb es menor
+
 		}
 	}
 }
@@ -460,7 +467,7 @@ func ProcesoMasChicoPrimero(cola []*PCB) *PCB {
 	return pcbTamanioMinimo
 }
 
-func SjfSinDesalojo() *PCB {
+func Sjf() *PCB {
 	if len(ColaReady) == 0 {
 		return &PCB{}
 	}
@@ -474,17 +481,13 @@ func SjfSinDesalojo() *PCB {
 	return pcbEstimacionMinima
 }
 
-func SjfConDesalojo() *PCB {
-	return SjfSinDesalojo()
-}
-
-func rafagaMasLargaDeLosCPU() (*PCB, *CPU) {
+func RafagaMasLargaDeLosCPU() (*PCB, *CPU) {
 	if len(ListaExec) == 0 {
 		return &PCB{}, &CPU{}
 	}
 	pcbEstimacionMasLarga := ListaExec[0]
 	for _, pcb := range ListaExec {
-		if pcb.EstimacionAnterior >= pcbEstimacionMasLarga.EstimacionAnterior {
+		if CalcularTiempoRestanteEjecucion(pcb) >= CalcularTiempoRestanteEjecucion(pcbEstimacionMasLarga) { //estamiacionAnterior - calcularTiempoEnExec
 			pcbEstimacionMasLarga = pcb
 		}
 	}
@@ -494,8 +497,12 @@ func rafagaMasLargaDeLosCPU() (*PCB, *CPU) {
 	return pcbEstimacionMasLarga, &cpuConLaRafagaLarga
 }
 
+func CalcularTiempoRestanteEjecucion(pcb *PCB) float32 {
+	return pcb.EstimacionAnterior - float32(pcb.TiempoEnvioExc.Sub(time.Now()))
+}
+
 func calcularRafagaEstimada(pcb *PCB) float32 {
-	return globals.ClientConfig.Alpha*pcb.EstimacionAnterior + (1-globals.ClientConfig.Alpha)*globals.ClientConfig.Initial_estimate
+	return globals.ClientConfig.Alpha*pcb.RafagaAnterior + (1-globals.ClientConfig.Alpha)*pcb.EstimacionAnterior
 }
 
 func PasarReady(pcb *PCB) {
@@ -518,6 +525,7 @@ func PasarExec(pcb *PCB) {
 	pcb.EstadoActual = "EXECUTE"
 	pcb.TiempoLlegada["EXECUTE"] = time.Now()
 	pcb.MetricaEstados["EXECUTE"]++
+	pcb.TiempoEnvioExc = time.Now()
 
 }
 
@@ -542,7 +550,7 @@ func removerPCB(cola []*PCB, pcb *PCB) []*PCB {
 	return cola
 }
 
-func CriterioParaReady(cola []*PCB) *PCB {
+func CriterioColaNew(cola []*PCB) *PCB {
 	if globals.ClientConfig.Ready_ingress_algorithm == "FIFO" {
 		return FIFO(cola)
 	} else {
@@ -555,9 +563,9 @@ func CriterioColaReady() (*PCB, bool) {
 	if globals.ClientConfig.Scheduler_algorithm == "FIFO" {
 		return FIFO(ColaReady), false
 	} else if globals.ClientConfig.Scheduler_algorithm == "SJF" {
-		return SjfSinDesalojo(), false
+		return Sjf(), false
 	} else {
-		return SjfConDesalojo(), true
+		return Sjf(), true
 	}
 }
 

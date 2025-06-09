@@ -17,6 +17,7 @@ type PCB struct {
 	Archivo            string               `json:"file"`
 	RafagaAnterior     float32              `json:"rafagaAnterior"` //capaz dsp lo cambiamos a time xd
 	EstimacionAnterior float32              `json:"estimacionAnterior"`
+	TiempoEnvioExc     time.Time            `json:"tiempoEnvioExc"` //sirve para calcular el timpo de ejecucion
 }
 
 /*
