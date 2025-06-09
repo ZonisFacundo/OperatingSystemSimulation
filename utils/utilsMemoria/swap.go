@@ -89,7 +89,7 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		return
 
 	} else {
-		retorno = SwapAMemoria(paqueteDeKernel.Pid)
+		//retorno = SwapAMemoria(paqueteDeKernel.Pid) comento esto para que no de error
 		if retorno == -1 {
 
 			respuesta.Mensaje = "ERROR AL SWAPPEAR A MEMORIA (error al abrir archivo) \n"
