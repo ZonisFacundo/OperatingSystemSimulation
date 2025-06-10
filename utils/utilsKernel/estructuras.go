@@ -90,6 +90,11 @@ type PaqueteEnviadoKERNELaCPU struct {
 	PC  int `json:"pc"`
 	Pid int `json:"pid"`
 }
+
+type PaqueteInterrupcion struct {
+	mensaje string `json:"message"`
+}
+
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
 }

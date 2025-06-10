@@ -108,6 +108,8 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	case "I/O":
 		//interrumpir
 		if ExisteIO(request.Parametro2) {
+			InterrumpirCPU(&cpuServidor)
+			PlanificadorCortoPlazo()
 			ioServidor := ObtenerIO(request.Parametro2)
 			AgregarColaIO(ioServidor, PCBUtilizar.Pid, request.Parametro1)
 			PasarBlocked(PCBUtilizar)
@@ -118,10 +120,12 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		} //remplanificar
 		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
 	case "EXIT":
-		//interumpir
+		InterrumpirCPU(&cpuServidor)
 		FinalizarProceso(PCBUtilizar)
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
 	case "DUMP_MEMORY":
+		InterrumpirCPU(&cpuServidor)
+		PlanificadorCortoPlazo()
 		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory) //revisar
 		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
 	case "INIT_PROC":
@@ -319,6 +323,66 @@ func EnviarProcesoACPU(pcb *PCB, cpu *CPU) {
 
 }
 
+func InterrumpirCPU(cpu *CPU) {
+
+	var paquete PaqueteInterrupcion
+
+	paquete.mensaje = "Interrupcion del proceso"
+
+	PaqueteFormatoJson, err := json.Marshal(paquete)
+	if err != nil {
+		//aca tiene que haber un logger
+		log.Printf("Error al convertir a json.")
+		return
+	}
+
+	cliente := http.Client{} // Crea un "cliente"
+
+	url := fmt.Sprintf("http://%s:%d/InterrupcionCPU", cpu.Ip, cpu.Port) //url del server
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+
+	if err != nil {
+
+		//aca tiene que haber un logger
+		log.Printf("Error al generar la peticion al server.\n")
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json") // Le avisa al server que manda la data en json format
+
+	respuestaJSON, err := cliente.Do(req)
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+	}
+
+	if respuestaJSON.StatusCode != http.StatusOK {
+		log.Printf("Código de respuesta del server: %d\n", respuestaJSON.StatusCode)
+		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		return
+	}
+
+	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+
+	log.Printf("Conexion establecida con exito \n")
+	//pasamos de JSON a formato bytes lo que nos paso el paquete
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	} //pasamos la respuesta de JSON a formato paquete que nos mando el server
+
+	var respuesta PaqueteRecibido
+	err = json.Unmarshal(body, &respuesta)
+	if err != nil {
+		log.Printf("Error al decodificar el JSON.\n")
+		return
+	}
+	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+
+} //falta la respuesta de CPU
+
 func InformarMemoriaFinProceso(pcb *PCB, ip string, puerto int) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria2
@@ -441,7 +505,13 @@ func PlanificadorCortoPlazo() {
 			EnviarProcesoACPU(pcbChequear, CPUDisponible)
 
 		} else if hayDesalojo {
-
+			pcbDesalojar, cpuDesalojar := RafagaMasLargaDeLosCPU()
+			if calcularRafagaEstimada(pcbChequear) <= CalcularTiempoRestanteEjecucion(pcbDesalojar) {
+				InterrumpirCPU(cpuDesalojar)
+				PasarReady(pcbDesalojar)
+				PasarExec(pcbChequear)
+				cpuDesalojar.Pid = pcbChequear.Pid
+			}
 		}
 	}
 }
