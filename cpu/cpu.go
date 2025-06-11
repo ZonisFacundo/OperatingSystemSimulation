@@ -32,8 +32,10 @@ func main() {
 	utilsCPU.EnvioPortKernel(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id, globals.ClientConfig.Port_cpu, globals.ClientConfig.Ip_cpu)
 
 	go func() {
-		http.HandleFunc("/KERNELCPU", utilsCPU.RecibirPCyPID)
-		procesoListo <- struct{}{}
+		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
+			utilsCPU.RecibirPCyPID(w, r)
+			procesoListo <- struct{}{}
+		})
 		log.Printf("Servidor corriendo, esperando PID y PC de Kernel.")
 		http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
 	}()
@@ -45,6 +47,7 @@ func main() {
 			log.Println("Interrupción ejecutada, a la espera de nuevo proceso.")
 			newFetch = true // Ésto se realiza más que nada porque cuando hay una interrupción, se interrumpe la ejecución del proceso y nos van a mandar uno nuevo.
 			<-procesoListo
+			interrupcionActiva = false //Reseteo el flag, para que no quede en True y se pueda ejecutar sin problema alguno.
 			log.Println("Nuevo proceso recibido, se reinicia el ciclo.")
 		}
 
