@@ -26,11 +26,12 @@ type PaqueteRecibidoMemoriadeKernel struct {
 	Archivo    string `json:"file"`
 }
 
-/*
-	type respuestaalKernel struct {
-		Mensaje string `json:"message"`
-	}
-*/
+// Hice este struct para la respuesta generica (Santi)
+type PaqueteRecibidoMemoriadeKernel2 struct {
+	Pid     int    `json:"pid"`
+	Mensaje string `json:"message"`
+}
+
 type respuestaalKernel struct {
 	Mensaje string `json:"message"`
 }
@@ -140,18 +141,7 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	// ✅ 2. Validar que tenga PID + N entradas de tabla
-	if len(Paquete.DirLogica) < globals.ClientConfig.Number_of_levels+1 {
-		log.Printf("Error: dirección lógica incompleta. Esperado %d entradas (PID + niveles), recibido %d",
-			globals.ClientConfig.Number_of_levels+1, len(Paquete.DirLogica))
-		http.Error(w, "Dirección lógica incompleta", http.StatusBadRequest)
-		return
-	}
-
-	for i := 1; i <= globals.ClientConfig.Number_of_levels; i++ { //puede ser que tenga que ser +1 el numberoflevels BrenÑ cambio para ver si aca esta el error
-		log.Printf("entrada nivel %d: %d\n", i, Paquete.DirLogica[i])
-	}
+	globals.PunteroBase = globals.MemoriaKernel[Paquete.DirLogica[0]].PunteroATablaDePaginas
 
 	var Traduccion globals.Marco = TraducirLogicaAFisica(Paquete.DirLogica, globals.PunteroBase)
 
@@ -212,6 +202,31 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 	rta.Mensaje = "OK\n"
 
 	respuestaJSON, err := json.Marshal(rta)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
+
+func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
+
+	//Este paquete lo unico q recibe es el pid para hacerle el dump junto a un mensaje
+	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
+	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	MemoryDump(paqueteDeKernel.Pid)
+
+	var respuesta respuestaalKernel
+	respuesta.Mensaje = "listo \n"
+
+	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return
 	}
@@ -347,11 +362,37 @@ func EntraEnMemoriaYVerificaSiYaExiste(tam int, pid int) int {
 
 			if PaginasEncontradas == int(PaginasNecesarias) {
 
-				return 1 //devuelvo numero positivo para indicar que fue entra
+				return 1 //devuelvo numero positivo para indicar que  entra
 			}
 		}
 	}
 	return -1 //no entra en memoria
+}
+
+/*
+	QUE HACE ENTRAENMEMORIA?
+
+lo mismo que el anterior pero no verifica si ya existe proceso con ese pid
+se fija si se encuentra disponible el tam necesario
+*/
+func EntraEnMemoria(tam int) int {
+	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
+	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
+
+	var PaginasEncontradas int = 0
+
+	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles para ver si entran todas las paginas del proceso
+
+		if globals.PaginasDisponibles[i] == 0 {
+			PaginasEncontradas++
+
+			if PaginasEncontradas == int(PaginasNecesarias) {
+
+				return 1 //devuelvo numero positivo para indicar que  entra
+			}
+		}
+	}
+	return -2 //no entra en memoria
 }
 
 func LeerArchivoYCargarMap(FilePath string, Pid int) {
@@ -386,6 +427,7 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 
 }
 
+// todo lo necesario para crear un proceso nuevo
 func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	if ReservarMemoria(paquete.TamProceso, paquete.Pid) < 0 { //ReservarMemoria devuelve <0 si hubo un error, si no hubieron errores actualiza el map y reserva la memoria para el proceso
 
@@ -455,7 +497,7 @@ func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) glo
 	var MarcoAurelio globals.Marco
 
 	//VERIFICO SI LOS DATOS QUE MANDO CPU TIENEN SENTIDO (O SEA, NO HAY VALORES MAYORES A LOS DE LA CANTIDAD DE NIVELES/ENTRADAS/TAMDEPAGINA QUE TENEMOS DEFINIDOS)
-	for i := 1; i <= globals.ClientConfig.Number_of_levels; i++ { //arrancamos desde 1 porque en 0 esta el desplazamiento, nos fijamos si la entrada nivel n es mayor a la cantidad de entradas por tabla
+	for i := 1; i <= len(DireccionLogica)-1; i++ { //arrancamos desde 1 porque en 0 esta el desplazamiento, nos fijamos si la entrada nivel n es mayor a la cantidad de entradas por tabla
 		if DireccionLogica[i] >= globals.ClientConfig.Entries_per_page {
 			MarcoAurelio.Frame = -1
 			return MarcoAurelio
@@ -601,13 +643,68 @@ func ActualizarPaginasDisponibles() {
 //cambiar las llamadas de las funciones actualizar einicializar de 0 a 1
 
 /*
+Que hace LIberarTablASimple?
+cambia el valor a -1 de todas las paginas asociadas al proceso la tabla simple del proceso que le pases por parametro
+*/
+func LiberarTablaSimple(pid int) {
+
+	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
+
+		globals.MemoriaKernel[pid].TablaSimple[i] = -1
+	}
+}
+
+/*
+Que hace CambiarAMenos1TodasLasTablas
+
+cambia a -1 toda la data relacionada a paginas del proceso, o sea, lo borras/mandas a swap, entonces tenes que llamar a esta funcion poruqe sino queda como si siguiera en memoria
+*/
+func CambiarAMenos1TodasLasTablas(pid int) {
+	LiberarTablaSimple(pid)
+	ActualizarPaginasDisponibles()
+
+	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
+	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
+}
+
+/*
+cambia a -1 la info del proceso a finalizar y printea las metricas del proceso
+*/
+func FinalizarProceso(pid int) {
+	CambiarAMenos1TodasLasTablas(pid)
+	fmt.Printf("ACA SE PRINTEAN LAS METRICAS DEL PROCESO, NOS FALTA CALCULAR ESO!! \n")
+	//printear metricas
+	//llamar una funcion que reinicie las metricas del proceso a 0 por si se crea un proceso con ese pid
+}
+
+/*
+Que hace MemoryDump?
+copia el contenido de todas las paginas del proceso y las pega en un archivo
+*/
+
 func MemoryDump(pid int) {
 
-    file, err := os.Create(fmt.Sprintf("%s", globals.ClientConfig.Dump_path))
+	//time stamp ---> timestamp := time.Now().Unix() // Ej: 1686835231     ?????
 
-    if err != nil {
-        log.Printf("ERROR AL CREAR EL ARCHIVO PARA EL DUMP \n")
-        return
-    }
+	file, err := os.Create(fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid)) //crea archivo para el dump
+
+	if err != nil {
+		log.Printf("error al crear el archivo para el dump de pid %d \n", pid)
+	}
+
+	buffer := make([]byte, globals.ClientConfig.Page_size) //contiene el contenido de una pagina entera
+
+	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
+		for j := 0; j < globals.ClientConfig.Page_size; j++ {
+			//buffer[j] = append(buffer, globals.MemoriaPrincipal[((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j])
+			buffer[j] = globals.MemoriaPrincipal[((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j]
+		}
+		bytesEscritos, err := file.Write(buffer)
+		if err != nil {
+			log.Printf("error al escribir en el archivo\n")
+		}
+		log.Printf("%d fueron escritos en la ultima iteracion\n", bytesEscritos)
+
+	}
+	defer file.Close()
 }
-*/

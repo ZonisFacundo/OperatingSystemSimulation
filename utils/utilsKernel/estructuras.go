@@ -1,15 +1,23 @@
 package utilsKernel
 
+import (
+	"time"
+)
+
 type Estado string
 
 type PCB struct {
-	Pid            int              `json:"pid"`
-	Pc             int              `json:"pc"`
-	EstadoActual   Estado           `json:"estadoActual"`
-	TamProceso     int              `json:"tamanioProceso"`
-	MetricaEstados map[Estado]int   `json:"metricaEstados"` //falta verlo
-	TiempoEstados  map[Estado]int64 `json:"tiempoEstados"`  // falta verlo un abrazo
-	Archivo        string           `json:"file"`
+	Pid                int                  `json:"pid"`
+	Pc                 int                  `json:"pc"`
+	EstadoActual       Estado               `json:"estadoActual"`
+	TamProceso         int                  `json:"tamanioProceso"`
+	MetricaEstados     map[Estado]int       `json:"metricaEstados"`
+	TiempoLlegada      map[Estado]time.Time `json:"tiempoLLegada"`
+	TiempoEstados      map[Estado]int64     `json:"tiempoEstados"`
+	Archivo            string               `json:"file"`
+	RafagaAnterior     float32              `json:"rafagaAnterior"` //capaz dsp lo cambiamos a time xd
+	EstimacionAnterior float32              `json:"estimacionAnterior"`
+	TiempoEnvioExc     time.Time            `json:"tiempoEnvioExc"` //sirve para calcular el timpo de ejecucion
 }
 
 /*
@@ -25,6 +33,7 @@ type CPU struct {
 	Port       int    `json:"port"`
 	Instancia  string `json:"instancia"`
 	Disponible bool   `json:"disponible"`
+	Pid        int    `json:"pid"` //Lo agregue porque no sabemos q cpu ejecuta q proceso
 }
 
 type IO struct {
@@ -81,6 +90,11 @@ type PaqueteEnviadoKERNELaCPU struct {
 	PC  int `json:"pc"`
 	Pid int `json:"pid"`
 }
+
+type PaqueteInterrupcion struct {
+	mensaje string `json:"message"`
+}
+
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
 }
@@ -111,13 +125,13 @@ type PaqueteRecibidoDeCPU struct {
 	Pc      int    `json:"pc"`
 }
 
-var ColaNew []PCB
-var ColaReady []PCB
-var ListaExec []PCB
-var ColaBlock []PCB
-var ColaSuspBlock []PCB
-var ColaSuspReady []PCB
-var ColaExit []PCB
+var ColaNew []*PCB
+var ColaReady []*PCB
+var ListaExec []*PCB
+var ColaBlock []*PCB
+var ColaSuspBlock []*PCB
+var ColaSuspReady []*PCB
+var ColaExit []*PCB
 var ContadorPCB int = 0
 var ListaCPU []CPU
 var ListaIO []IO

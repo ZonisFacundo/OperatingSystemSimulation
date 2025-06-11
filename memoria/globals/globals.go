@@ -73,6 +73,7 @@ var MemoriaPrincipal []byte                                                 //va
 var MemoriaKernel map[int]ProcesoEnMemoria = make(map[int]ProcesoEnMemoria) // memoria del kernel (donde guardo segmento de codigo basicamente) y paginas reservadas para cada proceso con pid como key
 var PaginasDisponibles []int                                                //nos indica el estado de cada pagina, ocupada o libre
 var PunteroBase *Nodo = nil
+var PaginasSwap []int = make([]int, 0) //la idea es que se vea algo asi por ejemplo: PaginasSwap = [2, 2, 5] --> significa que el primer marco de pagina del swap y el segundo los ocupan paginas del proceso 2, la tercera del proceso 5, si se deswappea el proceso 2 quedaria --> [-1, -1, 5]
 
 // FUNCIONES
 func CargarConfig(path string) {
