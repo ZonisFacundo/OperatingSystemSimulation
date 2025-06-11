@@ -12,8 +12,6 @@ import (
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
-// falta hacer la conexion del lado del cpu como servidor hacia el kernel pero no sabia donde hacerlas ni les queria romper el codigo =)
-
 func main() {
 	newFetch := true
 	interrupcionActiva := false
@@ -39,8 +37,9 @@ func main() {
 		log.Printf("Servidor corriendo, esperando PID y PC de Kernel.")
 		http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
 	}()
-	// Ciclo principal
 
+	// Ciclo principal
+	
 	for {
 		if interrupcionActiva {
 

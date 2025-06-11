@@ -19,6 +19,7 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int
 	if memoryManagement.TamPagina == 0 {
 		log.Fatalf("Error: TamPagina no puede ser 0. Verificá la configuración o la inicialización de la MMU.")
 	}
+	
 	nroPagina := direccionLogica / memoryManagement.TamPagina
 
 	// Crear un slice para guardar las entradas de las tablas de páginas
