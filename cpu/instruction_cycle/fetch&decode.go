@@ -88,7 +88,13 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 
 func Decode(instruccion globals.Instruccion) {
 
-	var memoryManagement mmu.MMU
+	memoryManagement := mmu.MMU{
+		ProcesoActual:       instruccion.ProcessValues,
+		TamPagina:           64,          
+		Niveles:             5,       
+		Cant_entradas_tabla: 4, 
+		TablasPaginas:       make(map[int]int), 
+	}
 
 	partesDelString := strings.Fields(instruccion.InstructionType)
 

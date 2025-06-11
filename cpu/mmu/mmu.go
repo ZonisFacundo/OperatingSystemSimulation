@@ -2,7 +2,7 @@ package mmu
 
 import (
 	"math"
-
+	"log"
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 	/*"github.com/sisoputnfrba/tp-golang/cpu/instruction_cycle"
@@ -36,13 +36,9 @@ type MMU struct {
 
 func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int {
 
-	//memoryManagement.TamPagina = 1000
-
-	// Calcular el número de página
-	memoryManagement.TamPagina = 1000
-	memoryManagement.Niveles = 2
-	memoryManagement.Cant_entradas_tabla = 4
-
+	if memoryManagement.TamPagina == 0 {
+		log.Fatalf("Error: TamPagina no puede ser 0. Verificá la configuración o la inicialización de la MMU.")
+	}
 	nroPagina := direccionLogica / memoryManagement.TamPagina
 
 	// Crear un slice para guardar las entradas de las tablas de páginas
@@ -63,8 +59,6 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int
 	globals.ID.Desplazamiento = desplazamiento
 	//
 	resultado := append([]int{pid}, entradas...) // Agrego el pid al principio del slice y concateno las entradas de nivel
-
-	// Retorno el array con las entradas de nivel + desplazamiento
 
 	return resultado
 

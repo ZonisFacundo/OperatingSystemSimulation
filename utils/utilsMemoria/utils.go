@@ -141,7 +141,15 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 		return
 	}
 
-	for i := 0; i < globals.ClientConfig.Number_of_levels; i++ { //puede ser que tenga que ser +1 el numberoflevels
+	// ✅ 2. Validar que tenga PID + N entradas de tabla
+	if len(Paquete.DirLogica) < globals.ClientConfig.Number_of_levels+1 {
+		log.Printf("Error: dirección lógica incompleta. Esperado %d entradas (PID + niveles), recibido %d",
+			globals.ClientConfig.Number_of_levels+1, len(Paquete.DirLogica))
+		http.Error(w, "Dirección lógica incompleta", http.StatusBadRequest)
+		return
+	}
+
+	for i := 1; i <= globals.ClientConfig.Number_of_levels; i++ { //puede ser que tenga que ser +1 el numberoflevels BrenÑ cambio para ver si aca esta el error
 		log.Printf("entrada nivel %d: %d\n", i, Paquete.DirLogica[i])
 	}
 

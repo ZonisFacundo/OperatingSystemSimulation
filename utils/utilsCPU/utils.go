@@ -11,17 +11,6 @@ import (
 	
 )
 
-/*
-func ConfigurarLogger() {
-	logFile, err := os.OpenFile("cpu.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
-	if err != nil {
-		panic(err)
-	}
-	mw := io.MultiWriter(os.Stdout, logFile)
-	log.SetOutput(mw)
-}
-*/
-
 func ConfigurarLogger(cpuId string) {
 	logFileName := fmt.Sprintf("CPU-%s.log", cpuId)
 	logFile, err := os.OpenFile(logFileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
@@ -179,12 +168,10 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 
 func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 
-	var paquete EnvioDirLogicaAMemoria
-
-	paquete.Ip = ip
-	paquete.Puerto = puerto
-	paquete.DirLogica = dirLogica
-
+	paquete := EnvioDirLogicaAMemoria{
+		DirLogica: dirLogica,
+	}
+	
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
 		log.Printf("Error al convertir a json.\n")
