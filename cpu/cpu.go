@@ -20,7 +20,7 @@ func main() {
 	}
 
 	instanceID := os.Args[1]
-	//procesoListo := make(chan struct{}, 0)
+	procesoListo := make(chan struct{}, 0)
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
@@ -31,7 +31,7 @@ func main() {
 	go func() {
 		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
 			utilsCPU.RecibirPCyPID(w, r)
-			//procesoListo <- struct{}{}
+			procesoListo <- struct{}{}
 		})
 		/*http.HandleFunc("/InterrupcionCPU", func(w http.ResponseWriter, r *http.Request) {
 			globals.Interruption = true
@@ -52,11 +52,12 @@ func main() {
 			log.Println("Nuevo proceso recibido, se reinicia el ciclo.")
 
 		}*/
-
+		<-procesoListo
 		instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 		instruction_cycle.Decode(globals.ID)
 		instruction_cycle.Execute(globals.ID)
 
+		globals.Instruction.Pc++
 		//interrupcionActiva = globals.Interruption
 	}
 }

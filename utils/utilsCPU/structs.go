@@ -6,7 +6,7 @@ type Proceso struct {
 	//Mensaje string `json:"messageCPU"`
 }
 type Interrupcion struct {
-	Interrup bool `json:"interrup`
+	Interrup bool `json:"interrup"`
 }
 type HandshakeCPU struct {
 	Ip        string `json:"ip"`

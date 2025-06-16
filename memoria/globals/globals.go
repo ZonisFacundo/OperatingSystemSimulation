@@ -48,8 +48,8 @@ type DireccionFisica struct {
 	Direccion int `json:"address"`
 }
 type PaqueteWrite struct {
-	Direccion int  `json:"address"`
-	Contenido byte `json:"content"`
+	Direccion int    `json:"address"`
+	Contenido string `json:"content"`
 }
 type DireccionLogica struct {
 	Ip        string `json:"ip"`

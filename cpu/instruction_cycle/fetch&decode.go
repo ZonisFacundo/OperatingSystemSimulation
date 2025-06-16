@@ -90,11 +90,10 @@ func Decode(instruccion globals.Instruccion) {
 
 	memoryManagement := mmu.MMU{
 		ProcesoActual:       instruccion.ProcessValues,
-		TamPagina:           64,          
-		Niveles:             5,       
-		Cant_entradas_tabla: 4, 
-		TablasPaginas:       make(map[int]int), 
-	}
+		TamPagina:           64,
+		Niveles:             5,
+		Cant_entradas_tabla: 4,
+		TablasPaginas:       make(map[int]int)}
 
 	partesDelString := strings.Fields(instruccion.InstructionType)
 
@@ -113,8 +112,12 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.Tamaño = instruccion.Tamaño
 
 		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
-		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
-		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+
+		EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
+		log.Printf("frame: %d", globals.ID.Frame)
+
+		globals.ID.DireccionFis = (globals.ID.Frame * memoryManagement.TamPagina) + globals.ID.Desplazamiento
 
 	case "WRITE":
 		instruccion.DireccionLog, _ = strconv.Atoi(partesDelString[1])
@@ -123,13 +126,17 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Datos = instruccion.Datos
 
+		log.Printf("dir: %d", instruccion.DireccionLog)
+
 		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
 
-		log.Printf("direccion: %d", direccionAEnviar)
+		log.Printf("direccion a enviar: %d", direccionAEnviar)
 
-		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+		EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 
-		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+		log.Printf("frame: %d", globals.ID.Frame)
+
+		globals.ID.DireccionFis = (globals.ID.Frame * memoryManagement.TamPagina) + globals.ID.Desplazamiento
 
 	case "GOTO":
 		instruccion.Valor, _ = strconv.Atoi(partesDelString[1])

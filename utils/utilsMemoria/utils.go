@@ -196,12 +196,17 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 	err := json.NewDecoder(r.Body).Decode(&PaqueteInfoWrite) //guarda en request lo que nos mando el cliente
 	if err != nil {
+		log.Printf("returneo porque no pude decodear (RetornoClienteCPUServidorMEMORIAWrite) \n")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.Printf("direccion recibida: %d\n", PaqueteInfoWrite.Direccion)
 
-	PaqueteInfoWrite.Contenido = globals.MemoriaPrincipal[PaqueteInfoWrite.Direccion]
+	bytardos := []byte(PaqueteInfoWrite.Contenido)
 
+	for i := 0; i < len(PaqueteInfoWrite.Contenido); i++ {
+		globals.MemoriaPrincipal[PaqueteInfoWrite.Direccion+i] = bytardos[i]
+	}
 	var rta respuestaalCPU
 	rta.Mensaje = "OK\n"
 
@@ -210,12 +215,13 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write(respuestaJSON)
-
 	log.Printf("\n\nMUESTRO LA MEMORIA DONDE SE ESCRIBIO LO QUE NOS PIDIO CPU \n\n")
 	auxiliares.Mostrarmemoria()
 	log.Printf("\n\n")
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
 }
 
 func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
