@@ -17,6 +17,7 @@ import (
 )
 
 func main() {
+
 	globals.CargarConfig("./memoria/globals/config.json") //decodifica de json a go y guarda los datos en un puntero (variable global) ClientConfig
 	utilsMemoria.ConfigurarLogger()
 

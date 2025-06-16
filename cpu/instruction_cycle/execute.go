@@ -21,7 +21,7 @@ func Execute(detalle globals.Instruccion) {
 	switch detalle.InstructionType {
 
 	case "NOOP": //?
-		if detalle.Tiempo != 0 {
+		/*if detalle.Tiempo != 0 {
 			tiempoEjecucion := NOOP(detalle.Tiempo)
 			detalle.ProcessValues.Pc = detalle.ProcessValues.Pc + 1
 			fmt.Printf("NOOP ejecutado con tiempo:%d , y actualizado el PC:%d.\n", tiempoEjecucion, detalle.ProcessValues.Pc)
@@ -30,7 +30,8 @@ func Execute(detalle globals.Instruccion) {
 		} else {
 			fmt.Println("Tiempo no especificado u acción incorrecta.")
 			detalle.Syscall = "Tiempo no especificado u acción incorrecta."
-		}
+		}*/
+		log.Println("Se ejecuta noop")
 
 	case "WRITE":
 

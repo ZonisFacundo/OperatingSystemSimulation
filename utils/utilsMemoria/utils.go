@@ -184,6 +184,10 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
+	log.Printf("\n\nMUESTRO LA MEMORIA DONDE SE LEE LO QUE NOS PIDE CPU \n\n")
+	auxiliares.Mostrarmemoria()
+	log.Printf("\n\n")
+
 }
 
 func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Request) {
@@ -209,6 +213,9 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
+	log.Printf("\n\nMUESTRO LA MEMORIA DONDE SE ESCRIBIO LO QUE NOS PIDIO CPU \n\n")
+	auxiliares.Mostrarmemoria()
+	log.Printf("\n\n")
 }
 
 func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
@@ -517,7 +524,7 @@ func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) glo
 
 	//SI LLEGAMOS ACA, LO QUE ENVIO CPU TIENE SENTIDO
 
-	marco := AccedeAEntrada(DireccionLogica, 1, PunteroNodo)
+	marco := AccedeAEntrada(DireccionLogica, 0, PunteroNodo)
 
 	MarcoAurelio.Frame = marco
 
@@ -538,7 +545,7 @@ Para aumentar expresividad en el codigo (no estar agregando i - 1 en los loops p
 func AccedeAEntrada(DireccionLogica []int, nivel int, PunteroNodo *globals.Nodo) int {
 
 	if nivel == globals.ClientConfig.Number_of_levels { //significa que ya estamos parados en el nivel que contiene los marcos
-		return ((*PunteroNodo).Marco[nivel])
+		return ((*PunteroNodo).Marco[DireccionLogica[nivel]])
 
 	} else {
 		return AccedeAEntrada(DireccionLogica, nivel+1, (*PunteroNodo).Siguiente[DireccionLogica[nivel]])

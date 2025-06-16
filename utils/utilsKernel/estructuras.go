@@ -17,6 +17,7 @@ type PCB struct {
 	Archivo            string               `json:"file"`
 	RafagaAnterior     float32              `json:"rafagaAnterior"` //capaz dsp lo cambiamos a time xd
 	EstimacionAnterior float32              `json:"estimacionAnterior"`
+	TiempoEnvioExc     time.Time            `json:"tiempoEnvioExc"` //sirve para calcular el timpo de ejecucion
 }
 
 /*
@@ -89,6 +90,11 @@ type PaqueteEnviadoKERNELaCPU struct {
 	PC  int `json:"pc"`
 	Pid int `json:"pid"`
 }
+
+type PaqueteInterrupcion struct {
+	mensaje string `json:"message"`
+}
+
 type RespuestaalIO struct {
 	Mensaje string `json:"message"`
 }

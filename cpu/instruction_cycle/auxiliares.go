@@ -12,9 +12,9 @@ import (
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
-func NOOP(Tiempo int) int {
+/*func NOOP(Tiempo int) int {
 	return Tiempo
-}
+}*/
 
 func GOTO(pcInstr int, valor int) int {
 	return pcInstr + valor

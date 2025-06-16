@@ -22,7 +22,10 @@ type Config struct {
 	Cache_delay       int    `json:"cache_delay"`
 	Log_level         string `json:"log_level"`
 	Instance_id       string `json:"instance_id"`
-	Page_size         int    `json:"size_page`
+	Page_size         int    `json:"size_page"`
+	Niveles           int    `json:"size_level"`
+	Entradas          int    `json:"size_entries"`
+
 }
 type Instruccion struct { // instruccion obtenida de memoria
 	ProcessValues   utilsCPU.Proceso      `json:"instruction"`  //Valores de PID y PC
@@ -45,6 +48,7 @@ var Instruction utilsCPU.Proceso
 var InstruccionDetalle Instruccion
 var ID Instruccion
 var ClientConfig *Config
+var Interruption bool
 
 func CargarConfig(path string, instanceID string) {
 
