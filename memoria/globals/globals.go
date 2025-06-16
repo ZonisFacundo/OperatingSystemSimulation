@@ -32,8 +32,11 @@ type ProcesoEnMemoria struct {
 	Instrucciones          []string `json:"instructions"`
 	TablaSimple            []int    `json:"tablasimple"` //basicamente la tabla de paginas simple para el proceso...
 	PunteroATablaDePaginas *Nodo    `json:"tabladepaginas"`
+	SwapStart              int64    `json:"swapstart"` //POSIBILIDAD DE ERROR
+	SwapTam                int      `json:"swaptam"`
 }
 
+// le damos mas bits al int porque puede ser largo el n de byte
 type Nodo struct {
 	Siguiente []*Nodo `json:"node"`
 	Marco     []int   `json:"frame"`
