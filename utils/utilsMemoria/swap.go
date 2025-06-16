@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"os"
 
@@ -57,7 +58,7 @@ func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *htt
 		return
 	} else {
 
-		respuesta.Mensaje = "listo (RetornoClienteKernelServidorMemoriaSwapADisco) \n"
+		respuesta.Mensaje = "Swappeado a disco (RetornoClienteKernelServidorMemoriaSwapADisco) \n"
 
 		respuestaJSON, err := json.Marshal(respuesta)
 		if err != nil {
@@ -96,7 +97,7 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		return
 
 	} else {
-		//retorno = SwapAMemoria(paqueteDeKernel.Pid) comento esto para que no de error
+		retorno = SwapAMemoria(paqueteDeKernel.Pid)
 		if retorno == -1 {
 
 			respuesta.Mensaje = "ERROR AL SWAPPEAR A MEMORIA (error al abrir archivo) (RetornoClienteKernelServidorMemoriaSwapAMemoria) \n"
@@ -111,7 +112,7 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 			return
 		}
 
-		respuesta.Mensaje = "listo (RetornoClienteKernelServidorMemoriaSwapAMemoria) \n"
+		respuesta.Mensaje = "Swappeado a Memoria (RetornoClienteKernelServidorMemoriaSwapAMemoria) \n"
 
 		respuestaJSON, err := json.Marshal(respuesta)
 		if err != nil {
@@ -172,17 +173,72 @@ func SwapADisco(pid int) int { //incompleta
 	return 0
 }
 
-/*
 func SwapAMemoria(pid int) int {
 
 	file, err := os.OpenFile(fmt.Sprintf("%s/swapfile.bin", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR, 0644)
 
 	if err != nil {
-		log.Printf("error al abrir el archivo SWAP a la hora de llevarlo a disco para pid: %d\n", pid)
+		log.Printf("error al abrir el archivo SWAP a la hora de llevarlo a disco para pid: %d    (SwapAMemoria)\n", pid)
 		return -1
 	}
 
+	if EntraEnMemoria(globals.MemoriaKernel[pid].SwapTam) < 0 {
+		log.Printf("No hay espacio para cargar el proceso en MP, pid: %d  tam proceso: %d bytes (SwapAMemoria)\n", pid, globals.MemoriaKernel[pid].SwapTam)
+		return -1
+	}
 
+	ReservarMemoriaSwapeado(pid, globals.MemoriaKernel[pid].SwapTam)
 
+	ActualizarTodasLasTablasEnBaseATablaSimple(pid) //actualiza tabla de paginas multinivel y paginas disponibles
+
+	//ADMINISTRATIVAMENTE, TODO TERMINADO, AHORA NOS QUEDA ACTUALIZAR LA IMAGEN EN MP
+
+	var bufferPagina []byte = make([]byte, globals.ClientConfig.Page_size)
+
+	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
+		//bufferPagina, _ = os.ReadFile(fmt.Sprintf("%s/swapfile.bin", globals.ClientConfig.Swapfile_path))
+		bytesleidos, _ := file.Read(bufferPagina)
+
+		for j := 0; j < bytesleidos; j++ {
+			globals.MemoriaPrincipal[globals.MemoriaKernel[pid].TablaSimple[i]*globals.ClientConfig.Page_size] = bufferPagina[j]
+		}
+		log.Printf("bytes leidos de disco y copiados en memoria en ultima iteracion: %d 	(SwapAMemoria)\n", bytesleidos)
+	}
+	defer file.Close()
+	return 1
 }
+
+/*
+Que hace ReservarMemoriaSwapeado?
+lo mismo que reservarmemoria pero para procesos que ya existen
+verifica si el proceso entra en memoria y en tal caso asigna las paginas al proceso en la tabla simple, ademas actualiza las paginasdisponibles del globals con las nuevas del proceso
 */
+
+func ReservarMemoriaSwapeado(pid int, tam int) int {
+
+	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
+
+	var frames globals.ProcesoEnMemoria
+	frames.TablaSimple = make([]int, 0) //inicializa el slice donde vamos a guardar la tabla de paginas simple para el proceso
+
+	var PaginasEncontradas int = 0
+	if EntraEnMemoria(tam) >= 0 {
+		for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
+
+			if globals.PaginasDisponibles[i] == 0 {
+				PaginasEncontradas++
+				frames.TablaSimple = append(frames.TablaSimple, i)
+				globals.PaginasDisponibles[i] = 1 //reservamos la pagina (podemos hacerlo ya que se llamo a EntraEnMemoriaYVerificaSiYaExiste anteriormente)
+
+				if PaginasEncontradas == int(PaginasNecesarias) {
+					auxiliares.ActualizarTablaSimple(frames, pid)
+
+					auxiliares.MostrarProceso(pid)
+
+					return 1 //devuelvo numero positivo para indicar que fue un exito, asignamos todas las paginas al proceso
+				}
+			}
+		}
+	}
+	return -1
+}

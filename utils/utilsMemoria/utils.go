@@ -318,6 +318,7 @@ func EscanearMemoria() {
 
 reservar memoria basicamente recibe informacion sobre un proceso que quiere iniciar kernel y guarda en el map que tenemos con informacion basica de proceso
 las paginas que este tiene reservada en memoria.
+
 */
 
 func ReservarMemoria(tam int, pid int) int {
@@ -384,7 +385,7 @@ se fija si se encuentra disponible el tam necesario
 */
 func EntraEnMemoria(tam int) int {
 	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
-	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
+	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos	(EntraEnMemoria) \n", PaginasNecesarias)
 
 	var PaginasEncontradas int = 0
 
@@ -438,7 +439,7 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	if ReservarMemoria(paquete.TamProceso, paquete.Pid) < 0 { //ReservarMemoria devuelve <0 si hubo un error, si no hubieron errores actualiza el map y reserva la memoria para el proceso
 
-		log.Printf("error al reservar memoria para el proceso de pid: %d", (paquete).Pid)
+		log.Printf("error al reservar memoria para el proceso de pid: %d (CrearProceso)", (paquete).Pid)
 		return
 	}
 
@@ -459,7 +460,7 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 	contador = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior (es la unica varialbe global de utils)
 
-	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
+	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d  (CrearProceso) \n", paquete.Pid, paquete.TamProceso)
 
 }
 
@@ -670,6 +671,12 @@ func CambiarAMenos1TodasLasTablas(pid int) {
 	LiberarTablaSimple(pid)
 	ActualizarPaginasDisponibles()
 
+	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
+	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
+}
+
+func ActualizarTodasLasTablasEnBaseATablaSimple(pid int) {
+	ActualizarPaginasDisponibles()
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
 	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
 }
