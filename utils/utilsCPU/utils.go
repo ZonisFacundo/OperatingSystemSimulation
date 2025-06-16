@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	
 )
 
 func ConfigurarLogger(cpuId string) {
@@ -107,6 +106,7 @@ func EnvioPortKernel(ip string, puerto int, instancia string, portcpu int, ipcpu
 }
 
 func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, syscall string, parametro1 int, parametro2 string) { // si no reciben parametros que sean  0 y "" que nosostros ahi no los usamos
+	
 	var paquete PackageFinEjecucion
 
 	paquete.Pid = pid
@@ -147,6 +147,7 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 		log.Printf("Status de respuesta el server no fue la esperada.\n")
 		return
 	}
+
 	defer respuestaJSON.Body.Close()
 
 	log.Printf("Conexion establecida con exito.\n")

@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/cpu/instruction_cycle"
@@ -13,15 +12,15 @@ import (
 )
 
 func main() {
-	newFetch := true
-	interrupcionActiva := false
+
+	//interrupcionActiva := false
 
 	if len(os.Args) < 2 {
 		log.Fatal("Error: Debe indicar el identificador de la CPU como argumento, por ejemplo: ./cpu cpuX")
 	}
 
 	instanceID := os.Args[1]
-	procesoListo := make(chan struct{}, 1)
+	//procesoListo := make(chan struct{}, 0)
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
@@ -32,35 +31,32 @@ func main() {
 	go func() {
 		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
 			utilsCPU.RecibirPCyPID(w, r)
-			procesoListo <- struct{}{}
+			//procesoListo <- struct{}{}
 		})
+		/*http.HandleFunc("/InterrupcionCPU", func(w http.ResponseWriter, r *http.Request) {
+			globals.Interruption = true
+		})*/
 		log.Printf("Servidor corriendo, esperando PID y PC de Kernel.")
 		http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
 	}()
 
 	// Ciclo principal
-	
+
 	for {
-		if interrupcionActiva {
+
+		/*if interrupcionActiva {
 
 			log.Println("Interrupción ejecutada, a la espera de nuevo proceso.")
-			newFetch = true // Ésto se realiza más que nada porque cuando hay una interrupción, se interrumpe la ejecución del proceso y nos van a mandar uno nuevo.
+			globals.Interruption = false
 			<-procesoListo
-			interrupcionActiva = false // Reseteo el flag, para que no quede en True y se pueda ejecutar sin problema alguno.
 			log.Println("Nuevo proceso recibido, se reinicia el ciclo.")
-		}
 
-		if newFetch {
-			instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
-			newFetch = false
-		}
+		}*/
 
+		instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 		instruction_cycle.Decode(globals.ID)
 		instruction_cycle.Execute(globals.ID)
 
-		interrupcionActiva = instruction_cycle.CheckInterruption()
-
-		time.Sleep(100 * time.Millisecond)
+		//interrupcionActiva = globals.Interruption
 	}
 }
-
