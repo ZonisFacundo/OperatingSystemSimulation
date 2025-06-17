@@ -32,6 +32,7 @@ func main() {
 	http.HandleFunc("POST /IO", utilsKernel.RecibirDatosIO)
 	http.HandleFunc("POST /handshake", utilsKernel.RecibirDatosCPU)
 	http.HandleFunc("POST /PCB", utilsKernel.RecibirProceso)
+	http.HandleFunc("POST /finIO", utilsKernel.FinalizarIO)
 	log.Printf("Servidor corriendo.\n")
 	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_kernel), nil)
 	wg.Wait()

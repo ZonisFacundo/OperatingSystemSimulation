@@ -17,6 +17,10 @@ type Handshakepaquete struct {
 	Puerto int    `json:"port"`
 }
 
+type HandshakepaqueteFin struct {
+	Nombre string `json:"name"`
+}
+
 type RespuestaHandshakeKernel struct {
 	Mensaje string `json:"message"`
 }
@@ -41,6 +45,59 @@ func ConfigurarLogger(ioId string) {
 	log.SetOutput(mw)
 
 	log.SetPrefix(fmt.Sprintf("[IO-%s] ", ioId))
+}
+
+func NotificarFinalizacionAlKernel(nombre string, ipKernel string, puertoKernel int, ipIO string, puertoIO int) {
+	var paquete HandshakepaqueteFin
+	paquete.Nombre = nombre
+
+	PaqueteFormatoJson, err := json.Marshal(paquete)
+	if err != nil {
+		log.Printf("error al convertir a json")
+		return
+	}
+	cliente := http.Client{}
+
+	url := fmt.Sprintf("http://%s:%d/finIO", ipKernel, puertoKernel)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson))
+
+	if err != nil {
+		log.Printf("error al generar la peticion al server")
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	respuestaJSON, err := cliente.Do(req)
+
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+
+	}
+
+	if respuestaJSON.StatusCode != http.StatusOK {
+
+		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		return
+	}
+	defer respuestaJSON.Body.Close()
+
+	log.Printf("Conexion establecida con exito \n")
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	var respuesta RespuestaHandshakeKernel
+	err = json.Unmarshal(body, &respuesta)
+	if err != nil {
+		log.Printf("Error al decodificar el JSON")
+		return
+	}
+	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
 }
 
 func PeticionClienteIOServidorKERNEL(nombre string, ipKernel string, puertoKernel int, ipIO string, puertoIO int) {
