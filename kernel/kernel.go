@@ -25,10 +25,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("Tamaño inválido: %v", err)
 	}
+	utilsKernel.InicializarSemaforos()
+	go func() {
+		utilsKernel.IniciarPlanifcador(tamanio, archivo)
+		utilsKernel.PlanificadorLargoPlazo()
+	}()
 
-	go utilsKernel.IniciarPlanifcador(tamanio, archivo)
+	go utilsKernel.PlanificadorCortoPlazo()
 
-	//http.HandleFunc("/handshake", utilsKernel.RecibirDatosIO) no se porque esta esto por las dudas no lo borro
 	http.HandleFunc("POST /IO", utilsKernel.RecibirDatosIO)
 	http.HandleFunc("POST /handshake", utilsKernel.RecibirDatosCPU)
 	http.HandleFunc("POST /PCB", utilsKernel.RecibirProceso)

@@ -131,13 +131,14 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	cpuServidor := ObtenerCpu(request.InstanciaCPU)
 	cpuServidor.Disponible = true
 	PCBUtilizar := ObtenerPCB(cpuServidor.Pid) // ya no hace falta porque esta en el struct
+	PCBUtilizar.Pc = request.Pc
 	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
 	respuesta.Mensaje = "interrupcion"
 	switch request.Syscall {
 	case "I/O":
 		//interrumpir
 		if ExisteIO(request.Parametro2) {
-			PlanificadorCortoPlazo()
+			SemCortoPlazo <- struct{}{}
 			ioServidor := ObtenerIO(request.Parametro2)
 			AgregarColaIO(ioServidor, PCBUtilizar.Pid, request.Parametro1)
 			PasarBlocked(PCBUtilizar)
@@ -148,14 +149,14 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			FinalizarProceso(PCBUtilizar)
-		} //remplanificar
+		}
 		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
 	case "EXIT":
 		FinalizarProceso(PCBUtilizar)
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
 	case "DUMP_MEMORY":
-		PlanificadorCortoPlazo()
-		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory) //revisar
+		SemCortoPlazo <- struct{}{}
+		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
 	case "INIT_PROC":
 		respuesta.Mensaje = ""
@@ -403,7 +404,9 @@ func InterrumpirCPU(cpu *CPU) {
 		return
 	} //pasamos la respuesta de JSON a formato paquete que nos mando el server
 
-	var respuesta PaqueteRecibido
+	var respuesta PaqueteRecibidoDeCPU
+	pcb := ObtenerPCB(respuesta.Pid)
+	pcb.Pc = respuesta.Pc
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
@@ -465,8 +468,8 @@ func InformarMemoriaFinProceso(pcb *PCB, ip string, puerto int) {
 		return
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
-	PlanificadorLargoPlazo()
-	PlanificadorCortoPlazo()
+	SemLargoPlazo <- struct{}{}
+	SemCortoPlazo <- struct{}{}
 
 }
 
@@ -484,13 +487,15 @@ func CrearPCB(tamanio int, archivo string) { //pid unico arranca de 0
 		RafagaAnterior:     0,
 		EstimacionAnterior: globals.ClientConfig.Initial_estimate,
 	}
+	MutexColaNew.Lock()
 	ColaNew = append(ColaNew, pcbUsar)
+	MutexColaNew.Unlock()
 
 	log.Printf("## (<%d>) Se crea el proceso - Estado: NEW \n", pcbUsar.Pid)
 	pcbUsar.MetricaEstados["NEW"]++
 	pcbUsar.TiempoLlegada["NEW"] = time.Now()
 	ContadorPCB++
-	PlanificadorLargoPlazo()
+	SemLargoPlazo <- struct{}{}
 }
 
 func LeerConsola() string {
@@ -514,34 +519,54 @@ func IniciarPlanifcador(tamanio int, archivo string) {
 }
 
 func PlanificadorLargoPlazo() {
-	if len(ColaSuspReady) != 0 {
-		pcbChequear := CriterioColaNew(ColaSuspReady)
-		ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
-	} else if len(ColaNew) != 0 {
-		pcbChequear := CriterioColaNew(ColaNew)
-		ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+	for true {
+		<-SemLargoPlazo //wait()
+		if len(ColaSuspReady) != 0 {
+			MutexColaNew.Lock()
+			pcbChequear := CriterioColaNew(ColaSuspReady)
+			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+			MutexColaNew.Unlock()
+		} else if len(ColaNew) != 0 {
+			MutexColaNew.Lock()
+			pcbChequear := CriterioColaNew(ColaNew)
+			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+			MutexColaNew.Unlock()
+		} else {
+			SemLargoPlazo <- struct{}{} //signal()
+			time.Sleep(1 * time.Second)
+
+		}
 	}
 }
 
 func PlanificadorCortoPlazo() {
-	if len(ColaReady) != 0 {
-		pcbChequear, hayDesalojo := CriterioColaReady()
-		CPUDisponible, noEsVacio := TraqueoCPU() //drakukeo en su defecto
-		if noEsVacio {
-			log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
-			PasarExec(pcbChequear)
-			CPUDisponible.Disponible = false
-			CPUDisponible.Pid = pcbChequear.Pid //le asigno el pid al cpu que lo va a ejecutar
-			EnviarProcesoACPU(pcbChequear, CPUDisponible)
-
-		} else if hayDesalojo {
-			pcbDesalojar, cpuDesalojar := RafagaMasLargaDeLosCPU()
-			if calcularRafagaEstimada(pcbChequear) <= CalcularTiempoRestanteEjecucion(pcbDesalojar) {
-				InterrumpirCPU(cpuDesalojar)
-				PasarReady(pcbDesalojar)
+	for true {
+		<-SemCortoPlazo
+		if len(ColaReady) != 0 {
+			MutexColaReady.Lock()
+			pcbChequear, hayDesalojo := CriterioColaReady()
+			MutexColaReady.Unlock()
+			CPUDisponible, noEsVacio := TraqueoCPU() //drakukeo en su defecto
+			if noEsVacio {
+				log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
 				PasarExec(pcbChequear)
-				cpuDesalojar.Pid = pcbChequear.Pid
+				CPUDisponible.Disponible = false
+				CPUDisponible.Pid = pcbChequear.Pid //le asigno el pid al cpu que lo va a ejecutar
+				EnviarProcesoACPU(pcbChequear, CPUDisponible)
+
+			} else if hayDesalojo {
+				pcbDesalojar, cpuDesalojar := RafagaMasLargaDeLosCPU()
+				if calcularRafagaEstimada(pcbChequear) < CalcularTiempoRestanteEjecucion(pcbDesalojar) {
+					InterrumpirCPU(cpuDesalojar)
+					PasarReady(pcbDesalojar)
+					PasarExec(pcbChequear)
+					cpuDesalojar.Pid = pcbChequear.Pid
+				}
 			}
+		} else {
+			SemCortoPlazo <- struct{}{}
+			time.Sleep(1 * time.Second)
+
 		}
 	}
 }
@@ -573,7 +598,7 @@ func Sjf() *PCB {
 	}
 	pcbEstimacionMinima := ColaReady[0]
 	for _, pcb := range ColaReady {
-		if calcularRafagaEstimada(pcb) <= calcularRafagaEstimada(pcbEstimacionMinima) {
+		if calcularRafagaEstimada(pcb) < calcularRafagaEstimada(pcbEstimacionMinima) {
 			pcbEstimacionMinima = pcb
 		}
 	}
@@ -607,20 +632,28 @@ func calcularRafagaEstimada(pcb *PCB) float32 {
 
 func PasarReady(pcb *PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado READY  \n", pcb.Pid, pcb.EstadoActual)
+	MutexColaReady.Lock()
 	ColaReady = append(ColaReady, pcb)
+	MutexColaReady.Unlock()
+	MutexColaNew.Lock()
 	ColaNew = removerPCB(ColaNew, pcb)
+	MutexColaNew.Unlock()
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "READY"
 	pcb.MetricaEstados["READY"]++
 	pcb.TiempoLlegada["READY"] = time.Now()
 
-	PlanificadorCortoPlazo()
+	SemCortoPlazo <- struct{}{}
 }
 
 func PasarExec(pcb *PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado EXECUTE \n", pcb.Pid, pcb.EstadoActual)
+	MutexListaExec.Lock()
 	ListaExec = append(ListaExec, pcb)
+	MutexListaExec.Unlock()
+	MutexColaReady.Lock()
 	ColaReady = removerPCB(ColaReady, pcb)
+	MutexColaReady.Unlock()
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "EXECUTE"
 	pcb.TiempoLlegada["EXECUTE"] = time.Now()
@@ -631,14 +664,18 @@ func PasarExec(pcb *PCB) {
 
 func PasarBlocked(pcb *PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado BLOCKED \n", pcb.Pid, pcb.EstadoActual)
+	MutexColaBlock.Lock()
 	ColaBlock = append(ColaBlock, pcb)
+	MutexColaBlock.Unlock()
+	MutexListaExec.Lock()
 	ListaExec = removerPCB(ListaExec, pcb)
+	MutexListaExec.Unlock()
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "BLOCKED"
 	pcb.MetricaEstados["BLOCKED"]++
 	pcb.TiempoLlegada["BLOCKED"] = time.Now()
 
-	PlanificadorCortoPlazo()
+	SemCortoPlazo <- struct{}{}
 }
 
 func removerPCB(cola []*PCB, pcb *PCB) []*PCB {
@@ -863,4 +900,9 @@ func enviarExitProcesosIO(io IO) {
 			FinalizarProceso(pcb)
 		}
 	}
+}
+
+func InicializarSemaforos() {
+	SemLargoPlazo = make(chan struct{}, 100)
+	SemCortoPlazo = make(chan struct{}, 100)
 }
