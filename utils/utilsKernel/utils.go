@@ -51,6 +51,34 @@ func RecibirDatosIO(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func FinalizarIO(w http.ResponseWriter, r *http.Request) {
+
+	var request HandshakepaqueteFinIO
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("el IO: %s se desconecto", request.Nombre)
+
+	ioCerrada := ObtenerIO(request.Nombre)
+	enviarExitProcesosIO(ioCerrada)
+	ListaIO = removerIO(&ioCerrada)
+
+	var respuestaIO RespuestaalIO
+	respuestaIO.Mensaje = "conexion realizada con exito"
+	respuestaJSON, err := json.Marshal(respuestaIO)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
+
 func RecibirDatosCPU(w http.ResponseWriter, r *http.Request) {
 
 	var request HandshakepaqueteCPU
@@ -94,7 +122,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuesta RespuestaalCPU
-	respuesta.Mensaje = "Conexion realizada con exito"
+
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return
@@ -104,31 +132,33 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	cpuServidor.Disponible = true
 	PCBUtilizar := ObtenerPCB(cpuServidor.Pid) // ya no hace falta porque esta en el struct
 	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
+	respuesta.Mensaje = "interrupcion"
 	switch request.Syscall {
 	case "I/O":
 		//interrumpir
 		if ExisteIO(request.Parametro2) {
-			InterrumpirCPU(&cpuServidor)
 			PlanificadorCortoPlazo()
 			ioServidor := ObtenerIO(request.Parametro2)
 			AgregarColaIO(ioServidor, PCBUtilizar.Pid, request.Parametro1)
 			PasarBlocked(PCBUtilizar)
 			log.Printf("## (<%d>) - Bloqueado por IO: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
 			MandarProcesoAIO(ioServidor)
+			if len(ioServidor.ColaProcesos) > 0 {
+				ioServidor.ColaProcesos = ioServidor.ColaProcesos[1:]
+			}
 		} else {
 			FinalizarProceso(PCBUtilizar)
 		} //remplanificar
 		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
 	case "EXIT":
-		InterrumpirCPU(&cpuServidor)
 		FinalizarProceso(PCBUtilizar)
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
 	case "DUMP_MEMORY":
-		InterrumpirCPU(&cpuServidor)
 		PlanificadorCortoPlazo()
 		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory) //revisar
 		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
 	case "INIT_PROC":
+		respuesta.Mensaje = ""
 		CrearPCB(request.Parametro1, request.Parametro2)
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
 		cpuServidor.Disponible = false
@@ -735,7 +765,6 @@ func MandarProcesoAIO(io IO) {
 	if io.Disponible {
 		io.Disponible = false
 		go UtilizarIO(io, io.ColaProcesos[0].Pid, io.ColaProcesos[0].Tiempo)
-		io.ColaProcesos = io.ColaProcesos[1:]
 
 	}
 }
@@ -824,4 +853,14 @@ func removerIO(io *IO) []IO {
 		}
 	}
 	return ListaIO
+}
+
+func enviarExitProcesosIO(io IO) {
+	for _, proceso := range io.ColaProcesos {
+		pcb := ObtenerPCB(proceso.Pid)
+		if pcb != nil {
+			log.Printf("El proceso PID: %d  se pasa a EXIT por desconexion del I/O %s", pcb.Pid, io.Instancia)
+			FinalizarProceso(pcb)
+		}
+	}
 }

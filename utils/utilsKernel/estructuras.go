@@ -55,6 +55,12 @@ type HandshakepaqueteIO struct {
 	Puerto int    `json:"port"`
 }
 
+type HandshakepaqueteFinIO struct {
+	Nombre string `json:"name"`
+	Ip     string `json:"ip"`
+	Puerto int    `json:"port"`
+}
+
 type HandshakepaqueteCPU struct {
 	Ip        string `json:"ip"`
 	Puerto    int    `json:"port"`
