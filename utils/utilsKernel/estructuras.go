@@ -1,6 +1,7 @@
 package utilsKernel
 
 import (
+	"sync"
 	"time"
 )
 
@@ -141,3 +142,9 @@ var ColaExit []*PCB
 var ContadorPCB int = 0
 var ListaCPU []CPU
 var ListaIO []IO
+var MutexColaNew sync.Mutex
+var MutexColaReady sync.Mutex
+var MutexListaExec sync.Mutex
+var MutexColaBlock sync.Mutex
+var SemLargoPlazo chan struct{}
+var SemCortoPlazo chan struct{}

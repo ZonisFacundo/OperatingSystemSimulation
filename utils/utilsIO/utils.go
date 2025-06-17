@@ -97,7 +97,7 @@ func NotificarFinalizacionAlKernel(nombre string, ipKernel string, puertoKernel 
 		log.Printf("Error al decodificar el JSON")
 		return
 	}
-	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+
 }
 
 func PeticionClienteIOServidorKERNEL(nombre string, ipKernel string, puertoKernel int, ipIO string, puertoIO int) {
