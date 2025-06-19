@@ -158,6 +158,11 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 
 	var respuesta RespuestaKernel
 
+	if respuesta.Mensaje == "interrupcion" {
+		//interrumpir
+		//finalizar ejecución de ahora y esperar el próximo PID y PC, como? no tengo la mas minima idea.
+	}
+	
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
 		log.Printf("Error al decodificar el JSON.\n")
