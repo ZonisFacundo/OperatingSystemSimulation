@@ -524,13 +524,15 @@ func PlanificadorLargoPlazo() {
 		if len(ColaSuspReady) != 0 {
 			MutexColaNew.Lock()
 			pcbChequear := CriterioColaNew(ColaSuspReady)
-			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			MutexColaNew.Unlock()
+			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+
 		} else if len(ColaNew) != 0 {
 			MutexColaNew.Lock()
 			pcbChequear := CriterioColaNew(ColaNew)
-			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			MutexColaNew.Unlock()
+			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+
 		} else {
 			SemLargoPlazo <- struct{}{} //signal()
 			time.Sleep(1 * time.Second)
