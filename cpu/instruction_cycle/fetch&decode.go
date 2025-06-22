@@ -111,10 +111,17 @@ func Decode(instruccion globals.Instruccion) {
 
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Tamaño = instruccion.Tamaño
+		
+		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
 
-		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
-		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
-		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+		if(mmu.EstaTraducida(nroPagina)){
+			Execute(globals.ID)
+		} else {
+			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
+			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+			globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+			//Mandar direccion fisica a la TLB junto con el numero de página así queda guardada en "caché".
+		}
 
 	case "WRITE":
 		instruccion.DireccionLog, _ = strconv.Atoi(partesDelString[1])
@@ -123,13 +130,18 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Datos = instruccion.Datos
 
-		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
-
-		log.Printf("direccion: %d", direccionAEnviar)
-
-		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
-
-		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina  
+		// mmu despues deberiamos hacerlo global, porque son parametros que nos deberia pasar memoria (tabla de pags)
+		
+		if (mmu.EstaTraducida(nroPagina)) {
+			Execute(globals.ID)
+		} else {
+			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
+			utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+			globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+			// aca habria que agregar la direccion traducida a la tlb y trabajar con un alg de reemplazo si la tlb esta llena
+		}
+		
 
 	case "GOTO":
 		instruccion.Valor, _ = strconv.Atoi(partesDelString[1])

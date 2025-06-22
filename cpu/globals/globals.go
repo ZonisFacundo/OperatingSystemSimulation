@@ -25,12 +25,12 @@ type Config struct {
 	Page_size         int    `json:"size_page"`
 	Niveles           int    `json:"size_level"`
 	Entradas          int    `json:"size_entries"`
-
 }
 type Instruccion struct { // instruccion obtenida de memoria
 	ProcessValues   utilsCPU.Proceso      `json:"instruction"`  //Valores de PID y PC
 	Interrup        utilsCPU.Interrupcion `json:"interruption"` //Valores de la interrupción.
 	DireccionLog    int                   `json:"adress_log"`
+	Traducida       bool                  `json:"traducida"`
 	DireccionFis    int                   `json:"adress_fis"` //Para Read and Write -> Dirección lógica que pasa memoria.
 	InstructionType string                `json:"type"`       //Contexto de la ejecución, es decir, la string que entra en el execute.
 	Valor           int                   `json:"value"`      //Parámetro para GOTO
@@ -44,11 +44,22 @@ type Instruccion struct { // instruccion obtenida de memoria
 	Parametro2      string                `json:"parametro2"`
 }
 
+type TLB struct {
+	Entradas []Entrada
+	Tamanio  int
+}
+
+type Entrada struct {
+	NroPagina int
+	Direccion int
+}
+
 var Instruction utilsCPU.Proceso
 var InstruccionDetalle Instruccion
 var ID Instruccion
 var ClientConfig *Config
 var Interruption bool
+var Tlb TLB
 
 func CargarConfig(path string, instanceID string) {
 
