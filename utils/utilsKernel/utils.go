@@ -498,6 +498,33 @@ func CrearPCB(tamanio int, archivo string) { //pid unico arranca de 0
 	SemLargoPlazo <- struct{}{}
 }
 
+/*
+func CrearPCBPrueba(tamanio int, archivo string) { //pid unico arranca de 0
+
+		pcbUsar := &PCB{
+			Pid:                ContadorPCB,
+			Pc:                 0,
+			EstadoActual:       "NEW",
+			TamProceso:         tamanio,
+			MetricaEstados:     make(map[Estado]int),
+			TiempoLlegada:      make(map[Estado]time.Time),
+			TiempoEstados:      make(map[Estado]int64),
+			Archivo:            archivo,
+			TiempoEnvioExc:     time.Now(),
+			RafagaAnterior:     0,
+			EstimacionAnterior: 5,
+		}
+		MutexColaNew.Lock()
+		ColaNew = append(ColaNew, pcbUsar)
+		MutexColaNew.Unlock()
+
+		log.Printf("## (<%d>) Se crea el proceso - Estado: NEW \n", pcbUsar.Pid)
+		pcbUsar.MetricaEstados["NEW"]++
+		pcbUsar.TiempoLlegada["NEW"] = time.Now()
+		ContadorPCB++
+		SemLargoPlazo <- struct{}{}
+	}
+*/
 func LeerConsola() string {
 	// Leer de la consola
 	reader := bufio.NewReader(os.Stdin)
@@ -545,6 +572,7 @@ func PlanificadorCortoPlazo() {
 	for true {
 		<-SemCortoPlazo
 		if len(ColaReady) != 0 {
+			//time.Sleep(10 * time.Second)
 			MutexColaReady.Lock()
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()

@@ -679,3 +679,55 @@
 2025/06/20 19:59:39 ## (<0>) Pasa del estado READY al estado EXECUTE 
 2025/06/20 19:59:39 Conexion establecida con exito 
 2025/06/20 19:59:39 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/22 21:15:24 Tamaño inválido: strconv.Atoi: parsing "archi.txt": invalid syntax
+2025/06/22 21:16:37 Tamaño inválido: strconv.Atoi: parsing "archi.txt": invalid syntax
+2025/06/22 21:17:29 Servidor corriendo.
+2025/06/22 21:17:29 Presione enter para inciar el planificador
+2025/06/22 21:17:31 Handshake recibido: Port: 8004 - Instance: cpuX - Ip: 127.0.0.1
+2025/06/22 21:17:32 Planificador de largo plazo ejecutando
+2025/06/22 21:17:32 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/22 21:17:32 ## (<1>) Se crea el proceso - Estado: NEW 
+2025/06/22 21:17:32 Conexion establecida con exito 
+2025/06/22 21:17:32 La respuesta del server fue: Recibi de Kernel
+2025/06/22 21:17:32 Se pasa el proceso PID: 1 a READY
+2025/06/22 21:17:32 ## (<1>) Pasa del estado NEW al estado READY  
+2025/06/22 21:17:32 Conexion establecida con exito 
+2025/06/22 21:17:32 La respuesta del server fue: Recibi de Kernel
+2025/06/22 21:17:32 Se pasa el proceso PID: 0 a READY
+2025/06/22 21:17:32 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/22 21:17:42 se pasa el proceso PID: 1 a EXECUTE
+2025/06/22 21:17:42 ## (<1>) Pasa del estado READY al estado EXECUTE 
+2025/06/22 21:17:42 Conexion establecida con exito 
+2025/06/22 21:17:42 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/22 21:20:18 Servidor corriendo.
+2025/06/22 21:20:18 Presione enter para inciar el planificador
+2025/06/22 21:20:20 Planificador de largo plazo ejecutando
+2025/06/22 21:20:20 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/22 21:20:20 ## (<1>) Se crea el proceso - Estado: NEW 
+2025/06/22 21:20:21 Conexion establecida con exito 
+2025/06/22 21:20:21 La respuesta del server fue: Recibi de Kernel
+2025/06/22 21:20:21 Se pasa el proceso PID: 1 a READY
+2025/06/22 21:20:21 ## (<1>) Pasa del estado NEW al estado READY  
+2025/06/22 21:20:21 Handshake recibido: Port: 8004 - Instance: cpuX - Ip: 127.0.0.1
+2025/06/22 21:20:21 Conexion establecida con exito 
+2025/06/22 21:20:21 La respuesta del server fue: Recibi de Kernel
+2025/06/22 21:20:21 Se pasa el proceso PID: 0 a READY
+2025/06/22 21:20:21 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/22 21:20:43 Servidor corriendo.
+2025/06/22 21:20:43 Presione enter para inciar el planificador
+2025/06/22 21:20:43 Handshake recibido: Port: 8004 - Instance: cpuX - Ip: 127.0.0.1
+2025/06/22 21:20:45 Planificador de largo plazo ejecutando
+2025/06/22 21:20:45 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/22 21:20:45 ## (<1>) Se crea el proceso - Estado: NEW 
+2025/06/22 21:20:45 Conexion establecida con exito 
+2025/06/22 21:20:45 La respuesta del server fue: Recibi de Kernel
+2025/06/22 21:20:45 Se pasa el proceso PID: 1 a READY
+2025/06/22 21:20:45 ## (<1>) Pasa del estado NEW al estado READY  
+2025/06/22 21:20:46 Conexion establecida con exito 
+2025/06/22 21:20:46 La respuesta del server fue: Recibi de Kernel
+2025/06/22 21:20:46 Se pasa el proceso PID: 0 a READY
+2025/06/22 21:20:46 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/22 21:20:55 se pasa el proceso PID: 1 a EXECUTE
+2025/06/22 21:20:55 ## (<1>) Pasa del estado READY al estado EXECUTE 
+2025/06/22 21:20:55 Conexion establecida con exito 
+2025/06/22 21:20:55 La respuesta del server fue: PC y PID recbidos correctamente
