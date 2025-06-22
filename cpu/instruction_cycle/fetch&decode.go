@@ -90,11 +90,10 @@ func Decode(instruccion globals.Instruccion) {
 
 	memoryManagement := mmu.MMU{
 		ProcesoActual:       instruccion.ProcessValues,
-		TamPagina:           64,          
-		Niveles:             5,       
-		Cant_entradas_tabla: 4, 
-		TablasPaginas:       make(map[int]int), 
-	}
+		TamPagina:           64,
+		Niveles:             5,
+		Cant_entradas_tabla: 4,
+		TablasPaginas:       make(map[int]int)}
 
 	partesDelString := strings.Fields(instruccion.InstructionType)
 
@@ -114,6 +113,7 @@ func Decode(instruccion globals.Instruccion) {
 		
 		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
 
+<<<<<<< HEAD
 		if(mmu.EstaTraducida(nroPagina)){
 			Execute(globals.ID)
 		} else {
@@ -122,6 +122,15 @@ func Decode(instruccion globals.Instruccion) {
 			globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
 			//Mandar direccion fisica a la TLB junto con el numero de página así queda guardada en "caché".
 		}
+=======
+		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
+
+		EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
+		log.Printf("frame: %d", globals.ID.Frame)
+
+		globals.ID.DireccionFis = (globals.ID.Frame * memoryManagement.TamPagina) + globals.ID.Desplazamiento
+>>>>>>> dde471a23fbbe06c3ba5c369e053840f3c490103
 
 	case "WRITE":
 		instruccion.DireccionLog, _ = strconv.Atoi(partesDelString[1])
@@ -130,6 +139,7 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Datos = instruccion.Datos
 
+<<<<<<< HEAD
 		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina  
 		// mmu despues deberiamos hacerlo global, porque son parametros que nos deberia pasar memoria (tabla de pags)
 		
@@ -142,6 +152,19 @@ func Decode(instruccion globals.Instruccion) {
 			// aca habria que agregar la direccion traducida a la tlb y trabajar con un alg de reemplazo si la tlb esta llena
 		}
 		
+=======
+		log.Printf("dir: %d", instruccion.DireccionLog)
+
+		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
+
+		log.Printf("direccion a enviar: %d", direccionAEnviar)
+
+		EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
+		log.Printf("frame: %d", globals.ID.Frame)
+
+		globals.ID.DireccionFis = (globals.ID.Frame * memoryManagement.TamPagina) + globals.ID.Desplazamiento
+>>>>>>> dde471a23fbbe06c3ba5c369e053840f3c490103
 
 	case "GOTO":
 		instruccion.Valor, _ = strconv.Atoi(partesDelString[1])

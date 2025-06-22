@@ -14,7 +14,7 @@ func Mostrarmemoria() {
 	for i := 0; i < globals.ClientConfig.Memory_size; i++ {
 
 		fmt.Printf("%v ", globals.MemoriaPrincipal[i])
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(2 * time.Millisecond)
 	}
 }
 
@@ -55,6 +55,19 @@ func ActualizarInstrucciones(x globals.ProcesoEnMemoria, pid int) { //hay que ha
 
 	auxi := globals.MemoriaKernel[pid]
 	auxi.Instrucciones = x.Instrucciones
+	globals.MemoriaKernel[pid] = auxi
+
+}
+
+/*
+recibe posicion en donde se comenzo a guardar el proceso en swap y tamao de este, se lo asigna a la variable global porque sino no te deja hacerlo directamente :( no se porque
+*/
+
+func ActualizarSwapInfo(posicion int64, tam int, pid int) { //hay que hacer esto porque no te deja actualizarle solo un miembro del struct directamente al de globals por algun motivo
+
+	auxi := globals.MemoriaKernel[pid]
+	auxi.SwapStart = posicion
+	auxi.SwapTam = tam
 	globals.MemoriaKernel[pid] = auxi
 
 }

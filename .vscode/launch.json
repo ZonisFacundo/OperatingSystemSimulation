@@ -2,12 +2,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug memoria desde raíz",
+            "name": "Debug memoria",
             "type": "go",
             "request": "launch",
-            "mode": "debug",
-            "program": "${workspaceFolder}/memoria",
-            "cwd": "${workspaceFolder}"
+            "mode": "auto",
+            "program": "${workspaceFolder}/memoria"
         }
     ]
 }

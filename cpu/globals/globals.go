@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
+	//"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 type Config struct {

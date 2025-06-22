@@ -32,8 +32,11 @@ type ProcesoEnMemoria struct {
 	Instrucciones          []string `json:"instructions"`
 	TablaSimple            []int    `json:"tablasimple"` //basicamente la tabla de paginas simple para el proceso...
 	PunteroATablaDePaginas *Nodo    `json:"tabladepaginas"`
+	SwapStart              int64    `json:"swapstart"` //POSIBILIDAD DE ERROR
+	SwapTam                int      `json:"swaptam"`
 }
 
+// le damos mas bits al int porque puede ser largo el n de byte
 type Nodo struct {
 	Siguiente []*Nodo `json:"node"`
 	Marco     []int   `json:"frame"`
@@ -45,8 +48,8 @@ type DireccionFisica struct {
 	Direccion int `json:"address"`
 }
 type PaqueteWrite struct {
-	Direccion int  `json:"address"`
-	Contenido byte `json:"content"`
+	Direccion int    `json:"address"`
+	Contenido string `json:"content"`
 }
 type DireccionLogica struct {
 	Ip        string `json:"ip"`
@@ -74,6 +77,7 @@ var MemoriaKernel map[int]ProcesoEnMemoria = make(map[int]ProcesoEnMemoria) // m
 var PaginasDisponibles []int                                                //nos indica el estado de cada pagina, ocupada o libre
 var PunteroBase *Nodo = nil
 var PaginasSwap []int = make([]int, 0) //la idea es que se vea algo asi por ejemplo: PaginasSwap = [2, 2, 5] --> significa que el primer marco de pagina del swap y el segundo los ocupan paginas del proceso 2, la tercera del proceso 5, si se deswappea el proceso 2 quedaria --> [-1, -1, 5]
+var Contador int = 0
 
 // FUNCIONES
 func CargarConfig(path string) {

@@ -1,6 +1,7 @@
 package utilsKernel
 
 import (
+	"sync"
 	"time"
 )
 
@@ -50,6 +51,12 @@ type PCBIO struct {
 }
 
 type HandshakepaqueteIO struct {
+	Nombre string `json:"name"`
+	Ip     string `json:"ip"`
+	Puerto int    `json:"port"`
+}
+
+type HandshakepaqueteFinIO struct {
 	Nombre string `json:"name"`
 	Ip     string `json:"ip"`
 	Puerto int    `json:"port"`
@@ -135,3 +142,9 @@ var ColaExit []*PCB
 var ContadorPCB int = 0
 var ListaCPU []CPU
 var ListaIO []IO
+var MutexColaNew sync.Mutex
+var MutexColaReady sync.Mutex
+var MutexListaExec sync.Mutex
+var MutexColaBlock sync.Mutex
+var SemLargoPlazo chan struct{}
+var SemCortoPlazo chan struct{}

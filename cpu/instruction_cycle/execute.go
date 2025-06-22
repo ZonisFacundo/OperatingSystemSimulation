@@ -37,11 +37,10 @@ func Execute(detalle globals.Instruccion) {
 
 		if globals.ID.DireccionFis != 0 { //Ésta habria que imprimir
 			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
-
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %s - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Datos, globals.ID.DireccionFis)
 		} else {
 			fmt.Println("WRITE inválido.")
-			
+
 			detalle.Syscall = "WRITE inválido."
 		}
 
@@ -152,7 +151,6 @@ func Write(ip string, port int, direccion int, contenido string) {
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
-
 		log.Printf("Status de respuesta el server no fue la esperada.\n")
 		return
 	}

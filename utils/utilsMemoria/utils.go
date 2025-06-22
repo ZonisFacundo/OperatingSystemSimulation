@@ -196,12 +196,18 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 	err := json.NewDecoder(r.Body).Decode(&PaqueteInfoWrite) //guarda en request lo que nos mando el cliente
 	if err != nil {
+		log.Printf("returneo porque no pude decodear (RetornoClienteCPUServidorMEMORIAWrite) \n")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.Printf("direccion recibida: %d\n", PaqueteInfoWrite.Direccion)
 
-	PaqueteInfoWrite.Contenido = globals.MemoriaPrincipal[PaqueteInfoWrite.Direccion]
+	bytardos := []byte(PaqueteInfoWrite.Contenido)
 
+	for i := 0; i < len(PaqueteInfoWrite.Contenido); i++ {
+		//log.Printf("%b", bytardos[i])
+		globals.MemoriaPrincipal[PaqueteInfoWrite.Direccion+i] = bytardos[i]
+	}
 	var rta respuestaalCPU
 	rta.Mensaje = "OK\n"
 
@@ -210,12 +216,19 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write(respuestaJSON)
-
 	log.Printf("\n\nMUESTRO LA MEMORIA DONDE SE ESCRIBIO LO QUE NOS PIDIO CPU \n\n")
 	auxiliares.Mostrarmemoria()
 	log.Printf("\n\n")
+
+	log.Printf("\n\nMUESTRO LA tabla de paginas multinivel de pid 0\n\n")
+
+	var PunteritoAux *globals.Nodo = globals.MemoriaKernel[0].PunteroATablaDePaginas
+	contador = 0
+	MostrarTablaMultinivel(0, 0, PunteritoAux)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
 }
 
 func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
@@ -318,6 +331,7 @@ func EscanearMemoria() {
 
 reservar memoria basicamente recibe informacion sobre un proceso que quiere iniciar kernel y guarda en el map que tenemos con informacion basica de proceso
 las paginas que este tiene reservada en memoria.
+
 */
 
 func ReservarMemoria(tam int, pid int) int {
@@ -384,7 +398,7 @@ se fija si se encuentra disponible el tam necesario
 */
 func EntraEnMemoria(tam int) int {
 	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
-	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos", PaginasNecesarias)
+	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos	(EntraEnMemoria) \n", PaginasNecesarias)
 
 	var PaginasEncontradas int = 0
 
@@ -438,7 +452,7 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	if ReservarMemoria(paquete.TamProceso, paquete.Pid) < 0 { //ReservarMemoria devuelve <0 si hubo un error, si no hubieron errores actualiza el map y reserva la memoria para el proceso
 
-		log.Printf("error al reservar memoria para el proceso de pid: %d", (paquete).Pid)
+		log.Printf("error al reservar memoria para el proceso de pid: %d (CrearProceso)", (paquete).Pid)
 		return
 	}
 
@@ -450,6 +464,7 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	aux := globals.MemoriaKernel[paquete.Pid]
 	aux.PunteroATablaDePaginas = new(globals.Nodo)
 	globals.MemoriaKernel[paquete.Pid] = aux
+
 	CrearEInicializarTablaDePaginas(globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas, 0)
 	//ahora nos queda asignarle los marcos correspondientes al proceso segun la tabla de paginas simple que ya tenemos creada
 
@@ -459,8 +474,7 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 	contador = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior (es la unica varialbe global de utils)
 
-	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
-
+	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d  (CrearProceso) \n", paquete.Pid, paquete.TamProceso)
 }
 
 func CrearEInicializarTablaDePaginas(PunteroANodo *globals.Nodo, nivel int) {
@@ -469,23 +483,26 @@ func CrearEInicializarTablaDePaginas(PunteroANodo *globals.Nodo, nivel int) {
 		log.Printf("No puede haber una estructura con niveles negativos...")
 		return
 	}
-	if nivel == globals.ClientConfig.Number_of_levels {
+	if nivel == globals.ClientConfig.Number_of_levels-1 {
 
 		(*PunteroANodo).Marco = make([]int, globals.ClientConfig.Entries_per_page)
 		for j := 0; j < globals.ClientConfig.Entries_per_page; j++ {
-			(*PunteroANodo).Marco[j] = -1 //lo dejo en -1 porque si los dejo en 0 podria significar una pagina valida
+			(*PunteroANodo).Marco[j] = -10 //lo dejo en -10 porque si los dejo en 0 podria significar una pagina valida
+			globals.Contador++
+			log.Printf("%d \t contador: %d\n", (*PunteroANodo).Marco[j], globals.Contador)
+
 		}
 		return
+	} else {
+		(*PunteroANodo).Siguiente = make([]*globals.Nodo, globals.ClientConfig.Entries_per_page) //inicializa el globals.Nodo -> sgte
+
+		for entrada := 0; entrada < globals.ClientConfig.Entries_per_page; entrada++ {
+
+			(*PunteroANodo).Siguiente[entrada] = new(globals.Nodo)
+			CrearEInicializarTablaDePaginas((*PunteroANodo).Siguiente[entrada], nivel+1)
+
+		}
 	}
-	(*PunteroANodo).Siguiente = make([]*globals.Nodo, globals.ClientConfig.Entries_per_page) //inicializa el globals.Nodo -> sgte
-
-	for entrada := 0; entrada < globals.ClientConfig.Entries_per_page; entrada++ {
-
-		(*PunteroANodo).Siguiente[entrada] = new(globals.Nodo)
-		CrearEInicializarTablaDePaginas((*PunteroANodo).Siguiente[entrada], nivel+1)
-
-	}
-
 }
 
 /*
@@ -505,23 +522,28 @@ func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) glo
 
 	//VERIFICO SI LOS DATOS QUE MANDO CPU TIENEN SENTIDO (O SEA, NO HAY VALORES MAYORES A LOS DE LA CANTIDAD DE NIVELES/ENTRADAS/TAMDEPAGINA QUE TENEMOS DEFINIDOS)
 	for i := 1; i <= len(DireccionLogica)-1; i++ { //arrancamos desde 1 porque en 0 esta el desplazamiento, nos fijamos si la entrada nivel n es mayor a la cantidad de entradas por tabla
+		log.Printf("DE CPU RECIBO: %d y el numero de entradas total es: %d	(TraducirLogicaAFisica)\n", DireccionLogica[i], globals.ClientConfig.Entries_per_page)
+
 		if DireccionLogica[i] >= globals.ClientConfig.Entries_per_page {
+			log.Printf("voy a devolver -1 maestro	(TraducirLogicaAFisica)\n")
 			MarcoAurelio.Frame = -1
 			return MarcoAurelio
 		}
 	}
 
-	if DireccionLogica[0] >= globals.ClientConfig.Page_size { //nos envio un desplazamiento dentro de la pagina mayor al tam de la pagina
-		MarcoAurelio.Frame = -2
-		return MarcoAurelio
-	}
-
 	//SI LLEGAMOS ACA, LO QUE ENVIO CPU TIENE SENTIDO
+	var marco globals.Marco
 
-	marco := AccedeAEntrada(DireccionLogica, 0, PunteroNodo)
+	ActualizarTodasLasTablasEnBaseATablaSimple(DireccionLogica[0])
 
-	MarcoAurelio.Frame = marco
+	log.Printf("MUESTRO EL PROCESO \n")
 
+	auxiliares.MostrarProceso(DireccionLogica[0])
+	marco.Frame = AccedeAEntrada(DireccionLogica, 0, PunteroNodo)
+
+	MarcoAurelio = marco
+
+	log.Printf("frame que devuelvo ante traduccion solicitada: %d	(TraducirLogicaAFisica)\n", MarcoAurelio.Frame)
 	return MarcoAurelio
 
 }
@@ -538,7 +560,8 @@ Para aumentar expresividad en el codigo (no estar agregando i - 1 en los loops p
 
 func AccedeAEntrada(DireccionLogica []int, nivel int, PunteroNodo *globals.Nodo) int {
 
-	if nivel == globals.ClientConfig.Number_of_levels { //significa que ya estamos parados en el nivel que contiene los marcos
+	if nivel == globals.ClientConfig.Number_of_levels-1 { //significa que ya estamos parados en el nivel que contiene los marcos
+		log.Printf("\n este es el valor que returneo: %d\n", (*PunteroNodo).Marco[DireccionLogica[nivel]])
 		return ((*PunteroNodo).Marco[DireccionLogica[nivel]])
 
 	} else {
@@ -610,7 +633,7 @@ var contador int = 0 //lo uso para contar donde estamos parados en la tabla de p
 
 func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo) {
 
-	if nivel == globals.ClientConfig.Number_of_levels { //significa que ya estamos parados en el nivel que contiene los marcos
+	if nivel == globals.ClientConfig.Number_of_levels-1 { //significa que ya estamos parados en el nivel que contiene los marcos
 		for j := 0; j < globals.ClientConfig.Entries_per_page; j++ {
 
 			if contador < len(globals.MemoriaKernel[pid].TablaSimple) {
@@ -674,6 +697,12 @@ func CambiarAMenos1TodasLasTablas(pid int) {
 	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
 }
 
+func ActualizarTodasLasTablasEnBaseATablaSimple(pid int) {
+	ActualizarPaginasDisponibles()
+	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
+	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
+}
+
 /*
 cambia a -1 la info del proceso a finalizar y printea las metricas del proceso
 */
@@ -714,4 +743,29 @@ func MemoryDump(pid int) {
 
 	}
 	defer file.Close()
+}
+
+func MostrarTablaMultinivel(pid int, nivel int, PunteroAux *globals.Nodo) {
+
+	if nivel == globals.ClientConfig.Number_of_levels-1 { //significa que ya estamos parados en el nivel que contiene los marcos
+		for j := 0; j < globals.ClientConfig.Entries_per_page; j++ {
+
+			if contador < len(globals.MemoriaKernel[pid].TablaSimple) {
+				log.Printf("%d \t contador: %d\n", (*PunteroAux).Marco[j], globals.Contador)
+				contador++
+				globals.Contador++
+			} else {
+				return
+			}
+
+		}
+
+	} else {
+
+		for i := 0; i < globals.ClientConfig.Entries_per_page; i++ {
+			MostrarTablaMultinivel(pid, nivel+1, (*PunteroAux).Siguiente[i])
+
+		}
+
+	}
 }
