@@ -4,7 +4,8 @@ import (
 	"math"
 	"log"
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
-	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU")
+	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
+)
 
 type MMU struct {
 	ProcesoActual       utilsCPU.Proceso
@@ -14,33 +15,34 @@ type MMU struct {
 	TablasPaginas       map[int]int
 }
 
-func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int {
+func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int, nroPagina int) ([]int) {
 
 	if memoryManagement.TamPagina == 0 {
 		log.Fatalf("Error: TamPagina no puede ser 0. Verificá la configuración o la inicialización de la MMU.")
 	}
 	
-	nroPagina := direccionLogica / memoryManagement.TamPagina
-
 	// Crear un slice para guardar las entradas de las tablas de páginas
 	entradas := make([]int, memoryManagement.Niveles)
 
 	// Calcular las entradas de la tabla de páginas para cada nivel
 	for x := 1; x <= memoryManagement.Niveles; x++ {
-		exp := memoryManagement.Niveles - x
-		divisor := int(math.Pow(float64(memoryManagement.Cant_entradas_tabla), float64(exp)))
+	exp := memoryManagement.Niveles - x
+	divisor := int(math.Pow(float64(memoryManagement.Cant_entradas_tabla), float64(exp)))
 
-		// Calculamos la entrada en el nivel X
-		entradaNivelX := (nroPagina / divisor) % memoryManagement.Cant_entradas_tabla
-		entradas[x-1] = entradaNivelX
+	// Calculamos la entrada en el nivel X
+	entradaNivelX := (nroPagina / divisor) % memoryManagement.Cant_entradas_tabla
+	entradas[x-1] = entradaNivelX
 	}
 
-	desplazamiento := direccionLogica % memoryManagement.TamPagina
+		desplazamiento := direccionLogica % memoryManagement.TamPagina
 
-	globals.ID.Desplazamiento = desplazamiento
+		globals.ID.Desplazamiento = desplazamiento
 	
-	resultado := append([]int{pid}, entradas...) // Agrego el pid al principio del slice y concateno las entradas de nivel
+		resultado := append([]int{pid}, entradas...) // Agrego el pid al principio del slice y concateno las entradas de nivel
 
-	return resultado
+		return resultado
 
-}
+	}
+
+
+	
