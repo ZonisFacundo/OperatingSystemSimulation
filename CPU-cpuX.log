@@ -1,0 +1,21 @@
+[CPU-cpuX] 2025/06/22 21:47:27 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/22 21:47:27 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/22 21:47:27 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/22 21:47:27 Servidor corriendo, esperando PID y PC de Kernel.
+[CPU-cpuX] 2025/06/22 21:47:31 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/22 21:47:31 Instruction given: WRITE 1 EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/22 21:47:31 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/22 21:47:31 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/22 21:47:31 type: WRITE
+[CPU-cpuX] 2025/06/22 21:47:31 value: 0
+[CPU-cpuX] 2025/06/22 21:49:57 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/22 21:49:57 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/22 21:49:57 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/22 21:49:57 Servidor corriendo, esperando PID y PC de Kernel.
+[CPU-cpuX] 2025/06/22 21:50:00 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/22 21:50:00 Instruction given: WRITE 1 EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/22 21:50:00 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/22 21:50:00 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/22 21:50:00 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/22 21:50:00 type: WRITE
+[CPU-cpuX] 2025/06/22 21:50:00 value: 0

@@ -34,13 +34,14 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int, nroPa
 	entradas[x-1] = entradaNivelX
 	}
 
-		desplazamiento := direccionLogica % memoryManagement.TamPagina
+	desplazamiento := direccionLogica % memoryManagement.TamPagina
 
-		globals.ID.Desplazamiento = desplazamiento
+	log.Printf("Desplazamiento?: %d", desplazamiento)
+	globals.ID.Desplazamiento = desplazamiento
 	
-		resultado := append([]int{pid}, entradas...) // Agrego el pid al principio del slice y concateno las entradas de nivel
+	resultado := append([]int{pid}, entradas...) // Agrego el pid al principio del slice y concateno las entradas de nivel
 
-		return resultado
+	return resultado
 
 	}
 
