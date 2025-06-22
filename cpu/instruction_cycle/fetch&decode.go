@@ -110,11 +110,10 @@ func Decode(instruccion globals.Instruccion) {
 
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Tamaño = instruccion.Tamaño
-		
+
 		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
 
-
-		if(mmu.EstaTraducida(nroPagina)){
+		if mmu.EstaTraducida(nroPagina) {
 			log.Printf("entro aca (1)")
 			Execute(globals.ID)
 		} else {
@@ -132,21 +131,20 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Datos = instruccion.Datos
 
-
-		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina  
+		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
 		// mmu despues deberiamos hacerlo global, porque son parametros que nos deberia pasar memoria (tabla de pags)
-		
-		if (mmu.EstaTraducida(nroPagina)) {
+
+		if mmu.EstaTraducida(nroPagina) {
+			log.Printf("entro aca (1)")
 			Execute(globals.ID)
 		} else {
+			log.Printf("entro aca (2)")
+			log.Printf("desplazamiento: %d", globals.ID.Desplazamiento)
 			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
 			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+			globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
 			// aca habria que agregar la direccion traducida a la tlb y trabajar con un alg de reemplazo si la tlb esta llena
 		}
-
-		globals.ID.Parametro1 = instruccion.Parametro1
-		globals.ID.Parametro2 = instruccion.Parametro2
-
 	case "INIT_PROC":
 		instruccion.Parametro1, _ = strconv.Atoi(partesDelString[2])
 		instruccion.Parametro2 = partesDelString[1]
