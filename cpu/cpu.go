@@ -36,12 +36,12 @@ func main() {
 	go func() {
 		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
 			utilsCPU.RecibirPCyPID(w, r)
-			log.Printf("📥 Proceso recibido - PID: %d, PC: %d", globals.Instruction.Pid, globals.Instruction.Pc)
+			log.Printf("Proceso recibido - PID: %d, PC: %d", globals.Instruction.Pid, globals.Instruction.Pc)
 			select {
 			case procesoNuevo <- struct{}{}:
-				log.Println("🔔 Notificando CPU de nuevo proceso")
+				log.Println("Notificando CPU de un nuevo proceso entrante.")
 			default:
-				log.Println("⚠️ CPU ya ejecutando. No se notifica de nuevo proceso")
+				log.Println("CPU ya ejecutando. No se notifica de nuevo proceso")
 			}
 		})
 
@@ -49,19 +49,19 @@ func main() {
 			mu.Lock()
 			globals.Interruption = true
 			mu.Unlock()
-			log.Println("⚡ Interrupción recibida desde Kernel.")
+			log.Println("Interrupción recibida desde Kernel.")
 		})
 
-		log.Printf("🌐 Servidor HTTP activo en puerto %d.", globals.ClientConfig.Port_cpu)
+		log.Printf("Servidor HTTP activo en puerto %d.", globals.ClientConfig.Port_cpu)
 		http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
 	}()
 
 	for {
-		log.Println("⏳ Esperando nuevo proceso...")
-		
+		log.Println("Esperando nuevo proceso...")
+
 		<-procesoNuevo
 
-		log.Printf("▶️ Ejecutando proceso (PID: %d)", globals.Instruction.Pid)
+		log.Printf(" Ejecutando proceso (PID: %d)", globals.Instruction.Pid)
 
 	ejecucion:
 		for {
@@ -73,11 +73,11 @@ func main() {
 			mu.Unlock()
 
 			if interrumpido {
-				log.Printf("⛔ Interrupción. Deteniendo proceso PID %d", globals.Instruction.Pid)
+				log.Printf("Interrupción. Deteniendo proceso PID %d", globals.Instruction.Pid)
 				break ejecucion
 			}
 
-			log.Printf("🔄 Ejecutando: PID=%d, PC=%d", globals.Instruction.Pid, globals.Instruction.Pc)
+			log.Printf("Ejecutando: PID=%d, PC=%d", globals.Instruction.Pid, globals.Instruction.Pc)
 			instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)
 			instruction_cycle.Execute(globals.ID)
