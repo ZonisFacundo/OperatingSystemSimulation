@@ -91,3 +91,18 @@
 [CPU-cpuX] 2025/06/22 21:20:55 value: 0
 [CPU-cpuX] 2025/06/22 21:21:10 Error al decodificar el JSON.
 [CPU-cpuX] 2025/06/22 21:21:10 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO - DIRECCION: 1
+[CPU-cpuX] 2025/06/22 21:25:26 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/22 21:25:26 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/22 21:25:26 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/22 21:25:26 Servidor corriendo, esperando PID y PC de Kernel.
+[CPU-cpuX] 2025/06/22 21:25:28 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/22 21:25:28 Instruction given: WRITE 1 EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/22 21:25:28 dir: 1
+[CPU-cpuX] 2025/06/22 21:25:28 direccion a enviar: [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/22 21:25:28 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/22 21:25:28 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/22 21:25:28 frame: 0
+[CPU-cpuX] 2025/06/22 21:25:28 type: WRITE
+[CPU-cpuX] 2025/06/22 21:25:28 value: 0
+[CPU-cpuX] 2025/06/22 21:25:41 Error al decodificar el JSON.
+[CPU-cpuX] 2025/06/22 21:25:41 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO - DIRECCION: 1
