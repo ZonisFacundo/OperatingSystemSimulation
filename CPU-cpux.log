@@ -715,3 +715,62 @@
 [CPU-cpux] 2025/06/20 19:59:39 value: 0
 [CPU-cpux] 2025/06/20 19:59:48 Error al decodificar el JSON.
 [CPU-cpux] 2025/06/20 19:59:48 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO - DIRECCION: 52
+[CPU-cpux] 2025/06/22 21:55:56 CPU cpux inicializada correctamente.
+[CPU-cpux] 2025/06/22 21:55:56 Conexion establecida con exito.
+[CPU-cpux] 2025/06/22 21:55:56 Conexión realizada con exito con el Kernel.
+[CPU-cpux] 2025/06/22 21:55:56 Servidor corriendo, esperando PID y PC de Kernel.
+[CPU-cpux] 2025/06/22 21:55:58 El Kernel envio PID: 0 - PC: 0
+[CPU-cpux] 2025/06/22 21:55:58 Instruction given: WRITE 500 EJEMPLO_DE_ENUNCIADO
+[CPU-cpux] 2025/06/22 21:55:58 Desplazamiento?: 52
+[CPU-cpux] 2025/06/22 21:55:58 Conexion establecida con exito.
+[CPU-cpux] 2025/06/22 21:55:58 Recibido de memoria el frame: 0
+[CPU-cpux] 2025/06/22 21:55:58 type: WRITE
+[CPU-cpux] 2025/06/22 21:55:58 value: 0
+[CPU-cpux] 2025/06/22 21:59:12 CPU cpux inicializada correctamente.
+[CPU-cpux] 2025/06/22 21:59:12 Conexion establecida con exito.
+[CPU-cpux] 2025/06/22 21:59:12 Conexión realizada con exito con el Kernel.
+[CPU-cpux] 2025/06/22 21:59:12 Servidor corriendo, esperando PID y PC de Kernel.
+[CPU-cpux] 2025/06/22 21:59:13 El Kernel envio PID: 0 - PC: 0
+[CPU-cpux] 2025/06/22 21:59:13 Instruction given: WRITE 500 EJEMPLO_DE_ENUNCIADO
+[CPU-cpux] 2025/06/22 21:59:13 Desplazamiento?: 52
+[CPU-cpux] 2025/06/22 21:59:13 Conexion establecida con exito.
+[CPU-cpux] 2025/06/22 21:59:13 Recibido de memoria el frame: 0
+[CPU-cpux] 2025/06/22 21:59:13 type: WRITE
+[CPU-cpux] 2025/06/22 21:59:13 value: 0
+[CPU-cpux] 2025/06/22 22:02:38 CPU cpux inicializada correctamente.
+[CPU-cpux] 2025/06/22 22:02:38 Conexion establecida con exito.
+[CPU-cpux] 2025/06/22 22:02:38 Conexión realizada con exito con el Kernel.
+[CPU-cpux] 2025/06/22 22:02:38 Servidor corriendo, esperando PID y PC de Kernel.
+[CPU-cpux] 2025/06/22 22:02:40 El Kernel envio PID: 0 - PC: 0
+[CPU-cpux] 2025/06/22 22:02:40 Instruction given: WRITE 500 EJEMPLO_DE_ENUNCIADO
+[CPU-cpux] 2025/06/22 22:02:40 Desplazamiento?: 52
+[CPU-cpux] 2025/06/22 22:02:40 Conexion establecida con exito.
+[CPU-cpux] 2025/06/22 22:02:40 Recibido de memoria el frame: 1
+[CPU-cpux] 2025/06/22 22:02:40 type: WRITE
+[CPU-cpux] 2025/06/22 22:02:40 value: 0
+[CPU-cpux] 2025/06/22 22:04:04 CPU cpux inicializada correctamente.
+[CPU-cpux] 2025/06/22 22:04:04 Conexion establecida con exito.
+[CPU-cpux] 2025/06/22 22:04:04 Conexión realizada con exito con el Kernel.
+[CPU-cpux] 2025/06/22 22:04:04 Servidor corriendo, esperando PID y PC de Kernel.
+[CPU-cpux] 2025/06/22 22:04:05 El Kernel envio PID: 0 - PC: 0
+[CPU-cpux] 2025/06/22 22:04:05 Instruction given: WRITE 500 EJEMPLO_DE_ENUNCIADO
+[CPU-cpux] 2025/06/22 22:04:05 entro aca (2)
+[CPU-cpux] 2025/06/22 22:04:05 Desplazamiento?: 52
+[CPU-cpux] 2025/06/22 22:04:05 Conexion establecida con exito.
+[CPU-cpux] 2025/06/22 22:04:05 Recibido de memoria el frame: 1
+[CPU-cpux] 2025/06/22 22:04:05 type: WRITE
+[CPU-cpux] 2025/06/22 22:04:05 value: 0
+[CPU-cpux] 2025/06/22 22:08:19 CPU cpux inicializada correctamente.
+[CPU-cpux] 2025/06/22 22:08:19 Conexion establecida con exito.
+[CPU-cpux] 2025/06/22 22:08:19 Conexión realizada con exito con el Kernel.
+[CPU-cpux] 2025/06/22 22:08:19 Servidor corriendo, esperando PID y PC de Kernel.
+[CPU-cpux] 2025/06/22 22:08:20 El Kernel envio PID: 0 - PC: 0
+[CPU-cpux] 2025/06/22 22:08:20 Instruction given: WRITE 500 EJEMPLO_DE_ENUNCIADO
+[CPU-cpux] 2025/06/22 22:08:20 entro aca (2)
+[CPU-cpux] 2025/06/22 22:08:20 Desplazamiento?: 52
+[CPU-cpux] 2025/06/22 22:08:20 Conexion establecida con exito.
+[CPU-cpux] 2025/06/22 22:08:20 Recibido de memoria el frame: 1
+[CPU-cpux] 2025/06/22 22:08:20 type: WRITE
+[CPU-cpux] 2025/06/22 22:08:20 value: 0
+[CPU-cpux] 2025/06/22 22:08:29 Error al decodificar el JSON.
+[CPU-cpux] 2025/06/22 22:08:29 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO - DIRECCION: 52

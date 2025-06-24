@@ -56,5 +56,5 @@ type EnvioDirLogicaAMemoria struct {
 }
 
 type MarcoDeMemoria struct {
-	Frame int `json:"marco"`
+	Frame int `json:"frame"`
 }
