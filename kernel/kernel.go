@@ -28,6 +28,7 @@ func main() {
 	utilsKernel.InicializarSemaforos()
 	go func() {
 		utilsKernel.IniciarPlanifcador(tamanio, archivo)
+		//utilsKernel.CrearPCBPrueba(1, archivo)
 		utilsKernel.PlanificadorLargoPlazo()
 	}()
 

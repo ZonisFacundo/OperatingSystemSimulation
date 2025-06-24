@@ -140,7 +140,9 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		if ExisteIO(request.Parametro2) {
 			SemCortoPlazo <- struct{}{}
 			ioServidor := ObtenerIO(request.Parametro2)
-			AgregarColaIO(ioServidor, PCBUtilizar.Pid, request.Parametro1)
+			PCBUtilizar.TiempoEnvioBlock = time.Now()
+			go PlanificadorMedianoPlazo(PCBUtilizar)
+			AgregarColaIO(ioServidor, PCBUtilizar, request.Parametro1)
 			PasarBlocked(PCBUtilizar)
 			log.Printf("## (<%d>) - Bloqueado por IO: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
 			MandarProcesoAIO(ioServidor)
@@ -171,10 +173,10 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func UtilizarIO(ioServer IO, pid int, tiempo int) {
+func UtilizarIO(ioServer IO, pcb *PCB, tiempo int) {
 
 	var paquete PaqueteEnviadoKERNELaIO
-	paquete.Pid = pid
+	paquete.Pid = pcb.Pid
 	paquete.Tiempo = tiempo
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
@@ -205,12 +207,6 @@ func UtilizarIO(ioServer IO, pid int, tiempo int) {
 
 	}
 
-	if respuestaJSON.StatusCode != http.StatusOK {
-
-		log.Printf("Status de respuesta del I/0 %s no fue la esperada.\n", ioServer.Instancia)
-		FinalizarProcesosIO(&ioServer)
-		return
-	}
 	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
 
 	log.Printf("Conexion establecida con exito \n")
@@ -226,9 +222,19 @@ func UtilizarIO(ioServer IO, pid int, tiempo int) {
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del I/O %s fue: %s\n", ioServer.Instancia, respuesta.Mensaje)
-	MandarProcesoAIO(ioServer)
 
+	if respuestaJSON.StatusCode == http.StatusOK {
+
+		log.Printf("La respuesta del I/O %s fue: %s\n", ioServer.Instancia, respuesta.Mensaje)
+
+		if EstaEnColaBlock(pcb) {
+			PasarReady(pcb)
+		} else {
+			PasarSuspReady(pcb)
+		}
+
+		MandarProcesoAIO(ioServer)
+	}
 }
 
 func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int) {
@@ -498,6 +504,34 @@ func CrearPCB(tamanio int, archivo string) { //pid unico arranca de 0
 	SemLargoPlazo <- struct{}{}
 }
 
+/*
+func CrearPCBPrueba(tamanio int, archivo string) { //pid unico arranca de 0
+
+		pcbUsar := &PCB{
+			Pid:                ContadorPCB,
+			Pc:                 0,
+			EstadoActual:       "NEW",
+			TamProceso:         tamanio,
+			MetricaEstados:     make(map[Estado]int),
+			TiempoLlegada:      make(map[Estado]time.Time),
+			TiempoEstados:      make(map[Estado]int64),
+			Archivo:            archivo,
+			TiempoEnvioExc:     time.Now(),
+			RafagaAnterior:     0,
+			EstimacionAnterior: 5,
+		}
+		MutexColaNew.Lock()
+		ColaNew = append(ColaNew, pcbUsar)
+		MutexColaNew.Unlock()
+
+		log.Printf("## (<%d>) Se crea el proceso - Estado: NEW \n", pcbUsar.Pid)
+		pcbUsar.MetricaEstados["NEW"]++
+		pcbUsar.TiempoLlegada["NEW"] = time.Now()
+		ContadorPCB++
+		SemLargoPlazo <- struct{}{}
+	}
+*/
+
 func LeerConsola() string {
 	// Leer de la consola
 	reader := bufio.NewReader(os.Stdin)
@@ -545,6 +579,7 @@ func PlanificadorCortoPlazo() {
 	for true {
 		<-SemCortoPlazo
 		if len(ColaReady) != 0 {
+			//time.Sleep(10 * time.Second)
 			MutexColaReady.Lock()
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
@@ -569,6 +604,19 @@ func PlanificadorCortoPlazo() {
 			SemCortoPlazo <- struct{}{}
 			time.Sleep(1 * time.Second)
 
+		}
+	}
+}
+
+func PlanificadorMedianoPlazo(pcb *PCB) {
+	for true {
+		if EstaEnColaBlock(pcb) {
+			if time.Since(pcb.TiempoEnvioBlock) >= time.Duration(globals.ClientConfig.Suspension_time)*time.Millisecond {
+				PasarSuspBlock(pcb)
+				break
+			}
+		} else {
+			break
 		}
 	}
 }
@@ -680,6 +728,35 @@ func PasarBlocked(pcb *PCB) {
 	SemCortoPlazo <- struct{}{}
 }
 
+func PasarSuspBlock(pcb *PCB) {
+	log.Printf("## (<%d>) Pasa del estado %s al estado SUSP.BLOCKED \n", pcb.Pid, pcb.EstadoActual)
+	//HacerSwap(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+	MutexColaSuspBlock.Lock()
+	ColaBlock = append(ColaSuspBlock, pcb)
+	MutexColaSuspBlock.Unlock()
+	MutexColaBlock.Lock()
+	ColaBlock = removerPCB(ColaBlock, pcb)
+	MutexColaBlock.Unlock()
+	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
+	pcb.EstadoActual = "SUSP.BLOCKED"
+	pcb.MetricaEstados["SUSP.BLOCKED"]++
+	pcb.TiempoLlegada["SUSP.BLOCKED"] = time.Now()
+}
+
+func PasarSuspReady(pcb *PCB) {
+	log.Printf("## (<%d>) Pasa del estado %s al estado SUSP.READY \n", pcb.Pid, pcb.EstadoActual)
+	MutexColaSuspReady.Lock()
+	ColaSuspReady = append(ColaSuspReady, pcb)
+	MutexColaSuspReady.Unlock()
+	MutexColaSuspBlock.Lock()
+	ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
+	MutexColaSuspBlock.Unlock()
+	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
+	pcb.EstadoActual = "SUSP.READY"
+	pcb.MetricaEstados["SUSP.READY"]++
+	pcb.TiempoLlegada["SUSP.READY"] = time.Now()
+}
+
 func removerPCB(cola []*PCB, pcb *PCB) []*PCB {
 	for i, item := range cola {
 		if item.Pid == pcb.Pid {
@@ -784,9 +861,9 @@ func ExisteIO(instancia string) bool {
 	return false
 }
 
-func AgregarColaIO(io IO, pid int, tiempo int) {
+func AgregarColaIO(io IO, pcb *PCB, tiempo int) {
 	io.ColaProcesos = append(io.ColaProcesos, PCBIO{
-		Pid:    pid,
+		Pcb:    pcb,
 		Tiempo: tiempo,
 	})
 }
@@ -800,10 +877,19 @@ func ObtenerPCB(pid int) *PCB {
 	return &PCB{}
 }
 
+func EstaEnColaBlock(pcbChequear *PCB) bool {
+	for _, pcb := range ColaBlock {
+		if pcb == pcbChequear {
+			return true
+		}
+	}
+	return false
+}
+
 func MandarProcesoAIO(io IO) {
 	if io.Disponible {
 		io.Disponible = false
-		go UtilizarIO(io, io.ColaProcesos[0].Pid, io.ColaProcesos[0].Tiempo)
+		go UtilizarIO(io, io.ColaProcesos[0].Pcb, io.ColaProcesos[0].Tiempo)
 
 	}
 }
@@ -874,17 +960,6 @@ func DumpDelProceso(pcb *PCB, ip string, puerto int) {
 
 }
 
-func FinalizarProcesosIO(io *IO) {
-	for _, proceso := range io.ColaProcesos {
-		pcb := ObtenerPCB(proceso.Pid)
-		if pcb != nil {
-			log.Printf("El proceso PID: %d  no pudo ser atendido por el I/O %s y se pasa a EXIT", pcb.Pid, io.Instancia)
-			FinalizarProceso(pcb)
-		}
-	}
-	ListaIO = removerIO(io) //alto gil
-}
-
 func removerIO(io *IO) []IO {
 	for i, item := range ListaIO {
 		if item.Instancia == io.Instancia {
@@ -896,12 +971,13 @@ func removerIO(io *IO) []IO {
 
 func enviarExitProcesosIO(io IO) {
 	for _, proceso := range io.ColaProcesos {
-		pcb := ObtenerPCB(proceso.Pid)
-		if pcb != nil {
-			log.Printf("El proceso PID: %d  se pasa a EXIT por desconexion del I/O %s", pcb.Pid, io.Instancia)
-			FinalizarProceso(pcb)
+		if proceso.Pcb != nil {
+			log.Printf("El proceso PID: %d  se pasa a EXIT por desconexion del I/O %s", proceso.Pcb.Pid, io.Instancia)
+			FinalizarProceso(proceso.Pcb)
 		}
 	}
+	removerIO(&io)
+	log.Printf("Se desconecto el I/O %s", io.Instancia)
 }
 
 func InicializarSemaforos() {

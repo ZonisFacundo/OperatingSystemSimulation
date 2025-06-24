@@ -19,6 +19,7 @@ type PCB struct {
 	RafagaAnterior     float32              `json:"rafagaAnterior"` //capaz dsp lo cambiamos a time xd
 	EstimacionAnterior float32              `json:"estimacionAnterior"`
 	TiempoEnvioExc     time.Time            `json:"tiempoEnvioExc"` //sirve para calcular el timpo de ejecucion
+	TiempoEnvioBlock   time.Time            `json:"tiempoEnvioBlock"`
 }
 
 /*
@@ -46,8 +47,8 @@ type IO struct {
 }
 
 type PCBIO struct {
-	Pid    int `json:"pid"`
-	Tiempo int `json:"tiempo"`
+	Pcb    *PCB `json:"Pcb"`
+	Tiempo int  `json:"tiempo"`
 }
 
 type HandshakepaqueteIO struct {
@@ -146,5 +147,7 @@ var MutexColaNew sync.Mutex
 var MutexColaReady sync.Mutex
 var MutexListaExec sync.Mutex
 var MutexColaBlock sync.Mutex
+var MutexColaSuspBlock sync.Mutex
+var MutexColaSuspReady sync.Mutex
 var SemLargoPlazo chan struct{}
 var SemCortoPlazo chan struct{}
