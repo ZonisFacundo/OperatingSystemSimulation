@@ -615,3 +615,81 @@
 2025/06/25 13:29:17 La respuesta del server fue: PC y PID recbidos correctamente
 2025/06/25 13:29:25 Conexion establecida con exito 
 2025/06/25 13:29:25 PID: 0 PC: 1
+2025/06/25 14:21:55 Servidor corriendo.
+2025/06/25 14:21:55 Presione enter para inciar el planificador
+2025/06/25 14:22:01 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 14:22:03 Planificador de largo plazo ejecutando
+2025/06/25 14:22:03 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 14:22:03 Conexion establecida con exito 
+2025/06/25 14:22:03 La respuesta del server fue: Recibi de Kernel
+2025/06/25 14:22:03 Se pasa el proceso PID: 0 a READY
+2025/06/25 14:22:03 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 14:22:03 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 14:22:03 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 14:22:03 Conexion establecida con exito 
+2025/06/25 14:22:03 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 14:22:05 Conexion establecida con exito 
+2025/06/25 14:22:05 PID: 0 PC: 0
+2025/06/25 14:25:52 Servidor corriendo.
+2025/06/25 14:25:52 Presione enter para inciar el planificador
+2025/06/25 14:25:54 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 14:25:55 Planificador de largo plazo ejecutando
+2025/06/25 14:25:55 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 14:25:56 Conexion establecida con exito 
+2025/06/25 14:25:56 La respuesta del server fue: Recibi de Kernel
+2025/06/25 14:25:56 Se pasa el proceso PID: 0 a READY
+2025/06/25 14:25:56 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 14:25:56 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 14:25:56 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 14:25:56 Conexion establecida con exito 
+2025/06/25 14:25:56 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 14:26:02 Conexion establecida con exito 
+2025/06/25 14:26:02 PID: 0 PC: 1
+2025/06/25 14:29:13 Servidor corriendo.
+2025/06/25 14:29:13 Presione enter para inciar el planificador
+2025/06/25 14:29:14 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 14:29:16 Planificador de largo plazo ejecutando
+2025/06/25 14:29:16 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 14:29:16 Conexion establecida con exito 
+2025/06/25 14:29:16 La respuesta del server fue: Recibi de Kernel
+2025/06/25 14:29:16 Se pasa el proceso PID: 0 a READY
+2025/06/25 14:29:16 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 14:29:16 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 14:29:16 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 14:29:16 Conexion establecida con exito 
+2025/06/25 14:29:16 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 14:29:21 contexto de devolucion del proceso: INIT_PROC
+2025/06/25 14:29:21 Conexion establecida con exito 
+2025/06/25 14:29:21 ## (<0>) - Solicitó syscall: <INIT_PROC> 
+2025/06/25 14:29:21 ## (<1>) Se crea el proceso - Estado: NEW 
+2025/06/25 14:29:21 Conexion establecida con exito 
+2025/06/25 14:29:21 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 14:29:21 PID: 0 PC: 3
+2025/06/25 14:29:21 Conexion establecida con exito 
+2025/06/25 14:29:21 La respuesta del server fue: No hay espacio para guardar el proceso en memoria crack
+2025/06/25 14:29:23 Conexion establecida con exito 
+2025/06/25 14:29:23 PID: 0 PC: 4
+2025/06/25 14:36:19 Servidor corriendo.
+2025/06/25 14:36:19 Presione enter para inciar el planificador
+2025/06/25 14:36:21 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 14:36:22 Planificador de largo plazo ejecutando
+2025/06/25 14:36:22 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 14:36:22 Conexion establecida con exito 
+2025/06/25 14:36:22 La respuesta del server fue: Recibi de Kernel
+2025/06/25 14:36:22 Se pasa el proceso PID: 0 a READY
+2025/06/25 14:36:22 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 14:36:22 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 14:36:22 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 14:36:22 Conexion establecida con exito 
+2025/06/25 14:36:22 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 14:36:27 contexto de devolucion del proceso: INIT_PROC
+2025/06/25 14:36:27 Conexion establecida con exito 
+2025/06/25 14:36:27 ## (<0>) - Solicitó syscall: <INIT_PROC> 
+2025/06/25 14:36:27 ## (<1>) Se crea el proceso - Estado: NEW 
+2025/06/25 14:36:27 Conexion establecida con exito 
+2025/06/25 14:36:27 La respuesta del server fue: No hay espacio para guardar el proceso en memoria crack
+2025/06/25 14:36:27 Conexion establecida con exito 
+2025/06/25 14:36:27 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 14:36:27 PID: 0 PC: 3
+2025/06/25 14:36:29 Conexion establecida con exito 
+2025/06/25 14:36:29 PID: 0 PC: 4

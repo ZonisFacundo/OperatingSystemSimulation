@@ -172,25 +172,28 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+	if PaqueteDireccion.Tamaño < 1 {
+		log.Printf("\n\nTAM A LEER ES < 0, ERROR (HTTP Read)\n\n")
+		return
+	}
 	var ContenidoDireccion globals.BytePaquete
+	ContenidoDireccion.Info = make([]byte, PaqueteDireccion.Tamaño)
 
 	for i := 0; i < PaqueteDireccion.Tamaño; i++ {
 
 		ContenidoDireccion.Info[i] = globals.MemoriaPrincipal[PaqueteDireccion.Direccion]
 	}
-	
+
 	respuestaJSON, err := json.Marshal(ContenidoDireccion)
 	if err != nil {
 		return
 	}
 
+	log.Printf("\n\nMUESTRO LO QUE LE MANDO A CPU COMO LEIDO (HTTP Read)\n\n")
+	log.Print("array de bytes: \n", ContenidoDireccion.Info)
+
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
-
-	log.Printf("\n\nMUESTRO LA MEMORIA DONDE SE LEE LO QUE NOS PIDE CPU \n\n")
-	auxiliares.Mostrarmemoria()
-	log.Printf("\n\n")
 
 }
 

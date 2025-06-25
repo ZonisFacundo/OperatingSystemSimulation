@@ -48,7 +48,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "READ":
 
-		if globals.ID.DireccionFis != 0 {
+		if globals.ID.DireccionFis >= 0 {
 
 			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Parametro1)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Tamaño, globals.ID.DireccionFis)
