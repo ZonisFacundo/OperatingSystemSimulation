@@ -19,7 +19,7 @@ func main() {
 
 	instanceID := os.Args[1]
 	procesoNuevo := make(chan struct{})
-	var mu sync.Mutex
+	var mutexInterrupcion sync.Mutex
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
@@ -45,10 +45,11 @@ func main() {
 			}
 		})
 
-		http.HandleFunc("/InterrupcionCPU", func(w http.ResponseWriter, r *http.Request) {
-			mu.Lock()
+		http.HandleFunc("/INTERRUPCIONCPU", func(w http.ResponseWriter, r *http.Request) {
+			utilsCPU.DevolverPidYPCInterrupcion(w, r, globals.Instruction.Pc, globals.Instruction.Pid)
+			mutexInterrupcion.Lock()
 			globals.Interruption = true
-			mu.Unlock()
+			mutexInterrupcion.Unlock()
 			log.Println("## Llega interrupción al puerto Interrupt.")
 		})
 
@@ -65,12 +66,13 @@ func main() {
 
 	ejecucion:
 		for {
-			mu.Lock()
+			mutexInterrupcion.Lock()
+
 			interrumpido := globals.Interruption
 			if interrumpido {
 				globals.Interruption = false
 			}
-			mu.Unlock()
+			mutexInterrupcion.Unlock()
 
 			if interrumpido {
 				log.Printf("Interrupción. Deteniendo proceso PID %d", globals.Instruction.Pid)
@@ -81,7 +83,6 @@ func main() {
 			instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)
 			instruction_cycle.Execute(globals.ID)
-
 			globals.Instruction.Pc++
 		}
 	}

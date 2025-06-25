@@ -100,7 +100,7 @@ type PaqueteEnviadoKERNELaCPU struct {
 }
 
 type PaqueteInterrupcion struct {
-	mensaje string `json:"message"`
+	Mensaje string `json:"message"`
 }
 
 type RespuestaalIO struct {

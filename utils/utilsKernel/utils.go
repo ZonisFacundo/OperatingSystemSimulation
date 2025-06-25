@@ -129,14 +129,13 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Conexion establecida con exito \n")
 	cpuServidor := ObtenerCpu(request.InstanciaCPU)
-	cpuServidor.Disponible = true
 	PCBUtilizar := ObtenerPCB(cpuServidor.Pid) // ya no hace falta porque esta en el struct
 	PCBUtilizar.Pc = request.Pc
 	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
 	respuesta.Mensaje = "interrupcion"
 	switch request.Syscall {
 	case "I/O":
-		//interrumpir
+		cpuServidor.Disponible = true
 		if ExisteIO(request.Parametro2) {
 			SemCortoPlazo <- struct{}{}
 			ioServidor := ObtenerIO(request.Parametro2)
@@ -154,20 +153,22 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		}
 		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
 	case "EXIT":
+		cpuServidor.Disponible = true
 		FinalizarProceso(PCBUtilizar)
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
 	case "DUMP_MEMORY":
+		cpuServidor.Disponible = true
 		SemCortoPlazo <- struct{}{}
 		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
 	case "INIT_PROC":
 		respuesta.Mensaje = ""
-		CrearPCB(request.Parametro1, request.Parametro2)
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
+		CrearPCB(request.Parametro1, request.Parametro2)
 		cpuServidor.Disponible = false
 		EnviarProcesoACPU(PCBUtilizar, &cpuServidor)
 	}
-
+	log.Printf("PID: %d PC: %d", request.Pid, request.Pc)
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
@@ -364,7 +365,7 @@ func InterrumpirCPU(cpu *CPU) {
 
 	var paquete PaqueteInterrupcion
 
-	paquete.mensaje = "Interrupcion del proceso"
+	paquete.Mensaje = "Interrupcion del proceso"
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -375,7 +376,7 @@ func InterrumpirCPU(cpu *CPU) {
 
 	cliente := http.Client{} // Crea un "cliente"
 
-	url := fmt.Sprintf("http://%s:%d/InterrupcionCPU", cpu.Ip, cpu.Port) //url del server
+	url := fmt.Sprintf("http://%s:%d/INTERRUPCIONCPU", cpu.Ip, cpu.Port) //url del server
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
@@ -418,8 +419,8 @@ func InterrumpirCPU(cpu *CPU) {
 		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
-
+	//log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	log.Printf("PID: %d PC: %d", respuesta.Pid, respuesta.Pc)
 } //falta la respuesta de CPU
 
 func InformarMemoriaFinProceso(pcb *PCB, ip string, puerto int) {
@@ -801,6 +802,16 @@ func crearStructCPU(ip string, puerto int, instancia string) {
 		Disponible: true,
 		Instancia:  instancia,
 	})
+}
+
+func CrearStructCPU2(ip string, puerto int, instancia string) CPU {
+	return (CPU{
+		Ip:         ip,
+		Port:       puerto,
+		Disponible: true,
+		Instancia:  instancia,
+	})
+
 }
 
 func ObtenerCpu(instancia string) CPU {

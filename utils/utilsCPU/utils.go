@@ -105,4 +105,26 @@ func EnvioPortKernel(ip string, puerto int, instancia string, portcpu int, ipcpu
 
 }
 
+func DevolverPidYPCInterrupcion(w http.ResponseWriter, r *http.Request, pc int, pid int) {
+	var request PaqueteInterrupcion
 
+	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	log.Printf("El kernel nos interrumpio.")
+
+	var respuesta RespuestaKernel
+	respuesta.Pc = pc
+	respuesta.Pid = pid
+
+	respuestaJSON, err := json.Marshal(respuesta)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+}

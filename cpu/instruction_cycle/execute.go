@@ -81,7 +81,7 @@ func Execute(detalle globals.Instruccion) bool {
 			globals.Instruction.Pid,
 			globals.Instruction.Pc,
 			globals.ClientConfig.Instance_id,
-			globals.InstruccionDetalle.InstructionType,
+			detalle.InstructionType,
 			globals.InstruccionDetalle.Parametro1,
 			globals.InstruccionDetalle.Parametro2)
 
@@ -89,11 +89,12 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - TAM: %d - ARCHIVO: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Parametro1, detalle.Parametro2)
+
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.Instruction.Pid, globals.Instruction.Pc,
 			globals.ClientConfig.Instance_id,
-			globals.InstruccionDetalle.Syscall,
+			detalle.InstructionType,
 			globals.InstruccionDetalle.Parametro1,
 			globals.InstruccionDetalle.Parametro2)
 
@@ -106,7 +107,7 @@ func Execute(detalle globals.Instruccion) bool {
 			globals.Instruction.Pid,
 			globals.Instruction.Pc,
 			globals.ClientConfig.Instance_id,
-			globals.InstruccionDetalle.Syscall,
+			detalle.InstructionType,
 			0,
 			"")
 		return true
@@ -118,7 +119,7 @@ func Execute(detalle globals.Instruccion) bool {
 			globals.Instruction.Pid,
 			globals.Instruction.Pc,
 			globals.ClientConfig.Instance_id,
-			globals.InstruccionDetalle.Syscall,
+			detalle.InstructionType,
 			0,
 			"")
 		return true
@@ -263,6 +264,8 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 	paquete.InstanciaCPU = instancia
 	paquete.Parametro1 = parametro1
 	paquete.Parametro2 = parametro2
+
+	log.Printf("syscall enviada: %s", paquete.Syscall)
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
