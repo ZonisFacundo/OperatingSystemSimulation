@@ -138,6 +138,8 @@ func Write(ip string, port int, direccion int, contenido string) {
 	paquete.Contenido = contenido
 	paquete.Direccion = direccion
 
+	log.Printf("dir: %d, cont: %s", paquete.Direccion, paquete.Contenido)
+
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
 		log.Printf("Error al convertir a json.\n")

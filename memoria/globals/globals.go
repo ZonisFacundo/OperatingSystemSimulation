@@ -48,7 +48,7 @@ type DireccionFisica struct {
 	Direccion int `json:"address"`
 }
 type PaqueteWrite struct {
-	Direccion int    `json:"address"`
+	Direccion int    `json:"adress"`
 	Contenido string `json:"content"`
 }
 type DireccionLogica struct {

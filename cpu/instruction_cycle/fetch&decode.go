@@ -118,7 +118,10 @@ func Decode(instruccion globals.Instruccion) {
 			log.Printf("entro aca (1)")
 			Execute(globals.ID)
 		} else {
-			log.Printf("entro aca (2)")
+			log.Printf("dir logica: ", globals.ID.DireccionLog)
+			log.Printf("PID: ", globals.ID.ProcessValues.Pid)
+			log.Printf("nroPagina: ", nroPagina)
+
 			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
 			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 			globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
@@ -139,11 +142,20 @@ func Decode(instruccion globals.Instruccion) {
 			log.Printf("entro aca (1)")
 			Execute(globals.ID)
 		} else {
-			log.Printf("entro aca (2)")
-			log.Printf("desplazamiento: %d", globals.ID.Desplazamiento)
+			log.Printf("dir logica: %d", globals.ID.DireccionLog)
+			log.Printf("PID: %d", globals.ID.ProcessValues.Pid)
+			log.Printf("nroPagina: %d", nroPagina)
+
 			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
+
+			log.Println("dir?: ", direccionAEnviar)
+
 			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
-			globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+			if globals.ID.Frame < 0 {
+				log.Printf("ERROR ERROR ERROR FACU, te imprimo el frame %d", globals.ID.Frame)
+			} else {
+				globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+			}
 			// aca habria que agregar la direccion traducida a la tlb y trabajar con un alg de reemplazo si la tlb esta llena
 		}
 	case "INIT_PROC":
