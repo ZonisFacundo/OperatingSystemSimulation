@@ -19,10 +19,10 @@ type PaqueteRecibidoMemoria struct {
 	Mensaje string `json:"message"`
 }
 type PaqueteRecibidoWRITE struct {
-	Mensaje int `json:"message"`
+	Mensaje string `json:"message"`
 }
 type PaqueteRecibidoREAD struct {
-	Info string `json:"info"`
+	Info byte `json:"info"`
 }
 
 func Fetch(pid int, pc int, ip string, puerto int) {

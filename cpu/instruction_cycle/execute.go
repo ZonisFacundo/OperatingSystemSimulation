@@ -186,9 +186,8 @@ func Write(ip string, port int, direccion int, contenido string) {
 		return
 	}
 
-	log.Printf("Respuesta de Memoria: %d\n", respuesta.Mensaje) // Nos devuelve memoria el mensaje de escritura.
+	log.Printf("Respuesta de Memoria: %s\n", respuesta.Mensaje) // Nos devuelve memoria el mensaje de escritura.
 
-	globals.ID.DireccionLog = respuesta.Mensaje
 }
 
 func Read(ip string, port int, direccion int) {
@@ -246,7 +245,7 @@ func Read(ip string, port int, direccion int) {
 		return
 	}
 
-	log.Printf("Valor en memoria: %s\n", respuesta.Info) // Nos devuelve memoria el mensaje de escritura.
+	log.Printf("Valor en memoria: %d\n", respuesta.Info) // Nos devuelve memoria el mensaje de escritura.
 
 }
 
@@ -294,7 +293,7 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 
 	defer respuestaJSON.Body.Close()
 
-	log.Printf("Conexion establecida con exito.\n")
+	log.Printf("Se envio syscall a Kernel.\n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
