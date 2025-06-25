@@ -75,7 +75,7 @@ func Execute(detalle globals.Instruccion) bool {
 	// SYSCALLS.
 
 	case "IO": //IO(Dispositivo y tiempo)
-		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %d - TIME: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Parametro1, detalle.Parametro2)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.Instruction.Pid,
@@ -88,7 +88,7 @@ func Execute(detalle globals.Instruccion) bool {
 		return true
 
 	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
-		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - TAM: %d - ARCHIVO: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Parametro1, detalle.Parametro2)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.Instruction.Pid, globals.Instruction.Pc,
@@ -100,7 +100,7 @@ func Execute(detalle globals.Instruccion) bool {
 		return true
 
 	case "DUMP_MEMORY": //
-		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.ProcessValues.Pid, detalle.InstructionType)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.Instruction.Pid,
@@ -112,7 +112,7 @@ func Execute(detalle globals.Instruccion) bool {
 		return true
 
 	case "EXIT":
-		log.Printf("Se envia syscall: %s a Kernel", detalle.InstructionType)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.ProcessValues.Pid, detalle.InstructionType)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.Instruction.Pid,

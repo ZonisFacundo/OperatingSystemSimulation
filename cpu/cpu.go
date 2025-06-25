@@ -49,7 +49,7 @@ func main() {
 			mu.Lock()
 			globals.Interruption = true
 			mu.Unlock()
-			log.Println("Interrupción recibida desde Kernel.")
+			log.Println("## Llega interrupción al puerto Interrupt.")
 		})
 
 		log.Printf("Servidor HTTP activo en puerto %d.", globals.ClientConfig.Port_cpu)
@@ -86,3 +86,16 @@ func main() {
 		}
 	}
 }
+
+/*
+LOGS FALTANTES POR PONER:
+
+Lectura/Escritura Memoria: “PID: <PID> - Acción: <LEER / ESCRIBIR> - Dirección Física: <DIRECCION_FISICA> - Valor: <VALOR LEIDO / ESCRITO>”.
+Obtener Marco: “PID: <PID> - OBTENER MARCO - Página: <NUMERO_PAGINA> - Marco: <NUMERO_MARCO>”.
+TLB Hit: “PID: <PID> - TLB HIT - Pagina: <NUMERO_PAGINA>”
+TLB Miss: “PID: <PID> - TLB MISS - Pagina: <NUMERO_PAGINA>”
+Página encontrada en Caché: “PID: <PID> - Cache Hit - Pagina: <NUMERO_PAGINA>”
+Página faltante en Caché: “PID: <PID> - Cache Miss - Pagina: <NUMERO_PAGINA>”
+Página ingresada en Caché: “PID: <PID> - Cache Add - Pagina: <NUMERO_PAGINA>”
+Página Actualizada de Caché a Memoria: “PID: <PID> - Memory Update - Página: <NUMERO_PAGINA> - Frame: <FRAME_EN_MEMORIA_PRINCIPAL>”
+*/

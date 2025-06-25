@@ -101,6 +101,7 @@ func Decode(instruccion globals.Instruccion) {
 
 	globals.ID.InstructionType = instruccion.InstructionType
 
+	log.Printf("## PID: <%d> - FETCH - Program Counter: <%d>.", instruccion.ProcessValues.Pid, instruccion.ProcessValues.Pc)
 	// Instruccion ¿tipo?
 	switch instruccion.InstructionType {
 
