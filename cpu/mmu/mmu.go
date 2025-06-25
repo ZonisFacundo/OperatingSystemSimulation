@@ -18,10 +18,6 @@ type MMU struct {
 
 func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int, nroPagina int) []int {
 
-	log.Printf("dir logica: %d", globals.ID.DireccionLog)
-	log.Printf("PID: %d", globals.ID.ProcessValues.Pid)
-	log.Printf("nroPagina: %d", nroPagina)
-
 	if memoryManagement.TamPagina == 0 {
 		log.Fatalf("Error: TamPagina no puede ser 0. Verificá la configuración o la inicialización de la MMU.")
 	}

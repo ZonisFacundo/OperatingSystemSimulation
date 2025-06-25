@@ -36,13 +36,13 @@ type Instruccion struct { // instruccion obtenida de memoria
 	InstructionType string                `json:"type"`       //Contexto de la ejecución, es decir, la string que entra en el execute.
 	Valor           int                   `json:"value"`      //Parámetro para GOTO
 	Tamaño          int                   `json:"size"`       //Parámetro para el READ e INIT_PROC.
-	Tiempo          int                   `json:"time"`       //Parámetro para NOOP.
+	ArchiInstr      string                `json:"archiInstr"`
+	Tiempo          int                   `json:"time"` //Parámetro para NOOP.
 	Datos           string                `json:"datos"`
 	Syscall         string                `json:"syscall"`
 	Frame           int                   `json:"frame"`
 	Desplazamiento  int                   `json:"desplazamiento"`
-	Parametro1      int                   `json:"parametro1"`
-	Parametro2      string                `json:"parametro2"`
+	Dispositivo string `json:"dispositive"`
 }
 
 type TLB struct {
