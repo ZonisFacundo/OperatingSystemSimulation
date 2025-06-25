@@ -45,8 +45,10 @@ type Marco struct {
 	Frame int `json:"frame"`
 }
 type DireccionFisica struct {
-	Direccion int `json:"address"`
+	Direccion int `json:"adress"`
+	Tamaño    int `json:"value"`
 }
+
 type PaqueteWrite struct {
 	Direccion int    `json:"adress"`
 	Contenido string `json:"content"`
@@ -58,7 +60,7 @@ type DireccionLogica struct {
 }
 
 type BytePaquete struct {
-	Info byte `json:"info"`
+	Info []byte `json:"info"`
 }
 type Pagina struct {
 	Info []byte `json:"info"`

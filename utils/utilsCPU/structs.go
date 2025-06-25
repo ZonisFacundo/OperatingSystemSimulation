@@ -36,7 +36,7 @@ type WriteStruct struct {
 }
 type ReadStruct struct {
 	Direccion int `json:"adress"`
-	Tamanio int `json:"value"`
+	Tamaño 	int `json:"value"`
 }
 
 type HandshakeKERNEL struct {

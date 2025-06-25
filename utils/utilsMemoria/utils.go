@@ -174,8 +174,12 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	}
 
 	var ContenidoDireccion globals.BytePaquete
-	ContenidoDireccion.Info = globals.MemoriaPrincipal[PaqueteDireccion.Direccion]
 
+	for i := 0; i < PaqueteDireccion.Tamaño; i++ {
+
+		ContenidoDireccion.Info[i] = globals.MemoriaPrincipal[PaqueteDireccion.Direccion]
+	}
+	
 	respuestaJSON, err := json.Marshal(ContenidoDireccion)
 	if err != nil {
 		return

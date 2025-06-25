@@ -197,7 +197,7 @@ func Read(ip string, port int, direccion int, tamaño int) {
 	var paquete utilsCPU.ReadStruct
 
 	paquete.Direccion = direccion
-	paquete.Tamanio = tamaño
+	paquete.Tamaño = tamaño
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -248,7 +248,9 @@ func Read(ip string, port int, direccion int, tamaño int) {
 		return
 	}
 
-	log.Printf("Valor en memoria: %d\n", respuesta.Info) // Nos devuelve memoria el mensaje de escritura.
+	informacion := string(respuesta.Info)
+
+	log.Printf("Valor en memoria: [%s]", informacion) // Nos devuelve memoria el mensaje de escritura.
 
 }
 
