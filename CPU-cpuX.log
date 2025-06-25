@@ -720,3 +720,161 @@ EXIT
 [CPU-cpuX] 2025/06/25 01:23:59 Se envio syscall a Kernel.
 [CPU-cpuX] 2025/06/25 01:23:59 Interrupción. Deteniendo proceso PID 0
 [CPU-cpuX] 2025/06/25 01:23:59 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 01:32:52 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/25 01:32:52 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 01:32:52 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/25 01:32:52 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 01:32:52 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/25 01:32:52 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 01:32:52 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 01:32:52 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/25 01:32:52  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/25 01:32:52 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/25 01:32:52 Instruction given: WRITE 1 EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/25 01:32:52 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 01:32:52 dir logica: 1
+[CPU-cpuX] 2025/06/25 01:32:52 PID: 0
+[CPU-cpuX] 2025/06/25 01:32:52 nroPagina: 0
+[CPU-cpuX] 2025/06/25 01:32:52 dir logica: 1
+[CPU-cpuX] 2025/06/25 01:32:52 PID: 0
+[CPU-cpuX] 2025/06/25 01:32:52 nroPagina: 0
+[CPU-cpuX] 2025/06/25 01:32:52 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/25 01:32:52 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/25 01:32:52 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/25 01:32:52 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 01:32:52 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/25 01:32:52 type: WRITE
+[CPU-cpuX] 2025/06/25 01:32:52 value: 0
+[CPU-cpuX] 2025/06/25 01:32:52 dir: 1, cont: EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/25 01:33:03 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/25 01:33:03 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO - DIRECCION: 1
+[CPU-cpuX] 2025/06/25 01:33:03 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/25 01:33:03 Instruction given: 
+GOTO 0
+[CPU-cpuX] 2025/06/25 01:33:03 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 01:33:03 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/25 01:33:03 type: GOTO
+[CPU-cpuX] 2025/06/25 01:33:03 value: 0
+[CPU-cpuX] 2025/06/25 01:33:03 ## PID: 0 - Ejecutando -> INSTRUCCION: GOTO - VALUE: 0
+[CPU-cpuX] 2025/06/25 01:33:03 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/25 01:33:03 Instruction given: 
+WRITE 2800 EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/25 01:33:03 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 01:33:03 dir logica: 2800
+[CPU-cpuX] 2025/06/25 01:33:03 PID: 0
+[CPU-cpuX] 2025/06/25 01:33:03 nroPagina: 43
+[CPU-cpuX] 2025/06/25 01:33:03 dir logica: 2800
+[CPU-cpuX] 2025/06/25 01:33:03 PID: 0
+[CPU-cpuX] 2025/06/25 01:33:03 nroPagina: 43
+[CPU-cpuX] 2025/06/25 01:33:03 Desplazamiento?: 48
+[CPU-cpuX] 2025/06/25 01:33:03 que es esto?:  [0 0 0 2 2 3]
+[CPU-cpuX] 2025/06/25 01:33:03 dir?:  [0 0 0 2 2 3]
+[CPU-cpuX] 2025/06/25 01:33:03 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 01:33:03 Recibido de memoria el frame: -10
+[CPU-cpuX] 2025/06/25 01:33:03 ERROR ERROR ERROR FACU, te imprimo el frame -10
+[CPU-cpuX] 2025/06/25 01:33:03 type: WRITE
+[CPU-cpuX] 2025/06/25 01:33:03 value: 0
+[CPU-cpuX] 2025/06/25 01:33:03 dir: 1, cont: EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/25 01:33:06 Error al recibir respuesta.
+[CPU-cpuX] 2025/06/25 01:33:06 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO - DIRECCION: 1
+[CPU-cpuX] 2025/06/25 01:33:06 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/25 01:33:06 Error al recibir respuesta.
+[CPU-cpuX] 2025/06/25 01:33:06 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 01:33:39 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/25 01:33:39 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 01:33:39 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/25 01:33:39 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 01:33:39 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/25 01:33:40 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 01:33:40 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 01:33:40 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/25 01:33:40  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/25 01:33:40 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/25 01:33:40 Instruction given: WRITE 1 EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/25 01:33:40 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 01:33:40 dir logica: 1
+[CPU-cpuX] 2025/06/25 01:33:40 PID: 0
+[CPU-cpuX] 2025/06/25 01:33:40 nroPagina: 0
+[CPU-cpuX] 2025/06/25 01:33:40 dir logica: 1
+[CPU-cpuX] 2025/06/25 01:33:40 PID: 0
+[CPU-cpuX] 2025/06/25 01:33:40 nroPagina: 0
+[CPU-cpuX] 2025/06/25 01:33:40 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/25 01:33:40 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/25 01:33:40 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/25 01:33:40 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 01:33:40 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/25 01:33:40 type: WRITE
+[CPU-cpuX] 2025/06/25 01:33:40 value: 0
+[CPU-cpuX] 2025/06/25 01:33:40 dir: 1, cont: EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/25 01:33:51 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/25 01:33:51 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO - DIRECCION: 1
+[CPU-cpuX] 2025/06/25 01:33:51 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/25 01:33:51 Instruction given: 
+WRITE 2800 EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/25 01:33:51 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 01:33:51 dir logica: 2800
+[CPU-cpuX] 2025/06/25 01:33:51 PID: 0
+[CPU-cpuX] 2025/06/25 01:33:51 nroPagina: 43
+[CPU-cpuX] 2025/06/25 01:33:51 dir logica: 2800
+[CPU-cpuX] 2025/06/25 01:33:51 PID: 0
+[CPU-cpuX] 2025/06/25 01:33:51 nroPagina: 43
+[CPU-cpuX] 2025/06/25 01:33:51 Desplazamiento?: 48
+[CPU-cpuX] 2025/06/25 01:33:51 que es esto?:  [0 0 0 2 2 3]
+[CPU-cpuX] 2025/06/25 01:33:51 dir?:  [0 0 0 2 2 3]
+[CPU-cpuX] 2025/06/25 01:33:51 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 01:33:51 Recibido de memoria el frame: -10
+[CPU-cpuX] 2025/06/25 01:33:51 ERROR ERROR ERROR FACU, te imprimo el frame -10
+[CPU-cpuX] 2025/06/25 01:33:51 type: WRITE
+[CPU-cpuX] 2025/06/25 01:33:51 value: 0
+[CPU-cpuX] 2025/06/25 01:33:51 dir: 1, cont: EJEMPLO_DE_ENUNCIADO
+[CPU-cpuX] 2025/06/25 01:34:02 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/25 01:34:02 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO - DIRECCION: 1
+[CPU-cpuX] 2025/06/25 01:34:02 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/25 01:34:02 Instruction given: 
+EXIT
+[CPU-cpuX] 2025/06/25 01:34:02 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 01:34:02 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/25 01:34:02 type: EXIT
+[CPU-cpuX] 2025/06/25 01:34:02 value: 0
+[CPU-cpuX] 2025/06/25 01:34:02 ## PID: 0 - Ejecutando -> INSTRUCCION: EXIT
+[CPU-cpuX] 2025/06/25 01:34:02 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/25 01:34:02 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/25 01:34:02 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 01:46:54 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/25 01:46:54 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 01:46:54 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/25 01:46:54 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 01:46:54 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/25 01:46:55 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 01:46:55 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 01:46:55 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/25 01:46:55  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/25 01:46:55 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/25 01:46:55 Instruction given: READ 0 20
+[CPU-cpuX] 2025/06/25 01:46:55 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 01:46:55 dir logica: %!(EXTRA int=0)
+[CPU-cpuX] 2025/06/25 01:46:55 PID: %!(EXTRA int=0)
+[CPU-cpuX] 2025/06/25 01:46:55 nroPagina: %!(EXTRA int=0)
+[CPU-cpuX] 2025/06/25 01:46:55 dir logica: 0
+[CPU-cpuX] 2025/06/25 01:46:55 PID: 0
+[CPU-cpuX] 2025/06/25 01:46:55 nroPagina: 0
+[CPU-cpuX] 2025/06/25 01:46:55 Desplazamiento?: 0
+[CPU-cpuX] 2025/06/25 01:46:55 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/25 01:46:55 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 01:46:55 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/25 01:46:55 type: READ
+[CPU-cpuX] 2025/06/25 01:46:55 value: 0
+[CPU-cpuX] 2025/06/25 01:46:55 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/25 01:46:55 Instruction given: 
+EXIT
+[CPU-cpuX] 2025/06/25 01:46:55 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 01:46:55 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/25 01:46:55 type: EXIT
+[CPU-cpuX] 2025/06/25 01:46:55 value: 0
+[CPU-cpuX] 2025/06/25 01:46:55 ## PID: 0 - Ejecutando -> INSTRUCCION: EXIT
+[CPU-cpuX] 2025/06/25 01:46:55 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/25 01:46:55 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/25 01:46:55 Esperando nuevo proceso...

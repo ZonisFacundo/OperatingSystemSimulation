@@ -50,7 +50,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 		if globals.ID.DireccionFis != 0 {
 
-			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis)
+			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Parametro1)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Tamaño, globals.ID.DireccionFis)
 
 		} else {
@@ -192,11 +192,12 @@ func Write(ip string, port int, direccion int, contenido string) {
 
 }
 
-func Read(ip string, port int, direccion int) {
+func Read(ip string, port int, direccion int, tamaño int) {
 
 	var paquete utilsCPU.ReadStruct
 
 	paquete.Direccion = direccion
+	paquete.Tamanio = tamaño
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
