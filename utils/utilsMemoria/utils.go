@@ -251,7 +251,7 @@ func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r 
 	MemoryDump(paqueteDeKernel.Pid)
 
 	var respuesta respuestaalKernel
-	respuesta.Mensaje = "listo \n"
+	respuesta.Mensaje = "DUMP REALIZADO CON EXITO \n"
 
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
@@ -733,9 +733,12 @@ copia el contenido de todas las paginas del proceso y las pega en un archivo
 
 func MemoryDump(pid int) {
 
+	var bytestotales int = 0
+	log.Printf("\n\n INICIANDO MEMORY DUMP (memorydump) \n\n")
 	//time stamp ---> timestamp := time.Now().Unix() // Ej: 1686835231     ?????
 
-	file, err := os.Create(fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid)) //crea archivo para el dump
+	var path string = fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid)
+	file, err := os.Create(path) //crea archivo para el dump
 
 	if err != nil {
 		log.Printf("error al crear el archivo para el dump de pid %d \n", pid)
@@ -752,9 +755,11 @@ func MemoryDump(pid int) {
 		if err != nil {
 			log.Printf("error al escribir en el archivo\n")
 		}
-		log.Printf("%d fueron escritos en la ultima iteracion\n", bytesEscritos)
-
+		bytestotales += bytesEscritos
 	}
+	log.Printf("%d bytes fueron escritos en el archivo gracias a la syscall de dump \n", bytestotales)
+
+	auxiliares.MostrarArchivo(path)
 	defer file.Close()
 }
 

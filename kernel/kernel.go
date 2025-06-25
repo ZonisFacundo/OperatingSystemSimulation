@@ -14,7 +14,6 @@ import (
 	"os"
 	"strconv"
 	"sync"
-	"time"
 )
 
 func main() {
@@ -35,12 +34,11 @@ func main() {
 
 	go utilsKernel.PlanificadorCortoPlazo()
 
-	
-	go func() {
+	/*go func() {
 		time.Sleep(10 * time.Second)
 		cpuX := utilsKernel.CrearStructCPU2("127.0.0.1", 8004, "cpuX")
 		utilsKernel.InterrumpirCPU(&cpuX)
-	} ()
+	} ()*/
 
 	http.HandleFunc("POST /IO", utilsKernel.RecibirDatosIO)
 	http.HandleFunc("POST /handshake", utilsKernel.RecibirDatosCPU)
