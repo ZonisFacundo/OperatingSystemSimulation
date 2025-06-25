@@ -14,6 +14,7 @@ import (
 	"os"
 	"strconv"
 	"sync"
+	"time"
 )
 
 func main() {
@@ -25,13 +26,26 @@ func main() {
 	if err != nil {
 		log.Fatalf("Tamaño inválido: %v", err)
 	}
+	utilsKernel.InicializarSemaforos()
+	go func() {
+		utilsKernel.IniciarPlanifcador(tamanio, archivo)
+		//utilsKernel.CrearPCBPrueba(1, archivo)
+		utilsKernel.PlanificadorLargoPlazo()
+	}()
 
-	go utilsKernel.IniciarPlanifcador(tamanio, archivo)
+	go utilsKernel.PlanificadorCortoPlazo()
 
-	//http.HandleFunc("/handshake", utilsKernel.RecibirDatosIO) no se porque esta esto por las dudas no lo borro
+	
+	go func() {
+		time.Sleep(10 * time.Second)
+		cpuX := utilsKernel.CrearStructCPU2("127.0.0.1", 8004, "cpuX")
+		utilsKernel.InterrumpirCPU(&cpuX)
+	} ()
+
 	http.HandleFunc("POST /IO", utilsKernel.RecibirDatosIO)
 	http.HandleFunc("POST /handshake", utilsKernel.RecibirDatosCPU)
 	http.HandleFunc("POST /PCB", utilsKernel.RecibirProceso)
+	http.HandleFunc("POST /finIO", utilsKernel.FinalizarIO)
 	log.Printf("Servidor corriendo.\n")
 	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_kernel), nil)
 	wg.Wait()

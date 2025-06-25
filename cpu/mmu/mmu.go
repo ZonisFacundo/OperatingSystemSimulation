@@ -1,10 +1,12 @@
 package mmu
 
 import (
-	"math"
 	"log"
+	"math"
+
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
-	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU")
+	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
+)
 
 type MMU struct {
 	ProcesoActual       utilsCPU.Proceso
@@ -14,13 +16,15 @@ type MMU struct {
 	TablasPaginas       map[int]int
 }
 
-func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int {
+func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int, nroPagina int) []int {
+
+	log.Printf("dir logica: %d", globals.ID.DireccionLog)
+	log.Printf("PID: %d", globals.ID.ProcessValues.Pid)
+	log.Printf("nroPagina: %d", nroPagina)
 
 	if memoryManagement.TamPagina == 0 {
 		log.Fatalf("Error: TamPagina no puede ser 0. Verificá la configuración o la inicialización de la MMU.")
 	}
-	
-	nroPagina := direccionLogica / memoryManagement.TamPagina
 
 	// Crear un slice para guardar las entradas de las tablas de páginas
 	entradas := make([]int, memoryManagement.Niveles)
@@ -37,9 +41,12 @@ func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int) []int
 
 	desplazamiento := direccionLogica % memoryManagement.TamPagina
 
+	log.Printf("Desplazamiento?: %d", desplazamiento)
 	globals.ID.Desplazamiento = desplazamiento
-	
+
 	resultado := append([]int{pid}, entradas...) // Agrego el pid al principio del slice y concateno las entradas de nivel
+
+	log.Println("que es esto?: ", resultado)
 
 	return resultado
 

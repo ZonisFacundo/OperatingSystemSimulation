@@ -24,8 +24,8 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 
 	var paquete utilsCPU.EnvioDirLogicaAMemoria
 
-	// paquete.Ip = ip
-	// paquete.Puerto = puerto
+	paquete.Ip = ip
+	paquete.Puerto = puerto
 	paquete.DirLogica = dirLogica
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
@@ -57,6 +57,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 	if respuestaJSON.StatusCode != http.StatusOK {
 
 		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		log.Printf("entro aca y rompo")
 		return
 	}
 	defer respuestaJSON.Body.Close()

@@ -5,8 +5,12 @@ type Proceso struct {
 	Pid int `json:"pid"`
 	//Mensaje string `json:"messageCPU"`
 }
+
+type PaqueteInterrupcion struct {
+	Mensaje string `json:"message"`
+}
 type Interrupcion struct {
-	Interrup bool `json:"interrup`
+	Interrup bool `json:"interrup"`
 }
 type HandshakeCPU struct {
 	Ip        string `json:"ip"`
@@ -36,6 +40,7 @@ type WriteStruct struct {
 }
 type ReadStruct struct {
 	Direccion int `json:"adress"`
+	Tamaño    int `json:"value"`
 }
 
 type HandshakeKERNEL struct {
@@ -48,6 +53,8 @@ type RespuestaalCPU struct {
 }
 type RespuestaKernel struct {
 	Mensaje string `json:"messageCPU"`
+	Pid     int    `json:"pid"`
+	Pc      int    `json:"pc"`
 }
 type EnvioDirLogicaAMemoria struct {
 	Ip        string `json:"ip"`
@@ -56,5 +63,5 @@ type EnvioDirLogicaAMemoria struct {
 }
 
 type MarcoDeMemoria struct {
-	Frame int `json:"marco"`
+	Frame int `json:"frame"`
 }

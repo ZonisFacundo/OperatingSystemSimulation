@@ -14,7 +14,7 @@ func Mostrarmemoria() {
 	for i := 0; i < globals.ClientConfig.Memory_size; i++ {
 
 		fmt.Printf("%v ", globals.MemoriaPrincipal[i])
-		time.Sleep(10 * time.Millisecond)
+		time.Sleep(1 * time.Millisecond)
 	}
 }
 

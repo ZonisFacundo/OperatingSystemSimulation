@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
+	"sync"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/cpu/instruction_cycle"
@@ -13,54 +13,90 @@ import (
 )
 
 func main() {
-	newFetch := true
-	interrupcionActiva := false
-
 	if len(os.Args) < 2 {
 		log.Fatal("Error: Debe indicar el identificador de la CPU como argumento, por ejemplo: ./cpu cpuX")
 	}
 
 	instanceID := os.Args[1]
-	procesoListo := make(chan struct{}, 1)
+	procesoNuevo := make(chan struct{})
+	var mutexInterrupcion sync.Mutex
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
 	globals.CargarConfig("./cpu/globals/config.json", instanceID)
 
-	utilsCPU.EnvioPortKernel(globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Instance_id, globals.ClientConfig.Port_cpu, globals.ClientConfig.Ip_cpu)
+	utilsCPU.EnvioPortKernel(
+		globals.ClientConfig.Ip_kernel,
+		globals.ClientConfig.Port_kernel,
+		globals.ClientConfig.Instance_id,
+		globals.ClientConfig.Port_cpu,
+		globals.ClientConfig.Ip_cpu,
+	)
 
 	go func() {
 		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
 			utilsCPU.RecibirPCyPID(w, r)
-			procesoListo <- struct{}{}
+			log.Printf("Proceso recibido - PID: %d, PC: %d", globals.Instruction.Pid, globals.Instruction.Pc)
+			select {
+			case procesoNuevo <- struct{}{}:
+				log.Println("Notificando CPU de un nuevo proceso entrante.")
+			default:
+				log.Println("CPU ya ejecutando. No se notifica de nuevo proceso")
+			}
 		})
-		log.Printf("Servidor corriendo, esperando PID y PC de Kernel.")
+
+		http.HandleFunc("/INTERRUPCIONCPU", func(w http.ResponseWriter, r *http.Request) {
+			utilsCPU.DevolverPidYPCInterrupcion(w, r, globals.Instruction.Pc, globals.Instruction.Pid)
+			mutexInterrupcion.Lock()
+			globals.Interruption = true
+			mutexInterrupcion.Unlock()
+			log.Println("## Llega interrupción al puerto Interrupt.")
+		})
+
+		log.Printf("Servidor HTTP activo en puerto %d.", globals.ClientConfig.Port_cpu)
 		http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
 	}()
 
-	// Ciclo principal
-	
 	for {
-		if interrupcionActiva {
+		log.Println("Esperando nuevo proceso...")
 
-			log.Println("Interrupción ejecutada, a la espera de nuevo proceso.")
-			newFetch = true // Ésto se realiza más que nada porque cuando hay una interrupción, se interrumpe la ejecución del proceso y nos van a mandar uno nuevo.
-			<-procesoListo
-			interrupcionActiva = false // Reseteo el flag, para que no quede en True y se pueda ejecutar sin problema alguno.
-			log.Println("Nuevo proceso recibido, se reinicia el ciclo.")
-		}
+		<-procesoNuevo
 
-		if newFetch {
+		log.Printf(" Ejecutando proceso (PID: %d)", globals.Instruction.Pid)
+
+	ejecucion:
+		for {
+			mutexInterrupcion.Lock()
+
+			interrumpido := globals.Interruption
+			if interrumpido {
+				globals.Interruption = false
+			}
+			mutexInterrupcion.Unlock()
+
+			if interrumpido {
+				log.Printf("Interrupción. Deteniendo proceso PID %d", globals.Instruction.Pid)
+				break ejecucion
+			}
+
+			log.Printf("Ejecutando: PID=%d, PC=%d", globals.Instruction.Pid, globals.Instruction.Pc)
 			instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
-			newFetch = false
+			instruction_cycle.Decode(globals.ID)
+			instruction_cycle.Execute(globals.ID)
+			globals.Instruction.Pc++
 		}
-
-		instruction_cycle.Decode(globals.ID)
-		instruction_cycle.Execute(globals.ID)
-
-		interrupcionActiva = instruction_cycle.CheckInterruption()
-
-		time.Sleep(100 * time.Millisecond)
 	}
 }
 
+/*
+LOGS FALTANTES POR PONER:
+
+Lectura/Escritura Memoria: “PID: <PID> - Acción: <LEER / ESCRIBIR> - Dirección Física: <DIRECCION_FISICA> - Valor: <VALOR LEIDO / ESCRITO>”.
+Obtener Marco: “PID: <PID> - OBTENER MARCO - Página: <NUMERO_PAGINA> - Marco: <NUMERO_MARCO>”.
+TLB Hit: “PID: <PID> - TLB HIT - Pagina: <NUMERO_PAGINA>”
+TLB Miss: “PID: <PID> - TLB MISS - Pagina: <NUMERO_PAGINA>”
+Página encontrada en Caché: “PID: <PID> - Cache Hit - Pagina: <NUMERO_PAGINA>”
+Página faltante en Caché: “PID: <PID> - Cache Miss - Pagina: <NUMERO_PAGINA>”
+Página ingresada en Caché: “PID: <PID> - Cache Add - Pagina: <NUMERO_PAGINA>”
+Página Actualizada de Caché a Memoria: “PID: <PID> - Memory Update - Página: <NUMERO_PAGINA> - Frame: <FRAME_EN_MEMORIA_PRINCIPAL>”
+*/

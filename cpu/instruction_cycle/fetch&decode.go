@@ -19,10 +19,10 @@ type PaqueteRecibidoMemoria struct {
 	Mensaje string `json:"message"`
 }
 type PaqueteRecibidoWRITE struct {
-	Mensaje int `json:"message"`
+	Mensaje string `json:"message"`
 }
 type PaqueteRecibidoREAD struct {
-	Info string `json:"info"`
+	Info []byte `json:"info"`
 }
 
 func Fetch(pid int, pc int, ip string, puerto int) {
@@ -90,11 +90,10 @@ func Decode(instruccion globals.Instruccion) {
 
 	memoryManagement := mmu.MMU{
 		ProcesoActual:       instruccion.ProcessValues,
-		TamPagina:           64,          
-		Niveles:             5,       
-		Cant_entradas_tabla: 4, 
-		TablasPaginas:       make(map[int]int), 
-	}
+		TamPagina:           64,
+		Niveles:             5,
+		Cant_entradas_tabla: 4,
+		TablasPaginas:       make(map[int]int)}
 
 	partesDelString := strings.Fields(instruccion.InstructionType)
 
@@ -102,6 +101,7 @@ func Decode(instruccion globals.Instruccion) {
 
 	globals.ID.InstructionType = instruccion.InstructionType
 
+	log.Printf("## PID: <%d> - FETCH - Program Counter: <%d>.", instruccion.ProcessValues.Pid, instruccion.ProcessValues.Pc)
 	// Instruccion ¿tipo?
 	switch instruccion.InstructionType {
 
@@ -112,9 +112,21 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Tamaño = instruccion.Tamaño
 
-		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
-		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
-		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
+
+		if mmu.EstaTraducida(nroPagina) {
+			log.Printf("entro aca (1)")
+			Execute(globals.ID)
+		} else {
+			log.Printf("dir logica: ", globals.ID.DireccionLog)
+			log.Printf("PID: ", globals.ID.ProcessValues.Pid)
+			log.Printf("nroPagina: ", nroPagina)
+
+			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
+			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+			globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+			//Mandar direccion fisica a la TLB junto con el numero de página así queda guardada en "caché".
+		}
 
 	case "WRITE":
 		instruccion.DireccionLog, _ = strconv.Atoi(partesDelString[1])
@@ -123,25 +135,29 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Datos = instruccion.Datos
 
-		direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid)
+		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
+		// mmu despues deberiamos hacerlo global, porque son parametros que nos deberia pasar memoria (tabla de pags)
 
-		log.Printf("direccion: %d", direccionAEnviar)
+		if mmu.EstaTraducida(nroPagina) {
+			log.Printf("entro aca (1)")
+			Execute(globals.ID)
+		} else {
+			log.Printf("dir logica: %d", globals.ID.DireccionLog)
+			log.Printf("PID: %d", globals.ID.ProcessValues.Pid)
+			log.Printf("nroPagina: %d", nroPagina)
 
-		utilsCPU.EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
 
-		globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+			log.Println("dir?: ", direccionAEnviar)
 
-	case "GOTO":
-		instruccion.Valor, _ = strconv.Atoi(partesDelString[1])
-		globals.ID.Valor = instruccion.Valor
-
-	case "IO":
-		instruccion.Parametro1, _ = strconv.Atoi(partesDelString[2])
-		instruccion.Parametro2 = partesDelString[1]
-
-		globals.ID.Parametro1 = instruccion.Parametro1
-		globals.ID.Parametro2 = instruccion.Parametro2
-
+			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+			if globals.ID.Frame < 0 {
+				log.Printf("ERROR ERROR ERROR FACU, te imprimo el frame %d", globals.ID.Frame)
+			} else {
+				globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+			}
+			// aca habria que agregar la direccion traducida a la tlb y trabajar con un alg de reemplazo si la tlb esta llena
+		}
 	case "INIT_PROC":
 		instruccion.Parametro1, _ = strconv.Atoi(partesDelString[2])
 		instruccion.Parametro2 = partesDelString[1]
