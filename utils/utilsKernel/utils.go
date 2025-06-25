@@ -135,6 +135,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	respuesta.Mensaje = "interrupcion"
 	switch request.Syscall {
 	case "I/O":
+		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
 		cpuServidor.Disponible = true
 		if ExisteIO(request.Parametro2) {
 			SemCortoPlazo <- struct{}{}
@@ -151,16 +152,18 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		} else {
 			FinalizarProceso(PCBUtilizar)
 		}
-		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
+
 	case "EXIT":
+		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
 		cpuServidor.Disponible = true
 		FinalizarProceso(PCBUtilizar)
-		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
+
 	case "DUMP_MEMORY":
+		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
 		cpuServidor.Disponible = true
 		SemCortoPlazo <- struct{}{}
 		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
-		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
+
 	case "INIT_PROC":
 		respuesta.Mensaje = ""
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
@@ -584,7 +587,7 @@ func PlanificadorCortoPlazo() {
 			MutexColaReady.Lock()
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
-			CPUDisponible, noEsVacio := TraqueoCPU() //drakukeo en su defecto
+			CPUDisponible, noEsVacio := TraqueoCPU()
 			if noEsVacio {
 				log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
 				PasarExec(pcbChequear)

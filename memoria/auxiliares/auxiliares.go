@@ -2,11 +2,11 @@ package auxiliares
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"time"
 
 	"github.com/sisoputnfrba/tp-golang/memoria/globals"
-	//	"log"
-	//	"os"
 )
 
 func Mostrarmemoria() {
@@ -89,4 +89,26 @@ func MostrarProceso(pid int) {
 		fmt.Printf("%d \n", globals.MemoriaKernel[pid].TablaSimple[i])
 
 	}
+}
+func MostrarArchivo(path string) {
+	file, err := os.OpenFile(path, os.O_RDONLY, 0777)
+
+	if err != nil {
+		log.Printf("error al leer el archivo (MostrarArchivoPorPagina)\n")
+	}
+
+	datos, error := os.ReadFile(path)
+
+	if error != nil {
+		log.Printf("error al leer el archivo (MostrarArchivoPorPagina)\n")
+	}
+
+	log.Printf("MUESTRO ARCHIVO (DUMPEADO) EN BYTES\n")
+	log.Print(datos, "\n\n\n")
+
+	log.Printf("MUESTRO ARCHIVO (DUMPEADO) EN STRING\n")
+	s := string(datos)
+	log.Printf("%s\n\n\n", s)
+
+	file.Close()
 }

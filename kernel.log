@@ -693,3 +693,210 @@
 2025/06/25 14:36:27 PID: 0 PC: 3
 2025/06/25 14:36:29 Conexion establecida con exito 
 2025/06/25 14:36:29 PID: 0 PC: 4
+2025/06/25 15:09:13 Servidor corriendo.
+2025/06/25 15:09:13 Presione enter para inciar el planificador
+2025/06/25 15:09:15 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 15:09:15 Planificador de largo plazo ejecutando
+2025/06/25 15:09:15 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 15:09:15 Conexion establecida con exito 
+2025/06/25 15:09:15 La respuesta del server fue: Recibi de Kernel
+2025/06/25 15:09:15 Se pasa el proceso PID: 0 a READY
+2025/06/25 15:09:15 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 15:09:15 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 15:09:15 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 15:09:15 Conexion establecida con exito 
+2025/06/25 15:09:15 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 15:09:21 contexto de devolucion del proceso: DUMP_MEMORY
+2025/06/25 15:09:21 Conexion establecida con exito 
+2025/06/25 15:09:21 ## (<0>) Pasa del estado EXECUTE al estado BLOCKED 
+2025/06/25 15:09:21 Conexion establecida con exito 
+2025/06/25 15:09:21 La respuesta del server fue: DUMP REALIZADO CON EXITO 
+
+2025/06/25 15:09:21 Se pudo hacer el DUMP del proceso con el PID: 0 
+2025/06/25 15:09:21 ## (<0>) Pasa del estado BLOCKED al estado READY  
+2025/06/25 15:09:21 ## (<0>) - Solicitó syscall: <DUMP_MEMORY> 
+2025/06/25 15:09:21 PID: 0 PC: 3
+2025/06/25 15:10:20 Servidor corriendo.
+2025/06/25 15:10:20 Presione enter para inciar el planificador
+2025/06/25 15:10:22 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 15:10:25 Planificador de largo plazo ejecutando
+2025/06/25 15:10:25 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 15:10:25 Conexion establecida con exito 
+2025/06/25 15:10:25 La respuesta del server fue: Recibi de Kernel
+2025/06/25 15:10:25 Se pasa el proceso PID: 0 a READY
+2025/06/25 15:10:25 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 15:10:25 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 15:10:25 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 15:10:25 Conexion establecida con exito 
+2025/06/25 15:10:25 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 15:10:25 contexto de devolucion del proceso: DUMP_MEMORY
+2025/06/25 15:10:25 Conexion establecida con exito 
+2025/06/25 15:10:25 ## (<0>) Pasa del estado EXECUTE al estado BLOCKED 
+2025/06/25 15:10:25 Conexion establecida con exito 
+2025/06/25 15:10:25 La respuesta del server fue: DUMP REALIZADO CON EXITO 
+
+2025/06/25 15:10:25 Se pudo hacer el DUMP del proceso con el PID: 0 
+2025/06/25 15:10:25 ## (<0>) Pasa del estado BLOCKED al estado READY  
+2025/06/25 15:10:25 ## (<0>) - Solicitó syscall: <DUMP_MEMORY> 
+2025/06/25 15:10:25 PID: 0 PC: 2
+2025/06/25 15:11:29 Servidor corriendo.
+2025/06/25 15:11:29 Presione enter para inciar el planificador
+2025/06/25 15:11:30 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 15:11:31 Planificador de largo plazo ejecutando
+2025/06/25 15:11:31 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 15:11:31 Conexion establecida con exito 
+2025/06/25 15:11:31 La respuesta del server fue: Recibi de Kernel
+2025/06/25 15:11:31 Se pasa el proceso PID: 0 a READY
+2025/06/25 15:11:31 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 15:11:31 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 15:11:31 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 15:11:31 Conexion establecida con exito 
+2025/06/25 15:11:31 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 15:11:31 contexto de devolucion del proceso: DUMP_MEMORY
+2025/06/25 15:11:31 Conexion establecida con exito 
+2025/06/25 15:11:31 ## (<0>) - Solicitó syscall: <DUMP_MEMORY> 
+2025/06/25 15:11:31 ## (<0>) Pasa del estado EXECUTE al estado BLOCKED 
+2025/06/25 15:11:31 Conexion establecida con exito 
+2025/06/25 15:11:31 La respuesta del server fue: DUMP REALIZADO CON EXITO 
+
+2025/06/25 15:11:31 Se pudo hacer el DUMP del proceso con el PID: 0 
+2025/06/25 15:11:31 ## (<0>) Pasa del estado BLOCKED al estado READY  
+2025/06/25 15:11:31 PID: 0 PC: 2
+2025/06/25 15:12:14 Servidor corriendo.
+2025/06/25 15:12:14 Presione enter para inciar el planificador
+2025/06/25 15:12:16 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 15:12:17 Planificador de largo plazo ejecutando
+2025/06/25 15:12:17 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 15:12:17 Conexion establecida con exito 
+2025/06/25 15:12:17 La respuesta del server fue: Recibi de Kernel
+2025/06/25 15:12:17 Se pasa el proceso PID: 0 a READY
+2025/06/25 15:12:17 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 15:12:17 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 15:12:17 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 15:12:17 Conexion establecida con exito 
+2025/06/25 15:12:17 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 15:12:17 contexto de devolucion del proceso: DUMP_MEMORY
+2025/06/25 15:12:17 Conexion establecida con exito 
+2025/06/25 15:12:17 ## (<0>) - Solicitó syscall: <DUMP_MEMORY> 
+2025/06/25 15:12:17 ## (<0>) Pasa del estado EXECUTE al estado BLOCKED 
+2025/06/25 15:12:17 Conexion establecida con exito 
+2025/06/25 15:12:17 La respuesta del server fue: DUMP REALIZADO CON EXITO 
+
+2025/06/25 15:12:17 Se pudo hacer el DUMP del proceso con el PID: 0 
+2025/06/25 15:12:17 ## (<0>) Pasa del estado BLOCKED al estado READY  
+2025/06/25 15:12:17 PID: 0 PC: 2
+2025/06/25 15:14:28 Servidor corriendo.
+2025/06/25 15:14:28 Presione enter para inciar el planificador
+2025/06/25 15:14:30 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 15:14:32 Planificador de largo plazo ejecutando
+2025/06/25 15:14:32 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 15:14:32 Conexion establecida con exito 
+2025/06/25 15:14:32 La respuesta del server fue: Recibi de Kernel
+2025/06/25 15:14:32 Se pasa el proceso PID: 0 a READY
+2025/06/25 15:14:32 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 15:14:32 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 15:14:32 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 15:14:32 Conexion establecida con exito 
+2025/06/25 15:14:32 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 15:14:32 contexto de devolucion del proceso: DUMP_MEMORY
+2025/06/25 15:14:32 Conexion establecida con exito 
+2025/06/25 15:14:32 ## (<0>) - Solicitó syscall: <DUMP_MEMORY> 
+2025/06/25 15:14:32 ## (<0>) Pasa del estado EXECUTE al estado BLOCKED 
+2025/06/25 15:14:32 Conexion establecida con exito 
+2025/06/25 15:14:32 La respuesta del server fue: DUMP REALIZADO CON EXITO 
+
+2025/06/25 15:14:32 Se pudo hacer el DUMP del proceso con el PID: 0 
+2025/06/25 15:14:32 ## (<0>) Pasa del estado BLOCKED al estado READY  
+2025/06/25 15:14:32 PID: 0 PC: 2
+2025/06/25 15:33:02 Servidor corriendo.
+2025/06/25 15:33:02 Presione enter para inciar el planificador
+2025/06/25 15:33:05 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 15:33:09 Planificador de largo plazo ejecutando
+2025/06/25 15:33:09 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 15:33:09 Conexion establecida con exito 
+2025/06/25 15:33:09 La respuesta del server fue: Recibi de Kernel
+2025/06/25 15:33:09 Se pasa el proceso PID: 0 a READY
+2025/06/25 15:33:09 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 15:33:09 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 15:33:09 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 15:33:09 Conexion establecida con exito 
+2025/06/25 15:33:09 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 15:33:09 contexto de devolucion del proceso: DUMP_MEMORY
+2025/06/25 15:33:09 Conexion establecida con exito 
+2025/06/25 15:33:09 ## (<0>) - Solicitó syscall: <DUMP_MEMORY> 
+2025/06/25 15:33:09 ## (<0>) Pasa del estado EXECUTE al estado BLOCKED 
+2025/06/25 15:33:09 Conexion establecida con exito 
+2025/06/25 15:33:09 La respuesta del server fue: DUMP REALIZADO CON EXITO 
+
+2025/06/25 15:33:09 Se pudo hacer el DUMP del proceso con el PID: 0 
+2025/06/25 15:33:09 ## (<0>) Pasa del estado BLOCKED al estado READY  
+2025/06/25 15:33:09 PID: 0 PC: 2
+2025/06/25 15:34:15 Servidor corriendo.
+2025/06/25 15:34:15 Presione enter para inciar el planificador
+2025/06/25 15:34:17 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 15:34:18 Planificador de largo plazo ejecutando
+2025/06/25 15:34:18 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 15:34:18 Conexion establecida con exito 
+2025/06/25 15:34:18 La respuesta del server fue: Recibi de Kernel
+2025/06/25 15:34:18 Se pasa el proceso PID: 0 a READY
+2025/06/25 15:34:18 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 15:34:18 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 15:34:18 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 15:34:18 Conexion establecida con exito 
+2025/06/25 15:34:18 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 15:34:18 contexto de devolucion del proceso: DUMP_MEMORY
+2025/06/25 15:34:18 Conexion establecida con exito 
+2025/06/25 15:34:18 ## (<0>) - Solicitó syscall: <DUMP_MEMORY> 
+2025/06/25 15:34:18 ## (<0>) Pasa del estado EXECUTE al estado BLOCKED 
+2025/06/25 15:34:18 Conexion establecida con exito 
+2025/06/25 15:34:18 La respuesta del server fue: DUMP REALIZADO CON EXITO 
+
+2025/06/25 15:34:18 Se pudo hacer el DUMP del proceso con el PID: 0 
+2025/06/25 15:34:18 ## (<0>) Pasa del estado BLOCKED al estado READY  
+2025/06/25 15:34:18 PID: 0 PC: 2
+2025/06/25 15:44:52 Servidor corriendo.
+2025/06/25 15:44:52 Presione enter para inciar el planificador
+2025/06/25 15:44:53 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 15:44:54 Planificador de largo plazo ejecutando
+2025/06/25 15:44:54 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 15:44:54 Conexion establecida con exito 
+2025/06/25 15:44:54 La respuesta del server fue: Recibi de Kernel
+2025/06/25 15:44:54 Se pasa el proceso PID: 0 a READY
+2025/06/25 15:44:54 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 15:44:54 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 15:44:54 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 15:44:54 Conexion establecida con exito 
+2025/06/25 15:44:54 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 15:44:59 contexto de devolucion del proceso: DUMP_MEMORY
+2025/06/25 15:44:59 Conexion establecida con exito 
+2025/06/25 15:44:59 ## (<0>) - Solicitó syscall: <DUMP_MEMORY> 
+2025/06/25 15:44:59 ## (<0>) Pasa del estado EXECUTE al estado BLOCKED 
+2025/06/25 15:44:59 Conexion establecida con exito 
+2025/06/25 15:44:59 La respuesta del server fue: DUMP REALIZADO CON EXITO 
+
+2025/06/25 15:44:59 Se pudo hacer el DUMP del proceso con el PID: 0 
+2025/06/25 15:44:59 ## (<0>) Pasa del estado BLOCKED al estado READY  
+2025/06/25 15:44:59 PID: 0 PC: 2
+2025/06/25 15:50:55 Servidor corriendo.
+2025/06/25 15:50:55 Presione enter para inciar el planificador
+2025/06/25 15:50:56 Handshake recibido: Port: 8004 - Instance: cpux - Ip: 127.0.0.1
+2025/06/25 15:50:57 Planificador de largo plazo ejecutando
+2025/06/25 15:50:57 ## (<0>) Se crea el proceso - Estado: NEW 
+2025/06/25 15:50:57 Conexion establecida con exito 
+2025/06/25 15:50:57 La respuesta del server fue: Recibi de Kernel
+2025/06/25 15:50:57 Se pasa el proceso PID: 0 a READY
+2025/06/25 15:50:57 ## (<0>) Pasa del estado NEW al estado READY  
+2025/06/25 15:50:57 se pasa el proceso PID: 0 a EXECUTE
+2025/06/25 15:50:57 ## (<0>) Pasa del estado READY al estado EXECUTE 
+2025/06/25 15:50:57 Conexion establecida con exito 
+2025/06/25 15:50:57 La respuesta del server fue: PC y PID recbidos correctamente
+2025/06/25 15:51:02 contexto de devolucion del proceso: DUMP_MEMORY
+2025/06/25 15:51:02 Conexion establecida con exito 
+2025/06/25 15:51:02 ## (<0>) - Solicitó syscall: <DUMP_MEMORY> 
+2025/06/25 15:51:02 ## (<0>) Pasa del estado EXECUTE al estado BLOCKED 
+2025/06/25 15:51:02 Conexion establecida con exito 
+2025/06/25 15:51:02 La respuesta del server fue: DUMP REALIZADO CON EXITO 
+
+2025/06/25 15:51:02 Se pudo hacer el DUMP del proceso con el PID: 0 
+2025/06/25 15:51:02 ## (<0>) Pasa del estado BLOCKED al estado READY  
+2025/06/25 15:51:02 PID: 0 PC: 2
