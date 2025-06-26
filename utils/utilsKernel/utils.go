@@ -132,10 +132,11 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	PCBUtilizar := ObtenerPCB(cpuServidor.Pid) // ya no hace falta porque esta en el struct
 	PCBUtilizar.Pc = request.Pc
 	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
-	respuesta.Mensaje = "interrupcion"
+
 	switch request.Syscall {
-	case "I/O":
+	case "IO":
 		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
+		respuesta.Mensaje = "interrupcion"
 		cpuServidor.Disponible = true
 		if ExisteIO(request.Parametro2) {
 			SemCortoPlazo <- struct{}{}
@@ -155,11 +156,13 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 	case "EXIT":
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
+		respuesta.Mensaje = "interrupcion"
 		cpuServidor.Disponible = true
 		FinalizarProceso(PCBUtilizar)
 
 	case "DUMP_MEMORY":
 		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
+		respuesta.Mensaje = "interrupcion"
 		cpuServidor.Disponible = true
 		SemCortoPlazo <- struct{}{}
 		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
@@ -582,7 +585,9 @@ func PlanificadorLargoPlazo() {
 func PlanificadorCortoPlazo() {
 	for true {
 		<-SemCortoPlazo
+
 		if len(ColaReady) != 0 {
+			log.Printf("Planificador de corto plazo ejecutando")
 			//time.Sleep(10 * time.Second)
 			MutexColaReady.Lock()
 			pcbChequear, hayDesalojo := CriterioColaReady()
@@ -901,7 +906,7 @@ func EstaEnColaBlock(pcbChequear *PCB) bool {
 }
 
 func MandarProcesoAIO(io IO) {
-	if io.Disponible {
+	if io.Disponible && len(io.ColaProcesos) > 0 {
 		io.Disponible = false
 		go UtilizarIO(io, io.ColaProcesos[0].Pcb, io.ColaProcesos[0].Tiempo)
 

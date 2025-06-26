@@ -72,15 +72,15 @@ func Execute(detalle globals.Instruccion) bool {
 	// SYSCALLS.
 
 	case "IO": //IO(Dispositivo y tiempo)
-		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.Instruction.Pid,
 			globals.Instruction.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
-			globals.InstruccionDetalle.Tiempo,
-			globals.InstruccionDetalle.Dispositivo)
+			globals.ID.Tiempo,
+			globals.ID.Dispositivo)
 
 		return true
 
