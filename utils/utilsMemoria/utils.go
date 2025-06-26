@@ -94,6 +94,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 
 		w.WriteHeader(http.StatusInsufficientStorage) //http tiene un mensaje de error especificamente para esto, tremendo
 		w.Write(respuestaJSON)
+		return
 	} else if DondeGuardarProceso == -2 {
 		log.Printf("YA EXISTE UN PROCESO CON ESE PID  \n")
 		respuestaKernel.Mensaje = "YA EXISTE UN PROCESO CON ESE PID\n"
@@ -104,6 +105,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 
 		w.WriteHeader(http.StatusInsufficientStorage) //http tiene un mensaje de error especificamente para esto, tremendo
 		w.Write(respuestaJSON)
+		return
 	} else {
 
 		/*
@@ -116,6 +118,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 			log.Printf("error al abrir el archivo de instrucciones enviado por kernel, pid: %d\n", PaqueteInfoProceso.Pid)
 			log.Printf("TENEMOS ESPACIO, EL PROBLEMA ES EN EL ARCHIVO, MANDO ESTE STATUS CODE PORQUE ES MAS PRACTICO POR EL CODIGO DE KERNEL\n")
 			w.WriteHeader(http.StatusInsufficientStorage)
+			return
 		}
 
 		CrearProceso(PaqueteInfoProceso)
@@ -128,6 +131,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 
 		w.WriteHeader(http.StatusOK)
 		w.Write(respuestaJSON)
+		return
 	}
 }
 
