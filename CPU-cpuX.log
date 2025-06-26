@@ -2035,3 +2035,23 @@ INIT_PROC proceso1 256
 [CPU-cpuX] 2025/06/26 21:56:21 Se envio syscall a Kernel.
 [CPU-cpuX] 2025/06/26 21:56:21 Interrupción. Deteniendo proceso PID 0
 [CPU-cpuX] 2025/06/26 21:56:21 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/26 21:58:32 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/26 21:58:32 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/26 21:58:32 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/26 21:58:32 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/26 21:58:32 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/26 21:58:35 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/26 21:58:35 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/26 21:58:35 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/26 21:58:35  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/26 21:58:35 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/26 21:58:35 Instruction given: INIT_PROC proceso1 256
+[CPU-cpuX] 2025/06/26 21:58:35 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/26 21:58:35 ## PID: 0 - Ejecutando -> INSTRUCCION: INIT_PROC - TAM: 256 - ARCHIVO: proceso1
+[CPU-cpuX] 2025/06/26 21:58:35 syscall enviada: INIT_PROC
+[CPU-cpuX] 2025/06/26 21:58:35 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/26 21:58:35 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/26 21:58:35 CPU ya ejecutando. No se notifica de nuevo proceso
+[CPU-cpuX] 2025/06/26 21:58:35 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/26 21:58:35 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/26 21:58:35 Esperando nuevo proceso...

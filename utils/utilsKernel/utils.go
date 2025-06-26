@@ -608,6 +608,9 @@ func PlanificadorCortoPlazo() {
 					PasarExec(pcbChequear)
 					cpuDesalojar.Pid = pcbChequear.Pid
 				}
+			} else {
+				SemCortoPlazo <- struct{}{}
+				time.Sleep(1 * time.Second)
 			}
 		} else {
 			SemCortoPlazo <- struct{}{}
