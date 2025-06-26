@@ -15,9 +15,6 @@ import (
 // switch para ver que hace dependiendo la instruccion:
 func Execute(detalle globals.Instruccion) bool {
 
-	log.Printf("type: %s", globals.ID.InstructionType)
-	log.Printf("value: %d", globals.ID.Valor)
-
 	switch detalle.InstructionType {
 
 	case "NOOP": //?
@@ -50,7 +47,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 		if globals.ID.DireccionFis >= 0 {
 
-			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Parametro1)
+			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Tamaño, globals.ID.DireccionFis)
 
 		} else {
@@ -75,28 +72,28 @@ func Execute(detalle globals.Instruccion) bool {
 	// SYSCALLS.
 
 	case "IO": //IO(Dispositivo y tiempo)
-		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %d - TIME: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Parametro1, detalle.Parametro2)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.Instruction.Pid,
 			globals.Instruction.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
-			globals.InstruccionDetalle.Parametro1,
-			globals.InstruccionDetalle.Parametro2)
+			globals.InstruccionDetalle.Tiempo,
+			globals.InstruccionDetalle.Dispositivo)
 
 		return true
 
 	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
-		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - TAM: %d - ARCHIVO: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Parametro1, detalle.Parametro2)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - TAM: %d - ARCHIVO: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Tamaño, detalle.ArchiInstr)
 
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.Instruction.Pid, globals.Instruction.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
-			globals.InstruccionDetalle.Parametro1,
-			globals.InstruccionDetalle.Parametro2)
+			globals.ID.Tamaño,
+			globals.ID.ArchiInstr)
 
 		return true
 
@@ -138,8 +135,6 @@ func Write(ip string, port int, direccion int, contenido string) {
 
 	paquete.Contenido = contenido
 	paquete.Direccion = direccion
-
-	log.Printf("dir: %d, cont: %s", paquete.Direccion, paquete.Contenido)
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {

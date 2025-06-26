@@ -1633,3 +1633,99 @@ WRITE 1 EJEMPLO_DE_ENUNCIADO
 [CPU-cpuX] 2025/06/25 13:29:31 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO - DIRECCION: 1
 [CPU-cpuX] 2025/06/25 13:29:31 Interrupción. Deteniendo proceso PID 0
 [CPU-cpuX] 2025/06/25 13:29:31 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 22:13:45 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/25 22:13:45 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 22:13:45 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/25 22:13:45 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 22:13:45 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/25 22:13:45 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 22:13:45 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 22:13:45 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/25 22:13:45  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/25 22:13:45 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/25 22:13:45 Instruction given: INIT_PROC proceso1 256
+[CPU-cpuX] 2025/06/25 22:13:45 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 22:13:45 type: INIT_PROC
+[CPU-cpuX] 2025/06/25 22:13:45 value: 0
+[CPU-cpuX] 2025/06/25 22:13:45 ## PID: 0 - Ejecutando -> INSTRUCCION: INIT_PROC - TAM: 256 - ARCHIVO: proceso1
+[CPU-cpuX] 2025/06/25 22:13:45 Se imprime el parametro1 (int): 0
+[CPU-cpuX] 2025/06/25 22:13:45 Se imprime el parametro2 (string): %!d(string=)
+[CPU-cpuX] 2025/06/25 22:13:45 syscall enviada: INIT_PROC
+[CPU-cpuX] 2025/06/25 22:13:45 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 22:13:45 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 22:13:45 CPU ya ejecutando. No se notifica de nuevo proceso
+[CPU-cpuX] 2025/06/25 22:13:45 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/25 22:13:45 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/25 22:13:45 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 22:24:47 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/25 22:24:47 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 22:24:47 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/25 22:24:47 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 22:24:47 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/25 22:24:50 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 22:24:50 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 22:24:50 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/25 22:24:50  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/25 22:24:50 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/25 22:24:50 Instruction given: INIT_PROC proceso1 256
+[CPU-cpuX] 2025/06/25 22:24:50 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 22:24:50 type: INIT_PROC
+[CPU-cpuX] 2025/06/25 22:24:50 value: 0
+[CPU-cpuX] 2025/06/25 22:24:50 ## PID: 0 - Ejecutando -> INSTRUCCION: INIT_PROC - TAM: %!d(string=) - ARCHIVO: %!s(int=0)
+[CPU-cpuX] 2025/06/25 22:24:50 Se imprime el parametro1 (int): 0
+[CPU-cpuX] 2025/06/25 22:24:50 Se imprime el parametro2 (string): %!d(string=)
+[CPU-cpuX] 2025/06/25 22:24:50 syscall enviada: INIT_PROC
+[CPU-cpuX] 2025/06/25 22:24:50 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 22:24:50 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 22:24:50 CPU ya ejecutando. No se notifica de nuevo proceso
+[CPU-cpuX] 2025/06/25 22:24:50 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/25 22:24:50 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/25 22:24:50 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 22:28:05 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/25 22:28:05 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 22:28:05 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/25 22:28:05 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 22:28:05 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/25 22:28:05 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 22:28:05 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 22:28:05 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/25 22:28:05  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/25 22:28:05 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/25 22:28:05 Instruction given: INIT_PROC proceso1 256
+[CPU-cpuX] 2025/06/25 22:28:05 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 22:28:05 type: INIT_PROC
+[CPU-cpuX] 2025/06/25 22:28:05 value: 0
+[CPU-cpuX] 2025/06/25 22:28:05 ## PID: 0 - Ejecutando -> INSTRUCCION: INIT_PROC - TAM: 0 - ARCHIVO: 
+[CPU-cpuX] 2025/06/25 22:28:05 Se imprime el parametro1 (int): 0
+[CPU-cpuX] 2025/06/25 22:28:05 Se imprime el parametro2 (string): 
+[CPU-cpuX] 2025/06/25 22:28:05 syscall enviada: INIT_PROC
+[CPU-cpuX] 2025/06/25 22:28:05 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 22:28:05 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 22:28:05 CPU ya ejecutando. No se notifica de nuevo proceso
+[CPU-cpuX] 2025/06/25 22:28:05 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/25 22:28:05 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/25 22:28:05 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 22:30:10 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/25 22:30:10 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/25 22:30:10 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/25 22:30:10 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/25 22:30:10 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/25 22:30:11 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 22:30:11 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 22:30:11 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/25 22:30:11  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/25 22:30:11 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/25 22:30:11 Instruction given: INIT_PROC proceso1 256
+[CPU-cpuX] 2025/06/25 22:30:11 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/25 22:30:11 type: INIT_PROC
+[CPU-cpuX] 2025/06/25 22:30:11 value: 0
+[CPU-cpuX] 2025/06/25 22:30:11 ## PID: 0 - Ejecutando -> INSTRUCCION: INIT_PROC - TAM: 256 - ARCHIVO: proceso1
+[CPU-cpuX] 2025/06/25 22:30:11 Se imprime el parametro1 (int): 256
+[CPU-cpuX] 2025/06/25 22:30:11 Se imprime el parametro2 (string): proceso1
+[CPU-cpuX] 2025/06/25 22:30:11 syscall enviada: INIT_PROC
+[CPU-cpuX] 2025/06/25 22:30:11 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/25 22:30:11 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/25 22:30:11 CPU ya ejecutando. No se notifica de nuevo proceso
+[CPU-cpuX] 2025/06/25 22:30:11 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/25 22:30:11 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/25 22:30:11 Esperando nuevo proceso...
