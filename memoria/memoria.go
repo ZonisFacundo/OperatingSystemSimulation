@@ -36,7 +36,7 @@ func main() {
 		}()
 	*/
 	auxiliares.MostrarMemoriaKernel()
-
+	http.HandleFunc("POST /HANDSHAKE", utilsMemoria.HandshakeACpu)
 	http.HandleFunc("POST /SWAPADISCO", utilsMemoria.RetornoClienteKernelServidorMemoriaSwapADisco)
 	http.HandleFunc("POST /KERNELMEMORIADUMP", utilsMemoria.RetornoClienteKernelServidorMemoriaDumpDelProceso)
 	http.HandleFunc("POST /READ", utilsMemoria.RetornoClienteCPUServidorMEMORIARead)

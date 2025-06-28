@@ -239,7 +239,7 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 		log.Printf("La respuesta del I/O %s fue: %s\n", ioServer.Instancia, respuesta.Mensaje)
 
 		if EstaEnColaBlock(pcb) {
-			PasarReady(pcb)
+			PasarReady(pcb, ColaBlock)
 		} else {
 			PasarSuspReady(pcb)
 		}
@@ -248,7 +248,7 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 	}
 }
 
-func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int) {
+func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int, cola []*PCB) {
 
 	var paquete PaqueteEnviadoKERNELaMemoria
 	paquete.Pid = pcb.Pid
@@ -303,7 +303,7 @@ func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int) {
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
 	if respuestaJSON.StatusCode == http.StatusOK {
 		log.Printf("Se pasa el proceso PID: %d a READY", pcb.Pid)
-		PasarReady(pcb)
+		PasarReady(pcb, cola)
 	}
 
 	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
@@ -570,13 +570,13 @@ func PlanificadorLargoPlazo() {
 			MutexColaNew.Lock()
 			pcbChequear := CriterioColaNew(ColaSuspReady)
 			MutexColaNew.Unlock()
-			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaSuspReady)
 
 		} else if len(ColaNew) != 0 {
 			MutexColaNew.Lock()
 			pcbChequear := CriterioColaNew(ColaNew)
 			MutexColaNew.Unlock()
-			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaNew)
 
 		} else {
 			SemLargoPlazo <- struct{}{} //signal()
@@ -608,7 +608,7 @@ func PlanificadorCortoPlazo() {
 				pcbDesalojar, cpuDesalojar := RafagaMasLargaDeLosCPU()
 				if calcularRafagaEstimada(pcbChequear) < CalcularTiempoRestanteEjecucion(pcbDesalojar) {
 					InterrumpirCPU(cpuDesalojar)
-					PasarReady(pcbDesalojar)
+					PasarReady(pcbDesalojar, ListaExec)
 					PasarExec(pcbChequear)
 					cpuDesalojar.Pid = pcbChequear.Pid
 				}
@@ -696,13 +696,16 @@ func calcularRafagaEstimada(pcb *PCB) float32 {
 	return globals.ClientConfig.Alpha*pcb.RafagaAnterior + (1-globals.ClientConfig.Alpha)*pcb.EstimacionAnterior
 }
 
-func PasarReady(pcb *PCB) {
+func PasarReady(pcb *PCB, colaSacar []*PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado READY  \n", pcb.Pid, pcb.EstadoActual)
 	MutexColaReady.Lock()
 	ColaReady = append(ColaReady, pcb)
 	MutexColaReady.Unlock()
-	MutexColaNew.Lock()
+	MutexColaNew.Lock() //este mutex deberia moverse a otro lado porque no estas nunca seguro de que sea la cola new
 	ColaNew = removerPCB(ColaNew, pcb)
+	ColaBlock = removerPCB(ColaBlock, pcb)
+	ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
+	ListaExec = removerPCB(ListaExec, pcb)
 	MutexColaNew.Unlock()
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "READY"
@@ -978,7 +981,7 @@ func DumpDelProceso(pcb *PCB, ip string, puerto int) {
 
 	if respuestaJSON.StatusCode == http.StatusOK {
 		log.Printf("Se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
-		PasarReady(pcb)
+		PasarReady(pcb, ColaBlock)
 	} else {
 		log.Printf("No se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
 		FinalizarProceso(pcb) //Mando a exit al proceso

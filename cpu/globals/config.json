@@ -11,5 +11,6 @@
     "cache_replacement": "CLOCK",
     "cache_delay": 10,
     "log_level": "DEBUG",
-    "instance_id": "cpuX"
+    "instance_id": "cpuX",
+    "size_page": 64
 }

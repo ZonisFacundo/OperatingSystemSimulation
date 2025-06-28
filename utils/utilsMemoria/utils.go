@@ -39,7 +39,42 @@ type respuestaalCPU struct {
 	Mensaje string `json:"message"`
 }
 
+type PaqueteCPUHandshake struct {
+	Entradas int `json:"ent"`
+	Niveles  int `json:"niv"`
+	TamPag   int `json:"tam"`
+}
+
 // http codigo
+
+// handshake para pasar datos del globals de memoria nada mas... ignorar
+func HandshakeACpu(w http.ResponseWriter, r *http.Request) {
+
+	var recibo respuestaalCPU
+	err := json.NewDecoder(r.Body).Decode(&recibo) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
+	var datos PaqueteCPUHandshake
+
+	datos.Entradas = globals.ClientConfig.Entries_per_page
+	datos.Niveles = globals.ClientConfig.Number_of_levels
+	datos.TamPag = globals.ClientConfig.Page_size
+	log.Printf("entradas: %d, niveles: %d, tam pagina: %d, (Envio valores del config a cpu) (Handshake) \n\n", datos.Entradas, datos.Niveles, datos.TamPag)
+
+	respuestaJSON, err := json.Marshal(datos)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
 
 func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
@@ -522,13 +557,8 @@ func CrearEInicializarTablaDePaginas(PunteroANodo *globals.Nodo, nivel int) {
 /*
 que hace traducirlogicaafisica?
 
-<<<<<<< HEAD
-recibe el slice de cpuS
-DireccionLogica[0] = desplazamiento
-=======
 recibe el slice de cpu
 DireccionLogica[0] = pid
->>>>>>> main
 DireccionLogica[1] = entrada nivel 1
 ...
 DireccionLogica[n] = entrada nivel n
@@ -544,7 +574,7 @@ func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) glo
 		log.Printf("DE CPU RECIBO: %d y el numero de entradas total es: %d	(TraducirLogicaAFisica)\n", DireccionLogica[i], globals.ClientConfig.Entries_per_page)
 
 		if DireccionLogica[i] >= globals.ClientConfig.Entries_per_page {
-			log.Printf("voy a devolver -1 maestro	(TraducirLogicaAFisica)\n")
+			log.Printf("voy a devolver -1 maestro, no tenemos tantas entradas	(TraducirLogicaAFisica)\n")
 			MarcoAurelio.Frame = -1
 			return MarcoAurelio
 		}
@@ -561,7 +591,10 @@ func TraducirLogicaAFisica(DireccionLogica []int, PunteroNodo *globals.Nodo) glo
 	marco.Frame = AccedeAEntrada(DireccionLogica, 0, PunteroNodo)
 
 	MarcoAurelio = marco
-
+	if marco.Frame < 0 {
+		log.Printf("como el frame es: %d voy a finalizar el proceso(TraducirLogicaAFisica)\n", MarcoAurelio.Frame)
+		FinalizarProceso(DireccionLogica[0])
+	}
 	log.Printf("frame que devuelvo ante traduccion solicitada: %d	(TraducirLogicaAFisica)\n", MarcoAurelio.Frame)
 	return MarcoAurelio
 

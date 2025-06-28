@@ -25,6 +25,8 @@ func main() {
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
 	globals.CargarConfig("./cpu/globals/config.json", instanceID)
 
+	instruction_cycle.RecibirDatosMMU(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+
 	utilsCPU.EnvioPortKernel(
 		globals.ClientConfig.Ip_kernel,
 		globals.ClientConfig.Port_kernel,
@@ -35,10 +37,9 @@ func main() {
 
 	go func() {
 		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
-			utilsCPU.RecibirPCyPID(w, r)
-			globals.Instruction.Pid = utilsCPU.Pid
-			globals.Instruction.Pc = utilsCPU.Pc
-			log.Printf("Proceso recibido - PID: %d, PC: %d", globals.Instruction.Pid, globals.Instruction.Pc)
+			instruction_cycle.RecibirPCyPID(w, r)
+
+			log.Printf("Proceso recibido - PID: %d, PC: %d", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
 			select {
 			case procesoNuevo <- struct{}{}:
 				log.Println("Notificando CPU de un nuevo proceso entrante.")
@@ -83,7 +84,7 @@ func main() {
 			}
 
 			log.Printf("Ejecutando: PID=%d, PC=%d", globals.Instruction.Pid, globals.Instruction.Pc)
-			instruction_cycle.Fetch(globals.Instruction.Pid, globals.Instruction.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+			instruction_cycle.Fetch(globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)
 			instruction_cycle.Execute(globals.ID)
 		}

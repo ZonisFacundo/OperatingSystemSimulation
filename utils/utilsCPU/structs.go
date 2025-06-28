@@ -62,6 +62,12 @@ type EnvioDirLogicaAMemoria struct {
 	DirLogica []int  `json:"dir_logica"`
 }
 
+type ReciboMMU struct {
+	Mensaje string `json:"message"`
+	Ip      string `json:"ip"`
+	Puerto  int    `json:"port"`
+}
+
 type MarcoDeMemoria struct {
 	Frame int `json:"frame"`
 }
