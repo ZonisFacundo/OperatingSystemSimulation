@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
-	//"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 type Config struct {
@@ -42,7 +41,7 @@ type Instruccion struct { // instruccion obtenida de memoria
 	Syscall         string                `json:"syscall"`
 	Frame           int                   `json:"frame"`
 	Desplazamiento  int                   `json:"desplazamiento"`
-	Dispositivo string `json:"dispositive"`
+	Dispositivo     string                `json:"dispositive"`
 }
 
 type TLB struct {

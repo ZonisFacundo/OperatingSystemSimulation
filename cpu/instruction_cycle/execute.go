@@ -17,22 +17,13 @@ func Execute(detalle globals.Instruccion) bool {
 
 	switch detalle.InstructionType {
 
-	case "NOOP": //?
-		/*if detalle.Tiempo != 0 {
-			tiempoEjecucion := NOOP(detalle.Tiempo)
-			detalle.ProcessValues.Pc = detalle.ProcessValues.Pc + 1
-			fmt.Printf("NOOP ejecutado con tiempo:%d , y actualizado el PC:%d.\n", tiempoEjecucion, detalle.ProcessValues.Pc)
-			log.Printf("## PID: %d - Ejecutando -> TYPE: %s ", detalle.ProcessValues.Pid, detalle.InstructionType)
-
-		} else {
-			fmt.Println("Tiempo no especificado u acción incorrecta.")
-			detalle.Syscall = "Tiempo no especificado u acción incorrecta."
-		}*/
+	case "NOOP":
 		log.Println("Se ejecuta noop")
 
 	case "WRITE":
 
-		if globals.ID.DireccionFis != 0 { //Ésta habria que imprimir
+		if globals.ID.DireccionFis != 0 {
+			globals.ID.ProcessValues.Pc++
 			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %s - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Datos, globals.ID.DireccionFis)
 		} else {
@@ -47,9 +38,9 @@ func Execute(detalle globals.Instruccion) bool {
 
 		if globals.ID.DireccionFis >= 0 {
 
+			globals.ID.ProcessValues.Pc++
 			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Tamaño, globals.ID.DireccionFis)
-
 		} else {
 			fmt.Sprintln("READ inválido.")
 
@@ -63,8 +54,8 @@ func Execute(detalle globals.Instruccion) bool {
 		pcInstrNew := GOTO(detalle.ProcessValues.Pc, detalle.Valor)
 
 		fmt.Println("PC actualizado en: ", pcInstrNew)
-
 		detalle.Syscall = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
+
 		globals.ID.ProcessValues.Pc = pcInstrNew
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.ProcessValues.Pc)
 		return false
@@ -73,10 +64,11 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "IO": //IO(Dispositivo y tiempo)
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
+		globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
-			globals.Instruction.Pid,
-			globals.Instruction.Pc,
+			globals.ID.ProcessValues.Pid,
+			globals.ID.ProcessValues.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
 			globals.ID.Tiempo,
@@ -87,9 +79,10 @@ func Execute(detalle globals.Instruccion) bool {
 	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - TAM: %d - ARCHIVO: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Tamaño, detalle.ArchiInstr)
 
+		globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
-			globals.Instruction.Pid, globals.Instruction.Pc,
+			globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
 			globals.ID.Tamaño,
@@ -99,10 +92,11 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "DUMP_MEMORY": //
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.ProcessValues.Pid, detalle.InstructionType)
+		globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
-			globals.Instruction.Pid,
-			globals.Instruction.Pc,
+			globals.ID.ProcessValues.Pid,
+			globals.ID.ProcessValues.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
 			0,
@@ -111,10 +105,11 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "EXIT":
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.ProcessValues.Pid, detalle.InstructionType)
+		globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
-			globals.Instruction.Pid,
-			globals.Instruction.Pc,
+			globals.ID.ProcessValues.Pid,
+			globals.ID.ProcessValues.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
 			0,
