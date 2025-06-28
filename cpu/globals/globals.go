@@ -54,8 +54,9 @@ type TLB struct {
 }
 
 type Entrada struct {
-	NroPagina int
-	Direccion int
+	NroPagina    int
+	Direccion    int
+	UltimoAcceso int64
 }
 
 type EntradaCacheDePaginas struct {
@@ -63,12 +64,13 @@ type EntradaCacheDePaginas struct {
 	Contenido       string
 	DireccionFisica int
 	Modificada      bool
+	BitUso          bool
 }
 
 type CacheDePaginas struct {
 	Tamanio      int
 	Entradas     []EntradaCacheDePaginas
-	PosReemplazo int //para implementar FIFO
+	PosReemplazo int 
 }
 
 var Instruction utilsCPU.Proceso
@@ -78,6 +80,8 @@ var ClientConfig *Config
 var Interruption bool
 var Tlb TLB
 var CachePaginas CacheDePaginas
+var AlgoritmoReemplazo string
+var AlgoritmoReemplazoTLB string
 
 func CargarConfig(path string, instanceID string) {
 

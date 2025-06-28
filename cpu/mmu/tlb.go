@@ -3,8 +3,12 @@ package mmu
 import "github.com/sisoputnfrba/tp-golang/cpu/globals"
 
 func EstaTraducida(nroPagina int) (bool) {
+	
+	if len(globals.Tlb.Entradas) == 0 {
+		return false
+	}
 
-	for i := 0; i < globals.Tlb.Tamanio; i++ {
+	for i := 0; i < len(globals.Tlb.Entradas); i++ {
 
 		if globals.Tlb.Entradas[i].NroPagina == nroPagina {
 			

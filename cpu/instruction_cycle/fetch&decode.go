@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
@@ -116,12 +117,13 @@ func Decode(instruccion globals.Instruccion) {
 		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
 
 		if mmu.EstaTraducida(nroPagina) {
+			globals.Tlb.Entradas[globals.ID.PosicionPag].UltimoAcceso = time.Now().UnixNano()
 			Execute(globals.ID)
 		} else {
 			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
 			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 			globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
-			//Mandar direccion fisica a la TLB junto con el numero de página así queda guardada en "caché".
+			Execute(globals.ID)
 		}
 
 	case "WRITE":
@@ -135,6 +137,7 @@ func Decode(instruccion globals.Instruccion) {
 		// mmu despues deberiamos hacerlo global, porque son parametros que nos deberia pasar memoria (tabla de pags)
 
 		if mmu.EstaTraducida(globals.ID.NroPag) {
+			globals.Tlb.Entradas[globals.ID.PosicionPag].UltimoAcceso = time.Now().UnixNano()
 			Execute(globals.ID)
 		} else {
 
