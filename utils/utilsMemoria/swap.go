@@ -21,11 +21,13 @@ crea un archivo con la ruta indicada en el config
 */
 
 func InicializarSwap() {
-	file, err := os.Create(fmt.Sprintf("%s/swapfile.bin", globals.ClientConfig.Swapfile_path))
+	file, err := os.Create(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path))
 
 	if err != nil {
-		log.Printf("error al crear el archivo swap")
+		log.Printf("error al crear el archivo swap (InicializarSwap)\n")
 		return
+	} else {
+		log.Printf("Swap creado (InicializarSwap) \n")
 	}
 
 	defer file.Close()
