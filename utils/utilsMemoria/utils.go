@@ -231,11 +231,12 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 	auxiliares.Mostrarmemoria()
 	log.Printf("\n\n")
 
-	log.Printf("\n\nMUESTRO LA tabla de paginas multinivel de pid 0\n\n")
+	//log.Printf("\n\nMUESTRO LA tabla de paginas multinivel de pid 0\n\n")
 
-	var PunteritoAux *globals.Nodo = globals.MemoriaKernel[0].PunteroATablaDePaginas
 	contador = 0
-	MostrarTablaMultinivel(0, 0, PunteritoAux)
+	//descomentar si queres ver la tabla de paginas
+	//var PunteritoAux *globals.Nodo = globals.MemoriaKernel[0].PunteroATablaDePaginas
+	//MostrarTablaMultinivel(0, 0, PunteritoAux)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
@@ -428,6 +429,7 @@ func EntraEnMemoria(tam int) int {
 }
 
 func LeerArchivoYCargarMap(FilePath string, Pid int) {
+
 	var buffer []byte
 	var err error
 	var Contenido globals.ProcesoEnMemoria //guardo lo que voy viendo del archivo organizadito para pasarselo a MemoriaKernel
@@ -499,8 +501,9 @@ func CrearEInicializarTablaDePaginas(PunteroANodo *globals.Nodo, nivel int) {
 		(*PunteroANodo).Marco = make([]int, globals.ClientConfig.Entries_per_page)
 		for j := 0; j < globals.ClientConfig.Entries_per_page; j++ {
 			(*PunteroANodo).Marco[j] = -10 //lo dejo en -10 porque si los dejo en 0 podria significar una pagina valida
-			globals.Contador++
-			log.Printf("%d \t contador: %d\n", (*PunteroANodo).Marco[j], globals.Contador)
+			//descomentar si queres ver llenado de tabla de paginas multinivel
+			//globals.Contador++
+			//log.Printf("%d \t contador: %d\n", (*PunteroANodo).Marco[j], globals.Contador)
 
 		}
 		return
@@ -519,8 +522,13 @@ func CrearEInicializarTablaDePaginas(PunteroANodo *globals.Nodo, nivel int) {
 /*
 que hace traducirlogicaafisica?
 
+<<<<<<< HEAD
+recibe el slice de cpuS
+DireccionLogica[0] = desplazamiento
+=======
 recibe el slice de cpu
 DireccionLogica[0] = pid
+>>>>>>> main
 DireccionLogica[1] = entrada nivel 1
 ...
 DireccionLogica[n] = entrada nivel n
