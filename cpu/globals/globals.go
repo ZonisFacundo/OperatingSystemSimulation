@@ -42,17 +42,33 @@ type Instruccion struct { // instruccion obtenida de memoria
 	Syscall         string                `json:"syscall"`
 	Frame           int                   `json:"frame"`
 	Desplazamiento  int                   `json:"desplazamiento"`
-	Dispositivo string `json:"dispositive"`
+	Dispositivo     string                `json:"dispositive"`
+	NroPag          int                   `json:"page_number"`
+	PosicionPag     int                   `json:"pos_number"`
 }
 
 type TLB struct {
-	Entradas []Entrada
-	Tamanio  int
+	Entradas       []Entrada
+	Tamanio        int
+	PosDeReemplazo int
 }
 
 type Entrada struct {
 	NroPagina int
 	Direccion int
+}
+
+type EntradaCacheDePaginas struct {
+	NroPag          int
+	Contenido       string
+	DireccionFisica int
+	Modificada      bool
+}
+
+type CacheDePaginas struct {
+	Tamanio      int
+	Entradas     []EntradaCacheDePaginas
+	PosReemplazo int //para implementar FIFO
 }
 
 var Instruction utilsCPU.Proceso
@@ -61,6 +77,7 @@ var ID Instruccion
 var ClientConfig *Config
 var Interruption bool
 var Tlb TLB
+var CachePaginas CacheDePaginas
 
 func CargarConfig(path string, instanceID string) {
 

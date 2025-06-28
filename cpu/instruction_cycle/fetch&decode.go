@@ -131,15 +131,14 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Datos = instruccion.Datos
 
-		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
+		globals.ID.NroPag = globals.ID.DireccionLog / memoryManagement.TamPagina
 		// mmu despues deberiamos hacerlo global, porque son parametros que nos deberia pasar memoria (tabla de pags)
 
-		if mmu.EstaTraducida(nroPagina) {
-
+		if mmu.EstaTraducida(globals.ID.NroPag) {
 			Execute(globals.ID)
 		} else {
 
-			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
+			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, globals.ID.NroPag)
 
 			log.Println("dir?: ", direccionAEnviar)
 
@@ -148,6 +147,7 @@ func Decode(instruccion globals.Instruccion) {
 				log.Printf("ERROR ERROR ERROR FACU, te imprimo el frame %d", globals.ID.Frame)
 			} else {
 				globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
+				Execute(globals.ID) //si no esta en la Tlb, la traduce y escribe en mem
 			}
 			// aca habria que agregar la direccion traducida a la tlb y trabajar con un alg de reemplazo si la tlb esta llena
 		}

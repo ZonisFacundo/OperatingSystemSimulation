@@ -1729,3 +1729,16 @@ WRITE 1 EJEMPLO_DE_ENUNCIADO
 [CPU-cpuX] 2025/06/25 22:30:11 Se envio syscall a Kernel.
 [CPU-cpuX] 2025/06/25 22:30:11 Interrupción. Deteniendo proceso PID 0
 [CPU-cpuX] 2025/06/25 22:30:11 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 20:03:56 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/28 20:03:56 Error al recibir respuesta.
+[CPU-cpuX] 2025/06/28 20:05:21 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/28 20:05:21 Error al recibir respuesta.
+[CPU-cpuX] 2025/06/28 20:05:21 PRUEBA TLB OK
+[CPU-cpuX] 2025/06/28 20:05:21 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 20:05:21 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/28 20:06:21 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/28 20:06:21 Error al recibir respuesta.
+[CPU-cpuX] 2025/06/28 20:06:21 PRUEBA TLB OK
+[CPU-cpuX] 2025/06/28 20:06:21 PRUEBA CACHE DE PÁGINAS OK
+[CPU-cpuX] 2025/06/28 20:06:21 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 20:06:21 Servidor HTTP activo en puerto 8004.

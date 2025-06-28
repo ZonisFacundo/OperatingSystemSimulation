@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
+	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
@@ -32,9 +33,15 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "WRITE":
 
-		if globals.ID.DireccionFis != 0 { //Ésta habria que imprimir
-			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %s - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Datos, globals.ID.DireccionFis)
+		if globals.ID.DireccionFis != 0 {
+			if mmu.EstaEnCache(globals.ID.NroPag) { //escribe en cache
+				mmu.WriteEnCache(globals.ID.Datos)
+			} else { //escribe en mem
+				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
+				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
+				AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
+				log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DATOS: %s - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Datos, globals.ID.DireccionFis)
+			}
 		} else {
 			fmt.Println("WRITE inválido.")
 
@@ -47,10 +54,21 @@ func Execute(detalle globals.Instruccion) bool {
 
 		if globals.ID.DireccionFis >= 0 {
 
-			Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
-			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Tamaño, globals.ID.DireccionFis)
+			if mmu.EstaEnCache(globals.ID.NroPag) {
+				contenidoCompleto := globals.CachePaginas.Entradas[globals.ID.PosicionPag].Contenido
+				desplazamiento := globals.ID.Desplazamiento
 
-		} else {
+				lectura := contenidoCompleto[desplazamiento : desplazamiento+globals.ID.Tamaño]
+				log.Printf("READ en cache: %s", lectura)
+			} else {
+				Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
+				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
+				AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
+			}
+
+			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Tamaño, globals.ID.DireccionFis)
+		
+			} else {
 			fmt.Sprintln("READ inválido.")
 
 			detalle.Syscall = "READ inválido."
@@ -72,7 +90,7 @@ func Execute(detalle globals.Instruccion) bool {
 	// SYSCALLS.
 
 	case "IO": //IO(Dispositivo y tiempo)
-		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.Instruction.Pid,
@@ -316,4 +334,52 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 	} else {
 		log.Printf("El Kernel recibió correctamente el PID y el PC.\n")
 	}
+}
+
+// reemplazo FIFO
+
+func AgregarEnCache(nroPagina int, direccionFisica int) {
+	entrada := globals.EntradaCacheDePaginas{
+		NroPag:          nroPagina,
+		Contenido:       globals.ID.Datos,
+		DireccionFisica: direccionFisica,
+		Modificada:      false,
+	}
+
+	if len(globals.CachePaginas.Entradas) < globals.CachePaginas.Tamanio {
+		globals.CachePaginas.Entradas = append(globals.CachePaginas.Entradas, entrada)
+		return
+	} else {
+		// caché llena
+		pos := globals.CachePaginas.PosReemplazo
+		entradaReemplazada := globals.CachePaginas.Entradas[pos]
+
+		if entradaReemplazada.Modificada {
+			// write-back a memoria (basicamente como se va a sacar de cache, la baja a memoria para no perder los datos)
+			frameBase := entradaReemplazada.NroPag * globals.ClientConfig.Page_size
+			Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, entradaReemplazada.Contenido)
+			log.Printf("Write-Back de página %d a memoria.", entradaReemplazada.NroPag)
+		} else {
+			globals.CachePaginas.Entradas[pos] = entrada
+			globals.CachePaginas.PosReemplazo = (globals.CachePaginas.PosReemplazo + 1) % globals.CachePaginas.Tamanio
+		}
+
+	}
+}
+
+func AgregarEnTLB(nroPagina int, direccion int) {
+	entrada := globals.Entrada{
+		NroPagina: nroPagina,
+		Direccion: direccion,
+	}
+
+	if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
+		globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
+		return
+	} else {
+		pos := globals.Tlb.PosDeReemplazo
+		globals.Tlb.Entradas[pos] = entrada
+		globals.Tlb.PosDeReemplazo = (globals.Tlb.PosDeReemplazo + 1) % globals.Tlb.Tamanio
+	}
+
 }

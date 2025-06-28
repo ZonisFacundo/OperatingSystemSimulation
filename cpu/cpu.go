@@ -32,7 +32,27 @@ func main() {
 		globals.ClientConfig.Port_cpu,
 		globals.ClientConfig.Ip_cpu,
 	)
+/* esto lo use para probar que tlb y cache funcionan bien 
+	globals.Tlb.Tamanio = 4
+	globals.Tlb.Entradas = make([]globals.Entrada, globals.Tlb.Tamanio)
 
+	globals.CachePaginas.Tamanio = 4
+	globals.CachePaginas.Entradas = make([]globals.EntradaCacheDePaginas, globals.CachePaginas.Tamanio)
+
+	instruction_cycle.AgregarEnTLB(4, 4000)
+	if !mmu.EstaTraducida(4) {
+		log.Fatal("ERROR: la página 4 debería estar en la TLB")
+	} else {
+		log.Println("PRUEBA TLB OK")
+	}
+
+	instruction_cycle.AgregarEnCache(3, 3000)
+	if !mmu.EstaEnCache(3) {
+		log.Fatal("ERROR: la página 3 debería estar en la cache de páginas")
+	} else {
+		log.Println("PRUEBA CACHE DE PÁGINAS OK")
+	}
+*/
 	go func() {
 		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
 			utilsCPU.RecibirPCyPID(w, r)
