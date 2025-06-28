@@ -69,6 +69,7 @@ func main() {
 			mutexInterrupcion.Lock()
 
 			interrumpido := globals.Interruption
+			
 			if interrumpido {
 				globals.Interruption = false
 			}

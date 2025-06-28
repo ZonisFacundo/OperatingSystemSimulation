@@ -168,14 +168,18 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 
 	case "INIT_PROC":
-		respuesta.Mensaje = ""
+		respuesta.Mensaje = "NO INTERRUMPAS GIL"
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
 		CrearPCB(request.Parametro1, request.Parametro2)
 		cpuServidor.Disponible = false
 		EnviarProcesoACPU(PCBUtilizar, &cpuServidor)
+		w.WriteHeader(http.StatusOK)
+
+		w.Write(respuestaJSON)
+		return
 	}
 	log.Printf("PID: %d PC: %d", request.Pid, request.Pc)
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusFound)
 	w.Write(respuestaJSON)
 
 }
@@ -587,11 +591,13 @@ func PlanificadorCortoPlazo() {
 		<-SemCortoPlazo
 
 		if len(ColaReady) != 0 {
-			log.Printf("Planificador de corto plazo ejecutando")
+			//log.Printf("Planificador de corto plazo ejecutando")
 			//time.Sleep(10 * time.Second)
 			MutexColaReady.Lock()
+			log.Printf("entreg al mutex")
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
+			log.Printf("sali del mutex")
 			CPUDisponible, noEsVacio := TraqueoCPU()
 			if noEsVacio {
 				log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
