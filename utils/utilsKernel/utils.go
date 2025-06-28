@@ -65,7 +65,7 @@ func FinalizarIO(w http.ResponseWriter, r *http.Request) {
 
 	ioCerrada := ObtenerIO(request.Nombre)
 	enviarExitProcesosIO(ioCerrada)
-	ListaIO = removerIO(&ioCerrada)
+	ListaIO = removerIO(ioCerrada)
 
 	var respuestaIO RespuestaalIO
 	respuestaIO.Mensaje = "conexion realizada con exito"
@@ -172,7 +172,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
 		CrearPCB(request.Parametro1, request.Parametro2)
 		cpuServidor.Disponible = false
-		EnviarProcesoACPU(PCBUtilizar, &cpuServidor)
+		EnviarProcesoACPU(PCBUtilizar, cpuServidor)
 		w.WriteHeader(http.StatusOK)
 
 		w.Write(respuestaJSON)
@@ -184,7 +184,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func UtilizarIO(ioServer IO, pcb *PCB, tiempo int) {
+func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 
 	var paquete PaqueteEnviadoKERNELaIO
 	paquete.Pid = pcb.Pid
@@ -594,10 +594,8 @@ func PlanificadorCortoPlazo() {
 			//log.Printf("Planificador de corto plazo ejecutando")
 			//time.Sleep(10 * time.Second)
 			MutexColaReady.Lock()
-			log.Printf("entreg al mutex")
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
-			log.Printf("sali del mutex")
 			CPUDisponible, noEsVacio := TraqueoCPU()
 			if noEsVacio {
 				log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
@@ -687,7 +685,7 @@ func RafagaMasLargaDeLosCPU() (*PCB, *CPU) {
 	//pcbEstimacionMinima.EstimacionAnterior = calcularRafagaEstimada(pcbEstimacionMinima)
 	cpuConLaRafagaLarga := ObtenerCpuEnFuncionDelPid(pcbEstimacionMasLarga.Pid)
 
-	return pcbEstimacionMasLarga, &cpuConLaRafagaLarga
+	return pcbEstimacionMasLarga, cpuConLaRafagaLarga
 }
 
 func CalcularTiempoRestanteEjecucion(pcb *PCB) float32 {
@@ -831,22 +829,22 @@ func CrearStructCPU2(ip string, puerto int, instancia string) CPU {
 
 }
 
-func ObtenerCpu(instancia string) CPU {
-	for _, cpu := range ListaCPU {
-		if cpu.Instancia == instancia {
-			return cpu
+func ObtenerCpu(instancia string) *CPU {
+	for i := range ListaCPU {
+		if ListaCPU[i].Instancia == instancia {
+			return &ListaCPU[i] // → la dirección del elemento real
 		}
 	}
-	return CPU{}
-} //Nos dice que instancia de CPU es
+	return nil
+}
 
-func ObtenerCpuEnFuncionDelPid(pid int) CPU {
-	for _, cpu := range ListaCPU {
-		if cpu.Pid == pid {
-			return cpu
+func ObtenerCpuEnFuncionDelPid(pid int) *CPU {
+	for i := range ListaCPU {
+		if ListaCPU[i].Pid == pid {
+			return &ListaCPU[i] // → la dirección del elemento real
 		}
 	}
-	return CPU{}
+	return nil
 } //Nos dice que instancia de CPU es
 
 func FinalizarProceso(pcb *PCB) {
@@ -871,13 +869,13 @@ func CrearStructIO(ip string, puerto int, instancia string) {
 	})
 }
 
-func ObtenerIO(instancia string) IO {
-	for _, io := range ListaIO {
-		if io.Instancia == instancia {
-			return io
+func ObtenerIO(instancia string) *IO {
+	for i := range ListaIO {
+		if ListaIO[i].Instancia == instancia {
+			return &ListaIO[i] // → la dirección del elemento real
 		}
 	}
-	return IO{}
+	return nil
 }
 
 func ExisteIO(instancia string) bool {
@@ -889,7 +887,7 @@ func ExisteIO(instancia string) bool {
 	return false
 }
 
-func AgregarColaIO(io IO, pcb *PCB, tiempo int) {
+func AgregarColaIO(io *IO, pcb *PCB, tiempo int) {
 	io.ColaProcesos = append(io.ColaProcesos, PCBIO{
 		Pcb:    pcb,
 		Tiempo: tiempo,
@@ -914,7 +912,7 @@ func EstaEnColaBlock(pcbChequear *PCB) bool {
 	return false
 }
 
-func MandarProcesoAIO(io IO) {
+func MandarProcesoAIO(io *IO) {
 	if io.Disponible && len(io.ColaProcesos) > 0 {
 		io.Disponible = false
 		go UtilizarIO(io, io.ColaProcesos[0].Pcb, io.ColaProcesos[0].Tiempo)
@@ -997,14 +995,14 @@ func removerIO(io *IO) []IO {
 	return ListaIO
 }
 
-func enviarExitProcesosIO(io IO) {
+func enviarExitProcesosIO(io *IO) {
 	for _, proceso := range io.ColaProcesos {
 		if proceso.Pcb != nil {
 			log.Printf("El proceso PID: %d  se pasa a EXIT por desconexion del I/O %s", proceso.Pcb.Pid, io.Instancia)
 			FinalizarProceso(proceso.Pcb)
 		}
 	}
-	removerIO(&io)
+	removerIO(io)
 	log.Printf("Se desconecto el I/O %s", io.Instancia)
 }
 

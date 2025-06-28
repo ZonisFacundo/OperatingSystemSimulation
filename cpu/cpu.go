@@ -36,6 +36,8 @@ func main() {
 	go func() {
 		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
 			utilsCPU.RecibirPCyPID(w, r)
+			globals.Instruction.Pid = utilsCPU.Pid
+			globals.Instruction.Pc = utilsCPU.Pc
 			log.Printf("Proceso recibido - PID: %d, PC: %d", globals.Instruction.Pid, globals.Instruction.Pc)
 			select {
 			case procesoNuevo <- struct{}{}:
@@ -69,7 +71,7 @@ func main() {
 			mutexInterrupcion.Lock()
 
 			interrumpido := globals.Interruption
-			
+
 			if interrumpido {
 				globals.Interruption = false
 			}

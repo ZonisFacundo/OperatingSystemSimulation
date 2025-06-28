@@ -65,3 +65,6 @@ type EnvioDirLogicaAMemoria struct {
 type MarcoDeMemoria struct {
 	Frame int `json:"frame"`
 }
+
+var Pid int
+var Pc int
