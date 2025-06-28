@@ -132,10 +132,11 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	PCBUtilizar := ObtenerPCB(cpuServidor.Pid) // ya no hace falta porque esta en el struct
 	PCBUtilizar.Pc = request.Pc
 	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
-	respuesta.Mensaje = "interrupcion"
+
 	switch request.Syscall {
-	case "I/O":
+	case "IO":
 		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
+		respuesta.Mensaje = "interrupcion"
 		cpuServidor.Disponible = true
 		if ExisteIO(request.Parametro2) {
 			SemCortoPlazo <- struct{}{}
@@ -155,24 +156,30 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 	case "EXIT":
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
+		respuesta.Mensaje = "interrupcion"
 		cpuServidor.Disponible = true
 		FinalizarProceso(PCBUtilizar)
 
 	case "DUMP_MEMORY":
 		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
+		respuesta.Mensaje = "interrupcion"
 		cpuServidor.Disponible = true
 		SemCortoPlazo <- struct{}{}
 		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 
 	case "INIT_PROC":
-		respuesta.Mensaje = ""
+		respuesta.Mensaje = "NO INTERRUMPAS GIL"
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
 		CrearPCB(request.Parametro1, request.Parametro2)
 		cpuServidor.Disponible = false
 		EnviarProcesoACPU(PCBUtilizar, &cpuServidor)
+		w.WriteHeader(http.StatusOK)
+
+		w.Write(respuestaJSON)
+		return
 	}
 	log.Printf("PID: %d PC: %d", request.Pid, request.Pc)
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusFound)
 	w.Write(respuestaJSON)
 
 }
@@ -582,11 +589,15 @@ func PlanificadorLargoPlazo() {
 func PlanificadorCortoPlazo() {
 	for true {
 		<-SemCortoPlazo
+
 		if len(ColaReady) != 0 {
+			//log.Printf("Planificador de corto plazo ejecutando")
 			//time.Sleep(10 * time.Second)
 			MutexColaReady.Lock()
+			log.Printf("entreg al mutex")
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
+			log.Printf("sali del mutex")
 			CPUDisponible, noEsVacio := TraqueoCPU()
 			if noEsVacio {
 				log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
@@ -603,6 +614,9 @@ func PlanificadorCortoPlazo() {
 					PasarExec(pcbChequear)
 					cpuDesalojar.Pid = pcbChequear.Pid
 				}
+			} else {
+				SemCortoPlazo <- struct{}{}
+				time.Sleep(1 * time.Second)
 			}
 		} else {
 			SemCortoPlazo <- struct{}{}
@@ -901,7 +915,7 @@ func EstaEnColaBlock(pcbChequear *PCB) bool {
 }
 
 func MandarProcesoAIO(io IO) {
-	if io.Disponible {
+	if io.Disponible && len(io.ColaProcesos) > 0 {
 		io.Disponible = false
 		go UtilizarIO(io, io.ColaProcesos[0].Pcb, io.ColaProcesos[0].Tiempo)
 

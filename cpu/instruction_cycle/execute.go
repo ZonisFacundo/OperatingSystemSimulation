@@ -72,15 +72,15 @@ func Execute(detalle globals.Instruccion) bool {
 	// SYSCALLS.
 
 	case "IO": //IO(Dispositivo y tiempo)
-		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.Instruction.Pid,
 			globals.Instruction.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
-			globals.InstruccionDetalle.Tiempo,
-			globals.InstruccionDetalle.Dispositivo)
+			globals.ID.Tiempo,
+			globals.ID.Dispositivo)
 
 		return true
 
@@ -290,8 +290,9 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 
 	if respuestaJSON.StatusCode != http.StatusOK {
 
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
-		return
+		log.Println("chupete en el orto outside")
+		globals.Interruption = true
+
 	}
 
 	defer respuestaJSON.Body.Close()
@@ -310,10 +311,6 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 		log.Printf("Error al decodificar el JSON.\n")
 	}
 
-	if respuesta.Mensaje != "interrupcion" {
-		globals.Interruption = true
+	log.Printf("El Kernel recibió correctamente el PID y el PC.\n")
 
-	} else {
-		log.Printf("El Kernel recibió correctamente el PID y el PC.\n")
-	}
 }

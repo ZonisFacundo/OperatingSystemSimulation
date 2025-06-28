@@ -9,3 +9,4 @@ READ 0 20
 INIT_PROC proceso1 256
 DUMP_MEMORY
 EXIT
+IO IO-impresora 1000 
