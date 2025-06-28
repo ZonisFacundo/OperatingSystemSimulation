@@ -1930,3 +1930,67 @@ DUMP_MEMORY
 [CPU-cpuX] 2025/06/28 22:53:33 Se envio syscall a Kernel.
 [CPU-cpuX] 2025/06/28 22:53:33 Interrupción. Deteniendo proceso PID 0
 [CPU-cpuX] 2025/06/28 22:53:33 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 22:58:34 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/28 22:58:34 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 22:58:34 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/28 22:58:34 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 22:58:34 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/28 22:58:35 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/28 22:58:35 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/28 22:58:35 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 22:58:35  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 22:58:35 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/28 22:58:35 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/06/28 22:58:35 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 22:58:35 Desplazamiento?: 26
+[CPU-cpuX] 2025/06/28 22:58:35 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/28 22:58:35 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/28 22:58:35 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 22:58:35 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 22:58:44 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/28 22:58:44 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/28 22:58:44 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/28 22:58:44 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 22:58:44 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/28 22:58:44 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 22:58:44 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 22:58:44 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 22:58:44 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/28 22:58:44 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 22:58:44 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/28 22:58:44 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 22:58:44 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/28 22:58:44 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/28 22:58:44 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 22:58:44 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/28 22:58:44 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 22:58:44 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 22:58:44 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 22:58:44 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/28 22:58:44 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 22:58:44 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/28 22:58:44 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 22:58:44 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/28 22:58:44 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/06/28 22:58:44 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 22:58:44 Desplazamiento?: 28
+[CPU-cpuX] 2025/06/28 22:58:44 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 22:58:44 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 22:58:44 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 22:58:44 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 22:58:53 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/28 22:58:53 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 22:58:53 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 22:58:53 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 22:58:53 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 22:58:53 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 22:58:53 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 22:58:53 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 22:58:53 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 22:58:53 Esperando nuevo proceso...

@@ -34,7 +34,7 @@ func Execute(detalle globals.Instruccion) bool {
 	case "WRITE":
 
 		if globals.ID.DireccionFis >= 0 {
-			if globals.ClientConfig.Cache_entries > 0 { // caché habilitada
+			if globals.ClientConfig.Cache_entries > 0 { 
 				if mmu.EstaEnCache(globals.ID.NroPag) {
 					mmu.WriteEnCache(globals.ID.Datos)
 				} else {
@@ -44,9 +44,9 @@ func Execute(detalle globals.Instruccion) bool {
 					AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 				}
 			} else {
-				// caché deshabilitada
 				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
 				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
+				AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 			}
 
 		} else {
@@ -60,7 +60,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 		if globals.ID.DireccionFis >= 0 {
 
-			if globals.ClientConfig.Cache_entries > 0 { // caché habilitada
+			if globals.ClientConfig.Cache_entries > 0 {
 				if mmu.EstaEnCache(globals.ID.NroPag) {
 					mmu.ReadEnCache()
 				} else {
@@ -69,9 +69,9 @@ func Execute(detalle globals.Instruccion) bool {
 					AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 				}
 			} else {
-				// caché deshabilitada
 				Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
 				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
+				AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 			}
 
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d",
