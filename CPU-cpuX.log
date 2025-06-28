@@ -2356,3 +2356,1304 @@ EXIT
 [CPU-cpuX] 2025/06/27 21:02:32 El Kernel recibió correctamente el PID y el PC.
 [CPU-cpuX] 2025/06/27 21:02:32 Interrupción. Deteniendo proceso PID 0
 [CPU-cpuX] 2025/06/27 21:02:32 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 18:42:01 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/28 18:42:01 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 18:42:01 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/28 18:42:01 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 18:42:01 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/28 18:42:07 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/28 18:42:07 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/28 18:42:07 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 18:42:07  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 18:42:07 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/28 18:42:07 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/06/28 18:42:07 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:42:07 Desplazamiento?: 26
+[CPU-cpuX] 2025/06/28 18:42:07 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/28 18:42:07 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/28 18:42:07 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 18:42:07 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 18:42:14 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/28 18:42:14 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL - DIRECCION: 26
+[CPU-cpuX] 2025/06/28 18:42:14 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/28 18:42:14 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/28 18:42:14 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:42:14 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/28 18:42:14 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 18:42:14 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 18:42:14 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 18:42:14 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/06/28 18:42:14 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 18:42:14 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/28 18:42:14 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/28 18:42:14 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:42:14 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/28 18:42:14 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 18:42:14 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 18:42:14 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 18:42:14 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/06/28 18:42:14 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 18:42:14 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/28 18:42:14 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/06/28 18:42:14 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:42:14 Desplazamiento?: 28
+[CPU-cpuX] 2025/06/28 18:42:14 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 18:42:14 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 18:42:14 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 18:42:14 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 18:42:21 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/28 18:42:21 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: H - DIRECCION: 28
+[CPU-cpuX] 2025/06/28 18:42:21 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 18:42:21 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 18:42:21 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:42:21 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 18:42:21 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 18:42:21 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 18:42:21 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 18:42:21 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 18:42:21 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 18:42:21 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 18:42:21 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 18:45:48 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/28 18:45:48 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 18:45:48 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/28 18:45:48 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 18:45:48 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/28 18:45:52 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/28 18:45:52 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/28 18:45:52 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 18:45:52  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 18:45:52 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/28 18:45:52 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/06/28 18:45:52 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:45:52 Desplazamiento?: 26
+[CPU-cpuX] 2025/06/28 18:45:52 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/28 18:45:52 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/28 18:45:52 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 18:45:52 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 18:46:01 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/28 18:46:01 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL - DIRECCION: 26
+[CPU-cpuX] 2025/06/28 18:46:01 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/28 18:46:01 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/28 18:46:01 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:46:01 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/28 18:46:01 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 18:46:01 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 18:46:01 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 18:46:01 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/06/28 18:46:01 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 18:46:01 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/28 18:46:01 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/28 18:46:01 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:46:01 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/28 18:46:01 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 18:46:01 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 18:46:01 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 18:46:01 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/06/28 18:46:01 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 18:46:01 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/28 18:46:01 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/06/28 18:46:01 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:46:01 Desplazamiento?: 28
+[CPU-cpuX] 2025/06/28 18:46:01 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 18:46:01 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 18:46:01 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 18:46:01 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 18:46:09 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/28 18:46:09 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: H - DIRECCION: 28
+[CPU-cpuX] 2025/06/28 18:46:09 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 18:46:09 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 18:46:09 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:46:09 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 18:46:09 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 18:46:09 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 18:46:09 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 18:46:09 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 18:46:09 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 18:46:09 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 18:46:09 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 18:46:10 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 18:46:10 Proceso recibido - PID: 0, PC: 5
+[CPU-cpuX] 2025/06/28 18:46:10 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 18:46:10  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 18:46:10 Ejecutando: PID=0, PC=5
+[CPU-cpuX] 2025/06/28 18:46:10 Instruction given: 
+IO IO-impresora 1000 
+[CPU-cpuX] 2025/06/28 18:46:10 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:46:10 ## PID: 0 - Ejecutando -> INSTRUCCION: IO - DISPOSITIVO: IO-impresora - TIME: 1000
+[CPU-cpuX] 2025/06/28 18:46:10 syscall enviada: IO
+[CPU-cpuX] 2025/06/28 18:46:10 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 18:46:10 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 18:46:10 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 18:46:10 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 18:46:10 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 18:46:12 El Kernel envio PID: 0 - PC: 5
+[CPU-cpuX] 2025/06/28 18:46:12 Proceso recibido - PID: 0, PC: 6
+[CPU-cpuX] 2025/06/28 18:46:12 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 18:46:12  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 18:46:12 Ejecutando: PID=0, PC=6
+[CPU-cpuX] 2025/06/28 18:46:12 Instruction given: 
+INIT_PROC archi2.txt 256
+[CPU-cpuX] 2025/06/28 18:46:12 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:46:12 ## PID: 0 - Ejecutando -> INSTRUCCION: INIT_PROC - TAM: 256 - ARCHIVO: archi2.txt
+[CPU-cpuX] 2025/06/28 18:46:12 syscall enviada: INIT_PROC
+[CPU-cpuX] 2025/06/28 18:46:12 El Kernel envio PID: 0 - PC: 6
+[CPU-cpuX] 2025/06/28 18:46:12 Proceso recibido - PID: 0, PC: 6
+[CPU-cpuX] 2025/06/28 18:46:12 CPU ya ejecutando. No se notifica de nuevo proceso
+[CPU-cpuX] 2025/06/28 18:46:12 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 18:46:12 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 18:46:12 Ejecutando: PID=0, PC=7
+[CPU-cpuX] 2025/06/28 18:46:12 Instruction given: 
+EXIT
+[CPU-cpuX] 2025/06/28 18:46:12 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 18:46:12 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 18:46:12 ## PID: 0 - Ejecutando -> INSTRUCCION: EXIT
+[CPU-cpuX] 2025/06/28 18:46:12 syscall enviada: EXIT
+[CPU-cpuX] 2025/06/28 18:46:12 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 18:46:12 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 18:46:12 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 18:46:12 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 18:46:12 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 18:46:13 El Kernel envio PID: 1 - PC: 0
+[CPU-cpuX] 2025/06/28 18:46:13 Proceso recibido - PID: 0, PC: 8
+[CPU-cpuX] 2025/06/28 18:46:13 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 18:46:13  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 18:46:13 Ejecutando: PID=0, PC=8
+[CPU-cpuX] 2025/06/28 18:46:13 Instruction given: 
+IO 25000
+[CPU-cpuX] 2025/06/28 18:46:13 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:12 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/28 19:01:12 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 19:01:12 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/28 19:01:12 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:12 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/28 19:01:20 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/28 19:01:20 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/28 19:01:20 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:20  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:20 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/28 19:01:20 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/06/28 19:01:20 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:20 Desplazamiento?: 26
+[CPU-cpuX] 2025/06/28 19:01:20 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/28 19:01:20 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/28 19:01:20 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 19:01:20 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 19:01:29 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/28 19:01:29 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL - DIRECCION: 26
+[CPU-cpuX] 2025/06/28 19:01:29 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/28 19:01:29 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/28 19:01:29 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:29 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/28 19:01:29 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 19:01:29 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 19:01:29 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 19:01:29 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/06/28 19:01:29 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 19:01:29 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/28 19:01:29 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/28 19:01:29 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:29 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/28 19:01:29 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 19:01:29 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 19:01:29 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 19:01:29 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/06/28 19:01:29 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 19:01:29 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/28 19:01:29 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/06/28 19:01:29 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:29 Desplazamiento?: 28
+[CPU-cpuX] 2025/06/28 19:01:29 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 19:01:29 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 19:01:29 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 19:01:29 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 19:01:37 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/28 19:01:37 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: H - DIRECCION: 28
+[CPU-cpuX] 2025/06/28 19:01:37 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:37 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:37 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:37 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:37 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:37 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:37 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:37 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:37 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:37 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:37 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:38 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:38 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:38 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:38  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:38 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:38 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:38 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:38 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:38 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:38 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:38 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:38 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:38 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:38 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:38 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:39 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:39 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:39 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:39  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:39 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:39 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:39 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:39 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:39 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:39 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:39 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:39 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:39 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:39 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:39 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:40 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:40 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:40 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:40  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:40 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:40 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:40 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:40 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:40 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:40 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:40 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:40 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:40 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:40 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:40 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:41 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:41 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:41 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:41  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:41 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:41 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:41 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:41 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:41 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:41 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:41 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:41 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:41 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:41 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:41 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:42 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:42 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:42 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:42  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:42 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:42 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:42 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:42 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:42 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:42 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:42 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:42 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:42 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:42 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:42 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:43 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:43 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:43 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:43  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:43 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:43 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:43 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:43 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:43 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:43 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:43 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:43 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:43 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:43 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:43 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:44 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:44 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:44 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:44  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:44 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:44 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:44 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:44 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:44 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:44 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:44 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:44 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:44 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:44 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:44 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:45 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:45 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:45 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:45  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:45 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:45 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:45 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:45 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:45 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:45 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:45 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:45 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:45 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:45 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:45 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:46 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:46 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:46 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:46  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:46 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:46 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:46 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:46 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:46 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:46 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:46 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:46 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:46 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:46 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:46 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:47 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:47 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:47 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:47  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:47 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:47 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:47 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:47 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:47 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:47 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:47 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:47 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:47 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:47 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:47 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:48 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:48 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:48 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:48  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:48 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:48 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:48 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:48 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:48 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:48 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:48 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:48 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:48 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:48 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:48 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:49 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:49 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:49 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:49  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:49 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:49 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:49 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:49 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:49 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:49 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:49 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:49 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:49 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:49 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:49 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:50 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:50 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:50 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:50  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:50 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:50 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:50 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:50 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:50 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:50 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:50 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:50 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:50 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:50 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:50 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:51 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:51 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:51 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:51  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:51 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:51 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:51 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:51 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:51 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:51 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:51 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:51 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:51 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:51 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:51 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:52 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:52 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:52 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:52  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:52 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:52 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:52 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:52 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:52 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:52 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:52 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:52 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:52 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:52 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:52 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:53 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:53 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:53 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:53  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:53 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:53 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:53 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:53 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:53 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:53 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:53 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:53 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:53 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:53 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:53 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:54 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:54 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:54 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:54  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:54 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:54 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:54 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:54 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:54 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:54 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:54 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:54 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:54 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:54 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:54 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:55 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:55 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:55 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:55  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:55 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:55 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:55 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:55 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:55 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:55 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:55 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:55 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:55 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:55 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:55 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:56 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:56 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:56 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:56  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:56 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:56 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:56 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:56 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:56 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:56 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:56 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:56 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:56 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:56 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:56 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:57 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:57 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:57 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:57  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:57 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:57 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:57 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:57 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:57 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:57 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:57 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:57 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:57 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:57 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:57 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:58 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:58 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:58 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:58  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:58 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:58 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:58 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:58 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:58 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:58 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:58 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:58 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:58 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:58 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:58 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:01:59 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:01:59 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:01:59 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:01:59  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:01:59 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:01:59 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:59 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:01:59 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:01:59 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:59 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:01:59 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:01:59 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:01:59 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:01:59 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:01:59 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:00 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:00 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:00 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:00  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:00 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:00 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:00 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:00 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:00 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:00 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:00 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:00 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:00 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:00 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:00 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:01 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:01 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:01 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:01  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:01 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:01 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:01 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:01 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:01 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:01 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:01 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:01 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:01 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:01 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:01 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:02 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:02 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:02 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:02  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:02 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:02 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:02 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:02 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:02 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:02 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:02 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:02 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:02 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:02 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:02 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:03 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:03 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:03 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:03  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:03 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:03 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:03 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:03 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:03 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:03 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:03 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:03 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:03 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:03 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:03 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:04 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:04 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:04 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:04  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:04 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:04 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:04 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:04 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:04 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:04 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:04 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:04 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:04 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:04 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:04 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:05 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:05 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:05 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:05  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:05 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:05 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:05 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:05 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:05 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:05 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:05 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:05 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:05 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:05 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:05 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:06 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:06 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:06 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:06  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:06 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:06 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:06 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:06 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:06 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:06 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:06 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:06 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:06 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:06 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:06 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:07 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:07 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:07 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:07  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:07 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:07 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:07 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:07 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:07 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:07 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:07 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:07 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:07 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:07 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:07 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:08 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:08 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:08 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:08  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:08 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:08 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:08 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:08 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:08 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:08 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:08 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:08 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:08 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:08 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:08 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:09 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:09 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:09 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:09  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:09 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:09 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:09 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:09 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:09 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:09 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:09 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:09 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:09 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:09 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:09 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:10 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:10 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:10 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:10  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:10 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:10 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:10 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:10 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:10 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:10 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:10 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:10 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:10 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:10 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:10 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:11 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:11 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:11 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:11  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:11 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:11 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:11 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:11 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:11 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:11 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:11 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:11 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:11 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:11 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:11 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:12 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:12 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:12 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:12  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:12 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:12 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:12 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:12 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:12 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:12 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:12 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:12 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:12 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:12 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:12 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:13 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:13 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:13 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:13  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:13 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:13 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:13 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:13 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:13 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:13 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:13 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:13 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:13 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:13 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:13 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:14 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:14 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:14 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:14  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:14 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:14 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:14 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:14 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:14 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:14 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:14 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:14 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:14 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:14 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:14 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:15 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:15 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:15 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:15  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:15 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:15 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:15 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:15 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:15 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:15 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:15 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:15 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:15 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:15 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:15 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:16 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:16 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:16 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:16  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:16 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:16 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:16 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:16 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:16 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:16 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:16 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:16 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:16 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:16 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:16 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:17 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:17 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:17 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:17  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:17 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:17 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:17 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:17 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:17 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:17 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:17 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:17 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:17 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:17 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:17 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:18 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:18 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:18 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:18  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:18 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:18 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:18 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:18 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:18 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:18 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:18 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:18 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:18 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:18 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:18 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:19 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:19 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:19 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:19  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:19 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:19 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:19 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:19 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:19 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:19 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:19 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:19 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:19 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:19 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:19 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:20 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:20 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:20 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:20  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:20 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:20 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:20 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:20 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:20 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:20 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:20 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:20 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:20 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:20 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:20 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:21 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:21 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:21 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:21  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:21 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:21 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:21 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:21 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:21 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:21 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:21 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:21 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:21 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:21 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:21 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:22 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:22 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:22 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:22  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:22 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:22 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:22 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:22 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:22 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:22 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:22 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:22 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:22 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:22 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:22 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:23 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:23 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:23 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:23  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:23 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:23 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:23 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:23 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:23 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:23 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:23 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:23 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:23 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:23 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:23 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:24 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:24 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:24 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:24  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:24 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:24 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:24 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:24 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:24 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:24 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:24 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:24 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:24 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:24 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:24 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:25 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:25 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:25 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:25  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:25 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:25 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:25 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:25 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:25 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:25 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:25 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:25 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:25 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:25 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:25 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:02:26 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:26 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:26 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:02:26  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:02:26 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:02:26 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:26 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:02:26 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:02:26 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:26 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:02:27 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:02:27 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:02:27 CPU ya ejecutando. No se notifica de nuevo proceso
+[CPU-cpuX] 2025/06/28 19:02:27 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:02:27 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:02:27 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:02:27 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:02:27 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:20 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/28 19:04:20 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 19:04:20 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/28 19:04:20 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:20 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/28 19:04:24 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/28 19:04:24 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/28 19:04:24 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:24  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:24 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/28 19:04:24 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/06/28 19:04:24 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:24 Desplazamiento?: 26
+[CPU-cpuX] 2025/06/28 19:04:24 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/28 19:04:24 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/28 19:04:24 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 19:04:24 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 19:04:33 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/28 19:04:33 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL - DIRECCION: 26
+[CPU-cpuX] 2025/06/28 19:04:33 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/28 19:04:33 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/28 19:04:33 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:33 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/28 19:04:33 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 19:04:33 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 19:04:33 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 19:04:33 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/06/28 19:04:33 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 19:04:33 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/28 19:04:33 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/28 19:04:33 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:33 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/28 19:04:33 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 19:04:33 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 19:04:33 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 19:04:33 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/06/28 19:04:33 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/28 19:04:33 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/28 19:04:33 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/06/28 19:04:33 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:33 Desplazamiento?: 28
+[CPU-cpuX] 2025/06/28 19:04:33 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 19:04:33 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/28 19:04:33 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/28 19:04:33 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/28 19:04:42 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/28 19:04:42 ## PID: 0 - Ejecutando -> INSTRUCCION: WRITE - DATOS: H - DIRECCION: 28
+[CPU-cpuX] 2025/06/28 19:04:42 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:42 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:42 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:42 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:42 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:42 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:42 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:42 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:42 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:42 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:42 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:43 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:43 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:43 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:43  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:43 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:43 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:43 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:43 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:43 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:43 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:43 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:43 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:43 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:43 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:43 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:44 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:44 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:44 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:44  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:44 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:44 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:44 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:44 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:44 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:44 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:44 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:44 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:44 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:44 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:44 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:45 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:45 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:45 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:45  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:45 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:45 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:45 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:45 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:45 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:45 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:45 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:45 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:45 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:45 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:45 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:46 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:46 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:46 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:46  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:46 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:46 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:46 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:46 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:46 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:46 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:46 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:46 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:46 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:46 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:46 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:46 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:46 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:46 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:46  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:46 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:46 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:46 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:46 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:46 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:46 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:46 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:46 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:46 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:46 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:46 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:47 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:47 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:47 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:47  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:47 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:47 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:47 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:47 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:47 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:47 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:47 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:47 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:47 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:47 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:47 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:48 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:48 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:48 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:48  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:48 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:48 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:48 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:48 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:48 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:48 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:48 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:48 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:48 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:48 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:48 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:49 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:49 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:49 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:49  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:49 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:49 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:49 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:49 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:49 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:49 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:49 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:49 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:49 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:49 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:49 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:50 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:50 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:50 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:50  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:50 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:50 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:50 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:50 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:50 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:50 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:50 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:50 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:50 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:50 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:50 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:51 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:51 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:51 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:51  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:51 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:51 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:51 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:51 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:51 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:51 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:51 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:51 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:51 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:51 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:51 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:52 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:52 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:52 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:52  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:52 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:52 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:52 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:52 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:52 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:52 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:52 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:52 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:52 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:52 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:52 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:53 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:53 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:53 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:53  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:53 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:53 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:53 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:53 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:53 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:53 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:53 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:53 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:53 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:53 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:53 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/28 19:04:54 El Kernel envio PID: 0 - PC: 4
+[CPU-cpuX] 2025/06/28 19:04:54 Proceso recibido - PID: 0, PC: 4
+[CPU-cpuX] 2025/06/28 19:04:54 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/28 19:04:54  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/28 19:04:54 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/28 19:04:54 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:54 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/28 19:04:54 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/28 19:04:54 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:54 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/28 19:04:54 chupete en el orto outside
+[CPU-cpuX] 2025/06/28 19:04:54 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/28 19:04:54 El Kernel recibió correctamente el PID y el PC.
+[CPU-cpuX] 2025/06/28 19:04:54 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/28 19:04:54 Esperando nuevo proceso...
