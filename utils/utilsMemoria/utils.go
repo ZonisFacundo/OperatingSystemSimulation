@@ -268,7 +268,7 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 	//log.Printf("\n\nMUESTRO LA tabla de paginas multinivel de pid 0\n\n")
 
-	contador = 0
+	globals.ContadorTabla = 0
 	//descomentar si queres ver la tabla de paginas
 	//var PunteritoAux *globals.Nodo = globals.MemoriaKernel[0].PunteroATablaDePaginas
 	//MostrarTablaMultinivel(0, 0, PunteritoAux)
@@ -520,7 +520,7 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	AsignarValoresATablaDePaginas(paquete.Pid, 0, PunteroAux)
 	ActualizarPaginasDisponibles() //actualiza que paginas estan disponibles en este momento
 
-	contador = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior (es la unica varialbe global de utils)
+	globals.ContadorTabla = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior (es la unica varialbe global de utils)
 
 	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d  (CrearProceso) \n", paquete.Pid, paquete.TamProceso)
 }
@@ -613,11 +613,11 @@ Para aumentar expresividad en el codigo (no estar agregando i - 1 en los loops p
 func AccedeAEntrada(DireccionLogica []int, nivel int, PunteroNodo *globals.Nodo) int {
 
 	if nivel == globals.ClientConfig.Number_of_levels-1 { //significa que ya estamos parados en el nivel que contiene los marcos
-		log.Printf("\n este es el valor que returneo: %d\n", (*PunteroNodo).Marco[DireccionLogica[nivel]])
-		return ((*PunteroNodo).Marco[DireccionLogica[nivel]])
+		log.Printf("\n este es el valor que returneo: %d\n", (*PunteroNodo).Marco[DireccionLogica[nivel+1]])
+		return ((*PunteroNodo).Marco[DireccionLogica[nivel+1]])
 
 	} else {
-		return AccedeAEntrada(DireccionLogica, nivel+1, (*PunteroNodo).Siguiente[DireccionLogica[nivel]])
+		return AccedeAEntrada(DireccionLogica, nivel+1, (*PunteroNodo).Siguiente[DireccionLogica[nivel+1]]) //DESPUES DE 5 HORAS DEBUGGEANDO, AHI IBA UN +1, NO TE OLVIDES NUNCA MAS POR FAVOR, EL PRIMER ELEMENTO DEL SLICE ES EL PID, ESTABAS TOMANDO EL PID COMO LA PRIMERA ENTRADA EN ESTA FUNCION
 
 	}
 }
@@ -681,17 +681,16 @@ que hace AsignarValoresATablaDePaginas
 
 mira los valores que hay en la tabla de paginas simple del proceso y actualiza los de la tabla de paginas de verdad
 */
-var contador int = 0 //lo uso para contar donde estamos parados en la tabla de paginas global (la del map del proceso)
 
 func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo) {
 
 	if nivel == globals.ClientConfig.Number_of_levels-1 { //significa que ya estamos parados en el nivel que contiene los marcos
 		for j := 0; j < globals.ClientConfig.Entries_per_page; j++ {
 
-			if contador < len(globals.MemoriaKernel[pid].TablaSimple) {
-				(*PunteroAux).Marco[j] = globals.MemoriaKernel[pid].TablaSimple[contador]
+			if globals.ContadorTabla < len(globals.MemoriaKernel[pid].TablaSimple) {
+				(*PunteroAux).Marco[j] = globals.MemoriaKernel[pid].TablaSimple[globals.ContadorTabla]
 				log.Printf("llene este valor     %d       , es una de las paginas que tiene, una de la tabla que printie arriba /n", (*PunteroAux).Marco[j])
-				contador++
+				globals.ContadorTabla++
 			} else {
 				return
 			}
@@ -807,9 +806,9 @@ func MostrarTablaMultinivel(pid int, nivel int, PunteroAux *globals.Nodo) {
 	if nivel == globals.ClientConfig.Number_of_levels-1 { //significa que ya estamos parados en el nivel que contiene los marcos
 		for j := 0; j < globals.ClientConfig.Entries_per_page; j++ {
 
-			if contador < len(globals.MemoriaKernel[pid].TablaSimple) {
+			if globals.ContadorTabla < len(globals.MemoriaKernel[pid].TablaSimple) {
 				log.Printf("%d \t contador: %d\n", (*PunteroAux).Marco[j], globals.Contador)
-				contador++
+				globals.ContadorTabla++
 				globals.Contador++
 			} else {
 				return

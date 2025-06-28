@@ -1,9 +1,9 @@
 {
     "port_memory": 8002,
-    "memory_size": 4096,
+    "memory_size": 1024,
     "page_size": 64,
-    "entries_per_page": 4,
-    "number_of_levels": 5,
+    "entries_per_page": 3,
+    "number_of_levels": 2,
     "memory_delay": 1500,
     "swapfile_path": "/home/utnso/swapfile.bin",
     "swap_delay": 15000,
