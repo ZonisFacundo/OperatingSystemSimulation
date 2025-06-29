@@ -213,7 +213,7 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 	respuestaJSON, err := cliente.Do(req) //recibe la respuesta del server
 
 	if err != nil {
-		log.Printf("Error al recibir respuesta.\n")
+		FinalizarProceso(pcb)
 		return
 
 	}
@@ -284,7 +284,7 @@ func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int, cola []*PCB) {
 
 	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
 
-	log.Printf("Conexion establecida con exito \n")
+	log.Printf("Pregunto si puedo pasar a ready un proceso \n")
 	//pasamos de JSON a formato bytes lo que nos paso el paquete
 	body, err := io.ReadAll(respuestaJSON.Body)
 
