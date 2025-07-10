@@ -1994,3 +1994,941 @@ DUMP_MEMORY
 [CPU-cpuX] 2025/06/28 22:58:53 Se envio syscall a Kernel.
 [CPU-cpuX] 2025/06/28 22:58:53 Interrupción. Deteniendo proceso PID 0
 [CPU-cpuX] 2025/06/28 22:58:53 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/29 17:52:21 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/29 17:52:21 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 17:52:21 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/29 17:52:21 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/29 17:52:21 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/29 17:52:24 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/29 17:52:24 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/29 17:52:24 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/29 17:52:24  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/29 17:52:24 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/29 17:52:24 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/06/29 17:52:24 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 17:52:24 Desplazamiento?: 26
+[CPU-cpuX] 2025/06/29 17:52:24 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/29 17:52:24 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/29 17:52:24 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 17:52:24 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 17:52:33 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/29 17:52:33 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/29 17:52:33 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/29 17:52:33 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 17:52:33 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/29 17:52:33 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 17:52:33 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 17:52:33 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 17:52:33 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/29 17:52:33 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/29 17:52:33 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/29 17:52:33 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/29 17:52:33 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 17:52:33 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/29 17:52:33 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 17:52:33 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 17:52:33 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 17:52:33 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/29 17:52:33 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/29 17:52:33 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/29 17:52:33 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/06/29 17:52:33 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 17:52:33 Desplazamiento?: 28
+[CPU-cpuX] 2025/06/29 17:52:33 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 17:52:33 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 17:52:33 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 17:52:33 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 17:52:41 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/29 17:52:41 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/29 17:52:41 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 17:52:41 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 17:52:41 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/29 17:52:41 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 17:52:41 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 17:52:41 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/29 17:52:41 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/29 17:52:41 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/29 18:00:55 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/29 18:00:55 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:00:55 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/29 18:00:55 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/29 18:00:55 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/29 18:00:57 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/29 18:00:57 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/29 18:00:57 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/29 18:00:57  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/29 18:00:57 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/29 18:00:57 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/06/29 18:00:57 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:00:57 Desplazamiento?: 26
+[CPU-cpuX] 2025/06/29 18:00:57 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/29 18:00:57 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/29 18:00:57 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:00:57 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:01:06 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/29 18:01:06 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/29 18:01:06 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/29 18:01:06 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:01:06 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/29 18:01:06 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:01:06 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:01:06 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:01:06 entro aca (no traducida)
+[CPU-cpuX] 2025/06/29 18:01:06 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/29 18:01:06 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/29 18:01:06 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/29 18:01:06 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/29 18:01:06 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:01:06 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/29 18:01:06 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:01:06 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:01:06 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:01:06 entro aca (no traducida)
+[CPU-cpuX] 2025/06/29 18:01:06 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/29 18:01:06 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/29 18:01:06 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/29 18:01:06 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/06/29 18:01:06 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:01:06 Desplazamiento?: 28
+[CPU-cpuX] 2025/06/29 18:01:06 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:01:06 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:01:06 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:01:06 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:01:14 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/29 18:01:14 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/29 18:01:14 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:01:14 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:01:14 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/29 18:01:14 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:01:14 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:01:14 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/29 18:01:14 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/29 18:01:14 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/29 18:04:01 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/29 18:04:01 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:04:01 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/29 18:04:01 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/29 18:04:01 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/29 18:04:02 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/29 18:04:02 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/29 18:04:02 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/29 18:04:02  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/29 18:04:02 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/29 18:04:02 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/06/29 18:04:02 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:04:02 Desplazamiento?: 26
+[CPU-cpuX] 2025/06/29 18:04:02 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/29 18:04:02 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/29 18:04:02 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:04:02 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:04:11 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/29 18:04:11 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/29 18:04:11 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/29 18:04:11 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:04:11 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/29 18:04:11 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:04:11 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:04:11 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:04:11 entro aca (no traducida)
+[CPU-cpuX] 2025/06/29 18:04:11 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/29 18:04:11 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/29 18:04:11 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/29 18:04:11 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/29 18:04:11 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:04:11 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/29 18:04:11 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:04:11 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:04:11 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:04:11 entro aca (no traducida)
+[CPU-cpuX] 2025/06/29 18:04:11 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/29 18:04:11 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/29 18:04:11 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/29 18:04:11 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/06/29 18:04:11 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:04:11 Desplazamiento?: 28
+[CPU-cpuX] 2025/06/29 18:04:11 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:04:11 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:04:11 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:04:11 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:04:20 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/29 18:04:20 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/29 18:04:20 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:04:20 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:04:20 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/29 18:04:20 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:04:20 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:04:20 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/29 18:04:20 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/29 18:04:20 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/29 18:07:38 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/29 18:07:38 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:07:38 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/29 18:07:38 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/29 18:07:38 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/29 18:07:40 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/29 18:07:40 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/29 18:07:40 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/29 18:07:40  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/29 18:07:40 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/29 18:07:40 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/06/29 18:07:40 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:07:40 Desplazamiento?: 26
+[CPU-cpuX] 2025/06/29 18:07:40 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/29 18:07:40 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/29 18:07:40 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:07:40 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:07:49 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/29 18:07:49 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/29 18:07:49 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/29 18:07:49 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:07:49 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/29 18:07:49 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:07:49 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:07:49 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:07:49 entro aca (no traducida)
+[CPU-cpuX] 2025/06/29 18:07:49 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/29 18:07:49 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/29 18:07:49 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/29 18:07:49 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/29 18:07:49 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:07:49 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/29 18:07:49 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:07:49 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:07:49 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:07:49 entro aca (no traducida)
+[CPU-cpuX] 2025/06/29 18:07:49 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/29 18:07:49 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/29 18:07:49 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/29 18:07:49 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/06/29 18:07:49 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:07:49 Desplazamiento?: 28
+[CPU-cpuX] 2025/06/29 18:07:49 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:07:49 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:07:49 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:07:49 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:07:58 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/29 18:07:58 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/29 18:07:58 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:07:58 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:07:58 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/29 18:07:58 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:07:58 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:07:58 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/29 18:07:58 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/29 18:07:58 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/29 18:11:53 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/06/29 18:11:53 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:11:53 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/06/29 18:11:53 Esperando nuevo proceso...
+[CPU-cpuX] 2025/06/29 18:11:53 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/06/29 18:11:54 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/06/29 18:11:54 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/06/29 18:11:54 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/06/29 18:11:54  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/06/29 18:11:54 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/06/29 18:11:54 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/06/29 18:11:54 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:11:54 entro aca y devuelvo false
+[CPU-cpuX] 2025/06/29 18:11:54 Desplazamiento?: 26
+[CPU-cpuX] 2025/06/29 18:11:54 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/29 18:11:54 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/06/29 18:11:54 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:11:54 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:12:04 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/29 18:12:04 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/06/29 18:12:04 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/29 18:12:04 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:12:04 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/06/29 18:12:04 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/29 18:12:04 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:12:04 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:12:04 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:12:04 entro aca (no traducida)
+[CPU-cpuX] 2025/06/29 18:12:04 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/29 18:12:04 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/29 18:12:04 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/06/29 18:12:04 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/06/29 18:12:04 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:12:04 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/06/29 18:12:04 Desplazamiento?: 1
+[CPU-cpuX] 2025/06/29 18:12:04 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:12:04 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:12:04 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:12:04 entro aca (no traducida)
+[CPU-cpuX] 2025/06/29 18:12:04 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/06/29 18:12:04 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/06/29 18:12:04 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/06/29 18:12:04 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/06/29 18:12:04 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:12:04 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/06/29 18:12:04 Desplazamiento?: 28
+[CPU-cpuX] 2025/06/29 18:12:04 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:12:04 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/06/29 18:12:04 Conexion establecida con exito.
+[CPU-cpuX] 2025/06/29 18:12:04 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/06/29 18:12:13 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/06/29 18:12:13 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/06/29 18:12:13 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:12:13 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/06/29 18:12:13 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/06/29 18:12:13 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:12:13 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/06/29 18:12:13 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/06/29 18:12:13 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/06/29 18:12:13 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 03:44:00 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/10 03:44:00 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 03:44:00 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/10 03:44:00 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 03:44:00 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/10 03:44:02 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/10 03:44:02 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/10 03:44:02 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/10 03:44:02  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/07/10 03:44:02 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/10 03:44:02 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/07/10 03:44:02 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 03:46:34 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/10 03:46:34 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 03:46:34 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/10 03:46:34 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 03:46:34 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/10 03:46:36 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/10 03:46:36 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/10 03:46:36 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/10 03:46:36  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/07/10 03:46:36 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/10 03:46:36 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/07/10 03:46:36 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 03:46:36 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 03:46:36 Desplazamiento?: 26
+[CPU-cpuX] 2025/07/10 03:46:36 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 03:46:36 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 03:46:36 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 03:46:36 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 03:46:45 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 03:46:45 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/07/10 03:46:45 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 03:46:45 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 03:46:45 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 03:46:45 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 03:46:45 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 03:46:45 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 03:46:45 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 03:46:45 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 03:46:45 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 03:46:45 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 03:46:45 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/07/10 03:46:45 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 03:46:45 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 03:46:45 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 03:46:45 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 03:46:45 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 03:46:45 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 03:46:45 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 03:46:45 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 03:46:45 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 03:46:45 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 03:46:45 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/07/10 03:46:45 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/07/10 03:46:45 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 03:46:45 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 03:46:45 Desplazamiento?: 28
+[CPU-cpuX] 2025/07/10 03:46:45 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 03:46:45 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 03:46:45 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 03:46:45 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 03:46:53 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 03:46:53 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/07/10 03:46:53 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 03:46:53 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 03:46:53 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/07/10 03:46:53 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 03:46:53 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 03:46:53 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/07/10 03:46:53 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/07/10 03:46:53 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 04:11:15 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/10 04:11:15 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:11:15 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/10 04:11:15 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 04:11:15 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/10 04:11:17 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/10 04:11:17 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/10 04:11:17 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/10 04:11:17  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/07/10 04:11:17 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/10 04:11:17 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/07/10 04:11:17 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 04:11:17 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:11:17 Desplazamiento?: 26
+[CPU-cpuX] 2025/07/10 04:11:17 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 04:11:17 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 04:11:17 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:11:17 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:11:25 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 04:11:25 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/07/10 04:11:25 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 04:11:25 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 04:11:25 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:11:25 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 04:11:25 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:11:25 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:11:25 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:11:25 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 04:11:25 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 04:11:25 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 04:11:25 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/07/10 04:11:25 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 04:11:25 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 04:11:25 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:11:25 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 04:11:25 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:11:25 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:11:25 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:11:25 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 04:11:25 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 04:11:25 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 04:11:25 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/07/10 04:11:25 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/07/10 04:11:25 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 04:11:25 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:11:25 Desplazamiento?: 28
+[CPU-cpuX] 2025/07/10 04:11:25 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:11:25 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:11:25 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:11:25 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:11:34 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 04:11:34 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/07/10 04:11:34 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:11:34 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 04:11:34 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/07/10 04:11:34 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:11:34 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:11:34 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/07/10 04:11:34 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/07/10 04:11:34 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 04:43:00 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/10 04:43:00 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:43:00 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/10 04:43:00 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 04:43:00 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/10 04:43:02 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/10 04:43:02 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/10 04:43:02 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/10 04:43:02  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/07/10 04:43:02 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/10 04:43:02 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/07/10 04:43:02 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 04:43:02 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:43:02 Desplazamiento?: 26
+[CPU-cpuX] 2025/07/10 04:43:02 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 04:43:02 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 04:43:02 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:43:02 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:43:11 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 04:43:11 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/07/10 04:43:11 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 04:43:11 ## PID: <0> - FETCH - Program Counter: <1>.
+[CPU-cpuX] 2025/07/10 04:43:11 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:43:11 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 04:43:11 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:43:11 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:43:11 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:43:11 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 04:43:11 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 04:43:11 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 04:43:11 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/07/10 04:43:11 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 04:43:11 ## PID: <0> - FETCH - Program Counter: <2>.
+[CPU-cpuX] 2025/07/10 04:43:11 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:43:11 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 04:43:11 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:43:11 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:43:11 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:43:11 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 04:43:11 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 04:43:11 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 04:43:11 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/07/10 04:43:11 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/07/10 04:43:11 ## PID: <0> - FETCH - Program Counter: <3>.
+[CPU-cpuX] 2025/07/10 04:43:11 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:43:11 Desplazamiento?: 28
+[CPU-cpuX] 2025/07/10 04:43:11 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:43:11 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:43:11 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:43:11 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:43:20 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 04:43:20 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/07/10 04:43:20 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:43:20 ## PID: <0> - FETCH - Program Counter: <4>.
+[CPU-cpuX] 2025/07/10 04:43:20 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/07/10 04:43:20 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:43:20 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:43:20 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/07/10 04:43:20 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/07/10 04:43:20 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 04:50:20 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/10 04:50:20 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:50:20 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/10 04:50:20 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 04:50:20 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/10 04:50:21 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/10 04:50:21 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/10 04:50:21 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/10 04:50:21  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/07/10 04:50:21 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/10 04:50:21 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/07/10 04:50:21 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 04:50:21 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:50:21 Desplazamiento?: 26
+[CPU-cpuX] 2025/07/10 04:50:21 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 04:50:21 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 04:50:21 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:50:21 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:50:29 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 04:50:29 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/07/10 04:50:29 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 04:50:29 ## PID: <0> - FETCH - Program Counter: <1>.
+[CPU-cpuX] 2025/07/10 04:50:29 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:50:29 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 04:50:29 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:50:29 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:50:29 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:50:29 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 04:50:29 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 04:50:29 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 04:50:29 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/07/10 04:50:29 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 04:50:29 ## PID: <0> - FETCH - Program Counter: <2>.
+[CPU-cpuX] 2025/07/10 04:50:29 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:50:29 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 04:50:29 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:50:29 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:50:29 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:50:29 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 04:50:29 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 04:50:29 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 04:50:29 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/07/10 04:50:29 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/07/10 04:50:29 ## PID: <0> - FETCH - Program Counter: <3>.
+[CPU-cpuX] 2025/07/10 04:50:29 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:50:29 Desplazamiento?: 28
+[CPU-cpuX] 2025/07/10 04:50:29 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:50:29 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:50:29 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:50:29 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:50:38 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 04:50:38 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/07/10 04:50:38 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:50:38 ## PID: <0> - FETCH - Program Counter: <4>.
+[CPU-cpuX] 2025/07/10 04:50:38 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/07/10 04:50:38 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:50:38 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:50:38 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/07/10 04:50:38 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/07/10 04:50:38 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 04:57:09 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/10 04:57:09 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:57:09 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/10 04:57:09 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 04:57:09 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/10 04:57:11 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/10 04:57:11 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/10 04:57:11 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/10 04:57:11  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/07/10 04:57:11 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/10 04:57:11 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/07/10 04:57:11 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 04:57:11 Buscando en TLB: PID=0 Pag=1
+[CPU-cpuX] 2025/07/10 04:57:11 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:57:11 Desplazamiento?: 26
+[CPU-cpuX] 2025/07/10 04:57:11 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 04:57:11 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 04:57:11 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:57:11 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:57:20 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 04:57:20 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/07/10 04:57:20 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 04:57:20 ## PID: <0> - FETCH - Program Counter: <1>.
+[CPU-cpuX] 2025/07/10 04:57:20 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 04:57:20 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:57:20 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 04:57:20 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:57:20 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:57:20 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:57:20 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 04:57:20 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 04:57:20 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 04:57:20 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/07/10 04:57:20 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 04:57:20 ## PID: <0> - FETCH - Program Counter: <2>.
+[CPU-cpuX] 2025/07/10 04:57:20 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 04:57:20 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:57:20 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 04:57:20 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:57:20 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:57:20 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:57:20 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 04:57:20 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 04:57:20 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 04:57:20 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/07/10 04:57:20 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/07/10 04:57:20 ## PID: <0> - FETCH - Program Counter: <3>.
+[CPU-cpuX] 2025/07/10 04:57:20 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 04:57:20 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 04:57:20 Desplazamiento?: 28
+[CPU-cpuX] 2025/07/10 04:57:20 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:57:20 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 04:57:20 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 04:57:20 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 04:57:27 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 04:57:27 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/07/10 04:57:27 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:57:27 ## PID: <0> - FETCH - Program Counter: <4>.
+[CPU-cpuX] 2025/07/10 04:57:27 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/07/10 04:57:27 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:57:27 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 04:57:27 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/07/10 04:57:27 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/07/10 04:57:27 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 05:01:33 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/10 05:01:33 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:01:33 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/10 05:01:33 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 05:01:33 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/10 05:01:34 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/10 05:01:34 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/10 05:01:34 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/10 05:01:34  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/07/10 05:01:34 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/10 05:01:34 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/07/10 05:01:34 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 05:01:34 Buscando en TLB: PID=0 Pag=1
+[CPU-cpuX] 2025/07/10 05:01:34 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 05:01:34 Desplazamiento?: 26
+[CPU-cpuX] 2025/07/10 05:01:34 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 05:01:34 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 05:01:34 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:01:34 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 05:01:42 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 05:01:42 >> Agregando en TLB: PID=0, Pagina=1, DirFis=26
+[CPU-cpuX] 2025/07/10 05:01:42 TLB[0] = PID:0 - Pag:1 - Dir:26
+[CPU-cpuX] 2025/07/10 05:01:42 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/07/10 05:01:42 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 05:01:42 ## PID: <0> - FETCH - Program Counter: <1>.
+[CPU-cpuX] 2025/07/10 05:01:42 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:01:42 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 05:01:42 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 05:01:42 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 05:01:42 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:01:42 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 05:01:42 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 05:01:42 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 05:01:42 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 05:01:42 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/07/10 05:01:42 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 05:01:42 ## PID: <0> - FETCH - Program Counter: <2>.
+[CPU-cpuX] 2025/07/10 05:01:42 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:01:42 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 05:01:42 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 05:01:42 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 05:01:42 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:01:42 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 05:01:42 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 05:01:42 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 05:01:42 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 05:01:42 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/07/10 05:01:42 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/07/10 05:01:42 ## PID: <0> - FETCH - Program Counter: <3>.
+[CPU-cpuX] 2025/07/10 05:01:42 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:01:42 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 05:01:42 Desplazamiento?: 28
+[CPU-cpuX] 2025/07/10 05:01:42 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 05:01:42 dir?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 05:01:42 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:01:42 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 05:01:50 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 05:01:50 >> Agregando en TLB: PID=0, Pagina=0, DirFis=28
+[CPU-cpuX] 2025/07/10 05:01:50 TLB[0] = PID:0 - Pag:1 - Dir:26
+[CPU-cpuX] 2025/07/10 05:01:50 TLB[1] = PID:0 - Pag:0 - Dir:28
+[CPU-cpuX] 2025/07/10 05:01:50 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/07/10 05:01:50 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:01:50 ## PID: <0> - FETCH - Program Counter: <4>.
+[CPU-cpuX] 2025/07/10 05:01:50 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/07/10 05:01:50 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:01:50 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:01:50 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/07/10 05:01:50 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/07/10 05:01:50 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 05:05:40 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/10 05:05:40 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:05:40 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/10 05:05:40 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 05:05:40 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/10 05:05:41 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/10 05:05:41 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/10 05:05:41 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/10 05:05:41  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/07/10 05:05:41 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/10 05:05:41 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/07/10 05:05:41 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 05:05:41 Buscando en TLB: PID=0 Pag=1
+[CPU-cpuX] 2025/07/10 05:05:41 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 05:05:41 Desplazamiento?: 26
+[CPU-cpuX] 2025/07/10 05:05:41 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 05:05:41 dir?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 05:05:41 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:05:41 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 05:05:50 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 05:05:50 >> Agregando en TLB: PID=0, Pagina=1, DirFis=26
+[CPU-cpuX] 2025/07/10 05:05:50 TLB[0] = PID:0 - Pag:1 - Dir:26
+[CPU-cpuX] 2025/07/10 05:05:50 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/07/10 05:05:50 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 05:05:50 ## PID: <0> - FETCH - Program Counter: <1>.
+[CPU-cpuX] 2025/07/10 05:05:50 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:05:50 entro aca y devuelvo false pq nunca averigue nada
+[CPU-cpuX] 2025/07/10 05:05:50 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 05:05:50 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 05:05:50 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:05:50 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 05:05:50 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 05:05:50 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/07/10 05:05:50 TLB tamanio: 15
+[CPU-cpuX] 2025/07/10 05:05:50 >> Agregando en TLB: PID=0, Pagina=0, DirFis=1
+[CPU-cpuX] 2025/07/10 05:05:50 TLB[0] = PID:0 - Pag:1 - Dir:26
+[CPU-cpuX] 2025/07/10 05:05:50 TLB[1] = PID:0 - Pag:0 - Dir:1
+[CPU-cpuX] 2025/07/10 05:05:50 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 05:05:50 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/07/10 05:05:50 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 05:05:50 ## PID: <0> - FETCH - Program Counter: <2>.
+[CPU-cpuX] 2025/07/10 05:05:50 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:05:50 entro aca (traducida1)
+[CPU-cpuX] 2025/07/10 05:05:50 entro aca (traducida2)
+[CPU-cpuX] 2025/07/10 05:05:50 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 05:05:50 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 05:05:50 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/07/10 05:05:50 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/07/10 05:05:50 ## PID: <0> - FETCH - Program Counter: <3>.
+[CPU-cpuX] 2025/07/10 05:05:50 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:05:50 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/07/10 05:05:50 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:05:50 ## PID: <0> - FETCH - Program Counter: <4>.
+[CPU-cpuX] 2025/07/10 05:05:50 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/07/10 05:05:50 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:05:50 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:05:50 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/07/10 05:05:50 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/07/10 05:05:50 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 05:23:57 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/10 05:23:57 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:23:57 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/10 05:23:57 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 05:23:57 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/10 05:23:58 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/10 05:23:58 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/10 05:23:58 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/10 05:23:58  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/07/10 05:23:58 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/10 05:23:58 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/07/10 05:23:58 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 05:23:58 Buscando en TLB: PID=0 Pag=1
+[CPU-cpuX] 2025/07/10 05:23:58 >> TLB MISS: PID=0, Pagina=1
+[CPU-cpuX] 2025/07/10 05:23:58 Desplazamiento?: 26
+[CPU-cpuX] 2025/07/10 05:23:58 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 05:23:58 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:23:58 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 05:23:58 Dirección física calculada: 26
+[CPU-cpuX] 2025/07/10 05:23:58 >> CACHE MISS: PID=0, Pagina=1
+[CPU-cpuX] 2025/07/10 05:24:06 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 05:24:06 >> Agregando en TLB: PID=0, Pagina=1, DirFis=26
+[CPU-cpuX] 2025/07/10 05:24:06 TLB[0] = PID:0 - Pag:1 - Dir:26
+[CPU-cpuX] 2025/07/10 05:24:06 WRITE a Memoria y agregado a Cache y TLB: PID=0, Pag=1, DirFis=26
+[CPU-cpuX] 2025/07/10 05:24:06 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/07/10 05:24:06 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 05:24:06 ## PID: <0> - FETCH - Program Counter: <1>.
+[CPU-cpuX] 2025/07/10 05:24:06 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:24:06 >> TLB MISS: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/10 05:24:06 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 05:24:06 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 05:24:06 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:24:06 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 05:24:06 entro aca (no traducida)
+[CPU-cpuX] 2025/07/10 05:24:06 >> CACHE MISS: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/10 05:24:06 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/07/10 05:24:06 TLB tamanio: 15
+[CPU-cpuX] 2025/07/10 05:24:06 >> Agregando en TLB: PID=0, Pagina=0, DirFis=1
+[CPU-cpuX] 2025/07/10 05:24:06 TLB[0] = PID:0 - Pag:1 - Dir:26
+[CPU-cpuX] 2025/07/10 05:24:06 TLB[1] = PID:0 - Pag:0 - Dir:1
+[CPU-cpuX] 2025/07/10 05:24:06 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 05:24:06 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/07/10 05:24:06 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 05:24:06 ## PID: <0> - FETCH - Program Counter: <2>.
+[CPU-cpuX] 2025/07/10 05:24:06 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:24:06 >> TLB HIT: PID=0, Pagina=0 -> DirFis=1
+[CPU-cpuX] 2025/07/10 05:24:06 entro aca (traducida1)
+[CPU-cpuX] 2025/07/10 05:24:06 entro aca (traducida2)
+[CPU-cpuX] 2025/07/10 05:24:06 >> CACHE HIT: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/10 05:24:06 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 05:24:06 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 05:24:06 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/07/10 05:24:06 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/07/10 05:24:06 ## PID: <0> - FETCH - Program Counter: <3>.
+[CPU-cpuX] 2025/07/10 05:24:06 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:24:06 >> TLB HIT: PID=0, Pagina=0 -> DirFis=1
+[CPU-cpuX] 2025/07/10 05:24:06 >> CACHE HIT: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/10 05:24:06 WRITE en Cache: PID=0, Pag=0, Datos=H
+[CPU-cpuX] 2025/07/10 05:24:06 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/07/10 05:24:06 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:24:06 ## PID: <0> - FETCH - Program Counter: <4>.
+[CPU-cpuX] 2025/07/10 05:24:06 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/07/10 05:24:06 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:24:06 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:24:06 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/07/10 05:24:06 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/07/10 05:24:06 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 05:26:44 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/10 05:26:44 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:26:44 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/10 05:26:44 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/10 05:26:44 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/10 05:26:46 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/10 05:26:46 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/10 05:26:46 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/10 05:26:46  Ejecutando proceso (PID: 0)
+[CPU-cpuX] 2025/07/10 05:26:46 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/10 05:26:46 Instruction given: WRITE 90 EJEMPLO_DE_ENUNCIADO_BIENVENIDO_AL_FUTBOL
+[CPU-cpuX] 2025/07/10 05:26:46 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/10 05:26:46 Buscando en TLB: PID=0 Pag=1
+[CPU-cpuX] 2025/07/10 05:26:46 >> TLB MISS: PID=0, Pagina=1
+[CPU-cpuX] 2025/07/10 05:26:46 Desplazamiento?: 26
+[CPU-cpuX] 2025/07/10 05:26:46 que es esto?:  [0 0 0 0 0 1]
+[CPU-cpuX] 2025/07/10 05:26:46 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:26:46 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 05:26:46 Dirección física calculada: 26
+[CPU-cpuX] 2025/07/10 05:26:46 >> CACHE MISS: PID=0, Pagina=1
+[CPU-cpuX] 2025/07/10 05:26:53 Respuesta de Memoria: OK
+
+[CPU-cpuX] 2025/07/10 05:26:53 >> Agregando en TLB: PID=0, Pagina=1, DirFis=26
+[CPU-cpuX] 2025/07/10 05:26:53 TLB[0] = PID:0 - Pag:1 - Dir:26
+[CPU-cpuX] 2025/07/10 05:26:53 WRITE a Memoria y agregado a Cache y TLB: PID=0, Pag=1, DirFis=26
+[CPU-cpuX] 2025/07/10 05:26:53 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/07/10 05:26:53 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 05:26:53 ## PID: <0> - FETCH - Program Counter: <1>.
+[CPU-cpuX] 2025/07/10 05:26:53 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:26:53 >> TLB MISS: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/10 05:26:53 Desplazamiento?: 1
+[CPU-cpuX] 2025/07/10 05:26:53 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/10 05:26:53 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/10 05:26:53 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/10 05:26:53 >> CACHE MISS: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/10 05:26:53 Valor en memoria: [                    ]
+[CPU-cpuX] 2025/07/10 05:26:53 TLB tamanio: 15
+[CPU-cpuX] 2025/07/10 05:26:53 >> Agregando en TLB: PID=0, Pagina=0, DirFis=1
+[CPU-cpuX] 2025/07/10 05:26:53 TLB[0] = PID:0 - Pag:1 - Dir:26
+[CPU-cpuX] 2025/07/10 05:26:53 TLB[1] = PID:0 - Pag:0 - Dir:1
+[CPU-cpuX] 2025/07/10 05:26:53 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 05:26:53 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/07/10 05:26:53 Instruction given: 
+READ 1 20
+[CPU-cpuX] 2025/07/10 05:26:53 ## PID: <0> - FETCH - Program Counter: <2>.
+[CPU-cpuX] 2025/07/10 05:26:53 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:26:53 >> TLB HIT: PID=0, Pagina=0 -> DirFis=1
+[CPU-cpuX] 2025/07/10 05:26:53 >> CACHE HIT: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/10 05:26:53 READ en cache: JEMPLO_DE_ENUNCIADO_
+[CPU-cpuX] 2025/07/10 05:26:53 ## PID: 0 - Ejecutando -> INSTRUCCION: READ - SIZE: 20 - DIRECCION: 1
+[CPU-cpuX] 2025/07/10 05:26:53 Ejecutando: PID=0, PC=3
+[CPU-cpuX] 2025/07/10 05:26:53 Instruction given: 
+WRITE 28 H
+[CPU-cpuX] 2025/07/10 05:26:53 ## PID: <0> - FETCH - Program Counter: <3>.
+[CPU-cpuX] 2025/07/10 05:26:53 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/10 05:26:53 >> TLB HIT: PID=0, Pagina=0 -> DirFis=1
+[CPU-cpuX] 2025/07/10 05:26:53 >> CACHE HIT: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/10 05:26:53 WRITE en Cache: PID=0, Pag=0, Datos=H
+[CPU-cpuX] 2025/07/10 05:26:53 Ejecutando: PID=0, PC=4
+[CPU-cpuX] 2025/07/10 05:26:53 Instruction given: 
+DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:26:53 ## PID: <0> - FETCH - Program Counter: <4>.
+[CPU-cpuX] 2025/07/10 05:26:53 Nada que modificar, continua la ejecución.
+[CPU-cpuX] 2025/07/10 05:26:53 ## PID: 0 - Ejecutando -> INSTRUCCION: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:26:53 syscall enviada: DUMP_MEMORY
+[CPU-cpuX] 2025/07/10 05:26:53 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/07/10 05:26:53 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/07/10 05:26:53 Esperando nuevo proceso...

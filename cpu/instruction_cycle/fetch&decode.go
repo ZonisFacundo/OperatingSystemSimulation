@@ -90,7 +90,8 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 func Decode(instruccion globals.Instruccion) {
 
 	memoryManagement := mmu.MMU{
-		ProcesoActual:       instruccion.ProcessValues,
+		Pc:                  instruccion.Pc,
+		Pid:                 instruccion.Pid,
 		TamPagina:           64,
 		Niveles:             5,
 		Cant_entradas_tabla: 4,
@@ -102,7 +103,7 @@ func Decode(instruccion globals.Instruccion) {
 
 	globals.ID.InstructionType = instruccion.InstructionType
 
-	log.Printf("## PID: <%d> - FETCH - Program Counter: <%d>.", instruccion.ProcessValues.Pid, instruccion.ProcessValues.Pc)
+	log.Printf("## PID: <%d> - FETCH - Program Counter: <%d>.", instruccion.Pid, instruccion.Pc)
 
 	// Instruccion ¿tipo?
 	switch instruccion.InstructionType {
@@ -114,16 +115,19 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Tamaño = instruccion.Tamaño
 
-		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
+		globals.ID.Pid = instruccion.Pid
 
-		if mmu.EstaTraducida(nroPagina) {
+		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
+		globals.ID.NroPag = nroPagina
+
+		traducida := mmu.EstaTraducida(nroPagina)
+
+		if traducida {
 			globals.Tlb.Entradas[globals.ID.PosicionPag].UltimoAcceso = time.Now().UnixNano()
-			Execute(globals.ID)
 		} else {
-			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
+			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.Pid, nroPagina)
 			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 			globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
-			Execute(globals.ID)
 		}
 
 	case "WRITE":
@@ -133,27 +137,27 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Datos = instruccion.Datos
 
+		globals.ID.Pid = instruccion.Pid
+
 		globals.ID.NroPag = globals.ID.DireccionLog / memoryManagement.TamPagina
 		// mmu despues deberiamos hacerlo global, porque son parametros que nos deberia pasar memoria (tabla de pags)
 
 		if mmu.EstaTraducida(globals.ID.NroPag) {
 			globals.Tlb.Entradas[globals.ID.PosicionPag].UltimoAcceso = time.Now().UnixNano()
-			Execute(globals.ID)
 		} else {
 
-			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, globals.ID.NroPag)
-
-			log.Println("dir?: ", direccionAEnviar)
+			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.Pid, globals.ID.NroPag)
 
 			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
 			if globals.ID.Frame < 0 {
-				log.Printf("ERROR ERROR ERROR FACU, te imprimo el frame %d", globals.ID.Frame)
+				log.Printf("ERROR: Frame inválido: %d", globals.ID.Frame)
 			} else {
 				globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
-				Execute(globals.ID) //si no esta en la Tlb, la traduce y escribe en mem
+				log.Printf("Dirección física calculada: %d", globals.ID.DireccionFis)
 			}
-			// aca habria que agregar la direccion traducida a la tlb y trabajar con un alg de reemplazo si la tlb esta llena
 		}
+
 	case "INIT_PROC":
 		instruccion.Tamaño, _ = strconv.Atoi(partesDelString[2])
 		instruccion.ArchiInstr = partesDelString[1]

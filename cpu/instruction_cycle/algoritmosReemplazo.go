@@ -57,6 +57,7 @@ func ReemplazarConCLOCK(entradaNueva globals.EntradaCacheDePaginas) {
 				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, candidato.Contenido)
 				log.Printf("Write-Back de página %d a memoria.", candidato.NroPag)
 			}
+			
 			*candidato = entradaNueva
 			candidato.BitUso = true  // porque la acabamos de traer y usar
 

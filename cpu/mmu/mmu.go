@@ -5,11 +5,11 @@ import (
 	"math"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
-	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 type MMU struct {
-	ProcesoActual       utilsCPU.Proceso
+	Pc                  int
+	Pid                 int
 	Niveles             int
 	TamPagina           int
 	Cant_entradas_tabla int

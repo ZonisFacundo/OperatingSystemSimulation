@@ -7,16 +7,15 @@ import (
 )
 
 func EstaEnCache(nroPagina int) bool {
-	
-	if len(globals.CachePaginas.Entradas) == 0 {
-		return false
-	}
-	for i := 0; i < len(globals.CachePaginas.Entradas); i++ {
-		if globals.CachePaginas.Entradas[i].NroPag == nroPagina {
+	for i, entrada := range globals.CachePaginas.Entradas {
+		if entrada.PID == globals.ID.Pid && entrada.NroPag == nroPagina {
 			globals.ID.PosicionPag = i
+			globals.CachePaginas.Entradas[i].BitUso = true
+			log.Printf(">> CACHE HIT: PID=%d, Pagina=%d", entrada.PID, entrada.NroPag)
 			return true
 		}
 	}
+	log.Printf(">> CACHE MISS: PID=%d, Pagina=%d", globals.ID.Pid, nroPagina)
 	return false
 }
 
@@ -26,9 +25,10 @@ func WriteEnCache(datos string) {
 		log.Printf("WriteEnCache: índice de página inválido %d", pos)
 		return
 	}
-	globals.CachePaginas.Entradas[globals.ID.PosicionPag].Contenido = datos
-	globals.CachePaginas.Entradas[globals.ID.PosicionPag].Modificada = true
-	globals.CachePaginas.Entradas[globals.ID.PosicionPag].Modificada = true
+
+	globals.CachePaginas.Entradas[pos].Contenido = datos
+	globals.CachePaginas.Entradas[pos].Modificada = true
+	globals.CachePaginas.Entradas[pos].BitUso = true
 }
 
 func ReadEnCache() {
@@ -37,12 +37,13 @@ func ReadEnCache() {
 		log.Printf("ReadEnCache: índice de página inválido %d", pos)
 		return
 	}
-	contenidoCompleto := globals.CachePaginas.Entradas[globals.ID.PosicionPag].Contenido
+	
+	contenidoCompleto := globals.CachePaginas.Entradas[pos].Contenido
 	desplazamiento := globals.ID.Desplazamiento
 
 	lectura := contenidoCompleto[desplazamiento : desplazamiento+globals.ID.Tamaño]
 	log.Printf("READ en cache: %s", lectura)
+
+	// Marcar uso:
+	globals.CachePaginas.Entradas[pos].BitUso = true
 }
-
-
-// investigar cache y como convinar con tlb y traducir

@@ -33,24 +33,29 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "WRITE":
 
+		// [0 0 1] -> Página: 3 // [0 0 2] -> Página: 3 (porque se reemplazó el contenido en Memoria)
+
 		if globals.ID.DireccionFis >= 0 {
-			if globals.ClientConfig.Cache_entries > 0 { 
+			if globals.ClientConfig.Cache_entries > 0 { //cache esta habilitada (está vacia?)
 				if mmu.EstaEnCache(globals.ID.NroPag) {
 					mmu.WriteEnCache(globals.ID.Datos)
+					log.Printf("WRITE en Cache: PID=%d, Pag=%d, Datos=%s", globals.ID.Pid, globals.ID.NroPag, globals.ID.Datos)
 				} else {
 					// leer en memoria y traer la página a la caché
 					Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
 					AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
 					AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
+					log.Printf("WRITE a Memoria y agregado a Cache y TLB: PID=%d, Pag=%d, DirFis=%d", globals.ID.Pid, globals.ID.NroPag, globals.ID.DireccionFis)
 				}
 			} else {
 				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
 				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
 				AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
+				log.Printf("WRITE a Memoria y agrego a Cache por primera vez: PID=%d, Pag=%d, DirFis=%d", globals.ID.Pid, globals.ID.NroPag, globals.ID.DireccionFis)
 			}
 
 		} else {
-			fmt.Println("WRITE inválido.")
+			fmt.Println("WRITE inválido: Direccion fisica inválida.")
 			detalle.Syscall = "WRITE inválido."
 		}
 
@@ -65,17 +70,19 @@ func Execute(detalle globals.Instruccion) bool {
 					mmu.ReadEnCache()
 				} else {
 					Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
+					log.Printf("TLB tamanio: %d", globals.Tlb.Tamanio)
 					AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
 					AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 				}
 			} else {
 				Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
+				log.Printf("TLB tamanio: %d", globals.Tlb.Tamanio)
 				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
 				AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 			}
 
 			log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - SIZE: %d - DIRECCION: %d",
-				detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.Tamaño, globals.ID.DireccionFis)
+				detalle.Pid, detalle.InstructionType, globals.ID.Tamaño, globals.ID.DireccionFis)
 
 		} else {
 			fmt.Sprintln("READ inválido.")
@@ -85,36 +92,36 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "GOTO":
 
-		pcInstrNew := GOTO(detalle.ProcessValues.Pc, detalle.Valor)
+		pcInstrNew := GOTO(detalle.Pc, detalle.Valor)
 
 		fmt.Println("PC actualizado en: ", pcInstrNew)
 
 		detalle.Syscall = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
-		globals.ID.ProcessValues.Pc = pcInstrNew
-		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.ProcessValues.Pc)
+		globals.ID.Pc = pcInstrNew
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.Pid, detalle.InstructionType, globals.ID.Pc)
 		return false
 
 	// SYSCALLS.
 
 	case "IO": //IO(Dispositivo y tiempo)
-		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %d", detalle.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
-			globals.Instruction.Pid,
-			globals.Instruction.Pc,
+			globals.ID.Pid,
+			globals.ID.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
-			globals.InstruccionDetalle.Tiempo,
-			globals.InstruccionDetalle.Dispositivo)
+			globals.ID.Tiempo,
+			globals.ID.Dispositivo)
 
 		return true
 
 	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
-		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - TAM: %d - ARCHIVO: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Tamaño, detalle.ArchiInstr)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - TAM: %d - ARCHIVO: %s", detalle.Pid, detalle.InstructionType, detalle.Tamaño, detalle.ArchiInstr)
 
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
-			globals.Instruction.Pid, globals.Instruction.Pc,
+			globals.ID.Pid, globals.ID.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
 			globals.ID.Tamaño,
@@ -123,11 +130,11 @@ func Execute(detalle globals.Instruccion) bool {
 		return true
 
 	case "DUMP_MEMORY": //
-		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.ProcessValues.Pid, detalle.InstructionType)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.Pid, detalle.InstructionType)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
-			globals.Instruction.Pid,
-			globals.Instruction.Pc,
+			globals.ID.Pid,
+			globals.ID.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
 			0,
@@ -135,11 +142,11 @@ func Execute(detalle globals.Instruccion) bool {
 		return true
 
 	case "EXIT":
-		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.ProcessValues.Pid, detalle.InstructionType)
+		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.Pid, detalle.InstructionType)
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
-			globals.Instruction.Pid,
-			globals.Instruction.Pc,
+			globals.ID.Pid,
+			globals.ID.Pc,
 			globals.ClientConfig.Instance_id,
 			detalle.InstructionType,
 			0,
@@ -344,9 +351,9 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 }
 
 // agregar en cache segun algortimo
-
 func AgregarEnCache(nroPagina int, direccionFisica int) {
 	entrada := globals.EntradaCacheDePaginas{
+		PID:             globals.ID.Pid,
 		NroPag:          nroPagina,
 		Contenido:       globals.ID.Datos,
 		DireccionFisica: direccionFisica,
@@ -358,34 +365,42 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 		globals.CachePaginas.Entradas = append(globals.CachePaginas.Entradas, entrada)
 		return
 	}
-	switch globals.AlgoritmoReemplazo {
+
+	switch globals.ClientConfig.Cache_replacement {
 	case "CLOCK":
 		ReemplazarConCLOCK(entrada)
 	case "CLOCK-M":
 		ReemplazarConCLOCKM(entrada)
 	default:
-		log.Printf("Algoritmo incorrecto.\n")
+		log.Printf("Algoritmo de reemplazo incorrecto.\n")
 	}
-
 }
 
 func AgregarEnTLB(nroPagina int, direccion int) {
 	entrada := globals.Entrada{
+		PID:       globals.ID.Pid, // <-- este valor es clave
 		NroPagina: nroPagina,
 		Direccion: direccion,
 	}
 
 	if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
+		log.Printf(">> Agregando en TLB: PID=%d, Pagina=%d, DirFis=%d", entrada.PID, entrada.NroPagina, entrada.Direccion)
 		globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
+		for i, e := range globals.Tlb.Entradas {
+			log.Printf("TLB[%d] = PID:%d - Pag:%d - Dir:%d", i, e.PID, e.NroPagina, e.Direccion)
+		}		
 		return
 	} else {
-		switch globals.AlgoritmoReemplazoTLB {
+		log.Printf(">> Agregando en TLB: PID=%d, Pagina=%d, DirFis=%d", entrada.PID, entrada.NroPagina, entrada.Direccion)
+
+		switch globals.ClientConfig.Tlb_replacement {
 		case "FIFO":
 			ReemplazarTLB_FIFO(entrada)
 		case "LRU":
 			ReemplazarTLB_LRU(entrada)
 		default:
-			log.Printf("Algoritmo incorrecto.\n")
+			log.Printf("Algoritmo de reemplaza incorrecto.\n")
 		}
 	}
 }
+

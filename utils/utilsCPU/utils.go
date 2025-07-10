@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 )
 
 func ConfigurarLogger(cpuId string) {
@@ -35,6 +37,9 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("El Kernel envio PID: %d - PC: %d", request.Pid, request.Pc)
+
+	globals.ID.Pid = request.Pid
+	globals.ID.Pc = request.Pc
 
 	var respuesta RespuestaKernel
 	respuesta.Mensaje = "PC y PID recbidos correctamente"

@@ -9,9 +9,7 @@ type Proceso struct {
 type PaqueteInterrupcion struct {
 	Mensaje string `json:"message"`
 }
-type Interrupcion struct {
-	Interrup bool `json:"interrup"`
-}
+
 type HandshakeCPU struct {
 	Ip        string `json:"ip"`
 	Puerto    int    `json:"port"`
