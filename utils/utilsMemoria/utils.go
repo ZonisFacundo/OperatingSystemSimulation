@@ -756,11 +756,29 @@ func ActualizarTodasLasTablasEnBaseATablaSimple(pid int) {
 }
 
 /*
+type Metricas struct {
+	Pid                              utilsCPU.Proceso `json:"pidparametricas"`
+	ContadorAccesosTablaPaginas      int              `json:"accesos"`
+	ContadorInstruccionesSolicitadas int              `json:"totalinstr"`
+	ContadorBajadasSWAP              int              `json:"bajadasswap"`
+	ContadorSubidasAMemoria          int              `json:"subidasmemoria"`
+	ContadorReadMemoria              int              `json:"readmemory"`
+	ContadorWriteMemoria             int              `json:"writememory"`
+}*/
+
+/*
 cambia a -1 la info del proceso a finalizar y printea las metricas del proceso
 */
 func FinalizarProceso(pid int) {
 	CambiarAMenos1TodasLasTablas(pid)
-	fmt.Printf("ACA SE PRINTEAN LAS METRICAS DEL PROCESO, NOS FALTA CALCULAR ESO!! \n")
+	log.Printf("## PID: <%d> - Proceso Destruido - Métricas - Acc. T. Pag: <%d>; Inst.Sol.: <%d>; SWAP:<%d>; Mem.Prin.:<%d>; Lec.Mem.: <%d>, Esc.Mem.: <%d>",
+		globals.Instruction.Pid,
+		globals.MetricasProceso[globals.Instruction.Pid].ContadorAccesosTablaPaginas,
+		globals.MetricasProceso[globals.Instruction.Pid].ContadorInstruccionesSolicitadas,
+		globals.MetricasProceso[globals.Instruction.Pid].ContadorBajadasSWAP,
+		globals.MetricasProceso[globals.Instruction.Pid].ContadorSubidasAMemoria,
+		globals.MetricasProceso[globals.Instruction.Pid].ContadorReadMemoria,
+		globals.MetricasProceso[globals.Instruction.Pid].ContadorWriteMemoria)
 	//printear metricas
 	//llamar una funcion que reinicie las metricas del proceso a 0 por si se crea un proceso con ese pid
 }

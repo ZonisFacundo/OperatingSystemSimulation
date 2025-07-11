@@ -173,9 +173,8 @@ func SwapADisco(pid int) int { //incompleta
 	CambiarAMenos1TodasLasTablas(pid)
 	defer file.Close()
 
-	if globals.Instruction.Pid == metricas.Pid.Pid {
-		metricas.ContadorBajadasSWAP++
-	}
+	globals.MetricasProceso[globals.Instruction.Pid].ContadorBajadasSWAP++
+	
 
 	return 0
 
@@ -214,10 +213,7 @@ func SwapAMemoria(pid int) int {
 	}
 	defer file.Close()
 
-	if globals.Instruction.Pid == metricas.Pid.Pid {
-		metricas.ContadorBajadasSWAP++
-		return 1
-	}
+	globals.MetricasProceso[globals.Instruction.Pid].ContadorSubidasAMemoria++
 
 	return 1
 }
