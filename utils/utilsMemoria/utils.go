@@ -13,8 +13,7 @@ import (
 	"github.com/sisoputnfrba/tp-golang/memoria/globals"
 )
 
-//					STRUCTS
-
+// STRUCTS
 type PaqueteRecibidoMemoriadeCPU struct {
 	Pid int `json:"pid"`
 	Pc  int `json:"pc"`
@@ -98,7 +97,6 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
-
 }
 
 func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
@@ -234,6 +232,7 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
+	globals.MetricasProceso[globals.Instruction.Pid].ContadorReadMemoria++
 }
 
 func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Request) {
@@ -275,6 +274,8 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
+
+	globals.MetricasProceso[globals.Instruction.Pid].ContadorWriteMemoria++
 
 }
 
