@@ -25,6 +25,8 @@ func main() {
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
 	globals.CargarConfig("./cpu/globals/config.json", instanceID)
 
+	instruction_cycle.RecibirDatosMMU(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+
 	globals.AlgoritmoReemplazo = globals.ClientConfig.Cache_replacement
 	globals.AlgoritmoReemplazoTLB = globals.ClientConfig.Tlb_replacement
 	globals.InitTlb()
