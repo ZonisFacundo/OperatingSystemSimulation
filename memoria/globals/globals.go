@@ -10,6 +10,7 @@ import (
 
 // STRUCTS
 type Config struct {
+	Ip_memory        string `json:"ip_memory"`
 	Port_memory      int    `json:"port_memory"`
 	Memory_size      int    `json:"memory_size"`
 	Page_size        int    `json:"page_size"`

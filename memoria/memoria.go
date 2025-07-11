@@ -39,5 +39,15 @@ func main() {
 	http.HandleFunc("GET /INSTRUCCIONES", utilsMemoria.RetornoClienteCPUServidorMEMORIA)
 	http.HandleFunc("POST /KERNELMEMORIA", utilsMemoria.RetornoClienteKernelServidorMEMORIA)
 	log.Printf("Servidor corriendo (Memoria) en puerto %d.\n", globals.ClientConfig.Port_memory)
-	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_memory), nil)
+
+	addr := fmt.Sprintf("%s:%d",
+		globals.ClientConfig.Ip_memory,   // la IP que leíste de config.json
+		globals.ClientConfig.Port_memory, // el puerto
+	)
+
+	log.Printf("Servidor Memoria escuchando en %s\n", addr)
+	if err := http.ListenAndServe(addr, nil); err != nil {
+		log.Fatalf("Error al arrancar servidor en %s: %v\n", addr, err)
+	}
+
 }
