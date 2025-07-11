@@ -79,6 +79,7 @@ func main() {
 
 			if interrumpido {
 				log.Printf("Interrupción. Deteniendo proceso PID %d", globals.ID.Pid)
+				log.Println("Llega interrupción al puerto Interrupt")
 				break ejecucion
 			}
 
