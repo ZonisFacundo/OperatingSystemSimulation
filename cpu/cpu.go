@@ -67,8 +67,6 @@ func main() {
 
 		<-procesoNuevo
 
-		log.Printf(" Ejecutando proceso (PID: %d)", globals.ID.Pid)
-
 	ejecucion:
 		for {
 			mutexInterrupcion.Lock()
@@ -92,6 +90,7 @@ func main() {
 		}
 	}
 }
+
 
 /*
 LOGS FALTANTES POR PONER:

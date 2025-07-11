@@ -172,7 +172,12 @@ func SwapADisco(pid int) int { //incompleta
 
 	CambiarAMenos1TodasLasTablas(pid)
 	defer file.Close()
+
+	globals.MetricasProceso[globals.Instruction.Pid].ContadorBajadasSWAP++
+	
+
 	return 0
+
 }
 
 func SwapAMemoria(pid int) int {
@@ -207,6 +212,9 @@ func SwapAMemoria(pid int) int {
 		log.Printf("bytes leidos de disco y copiados en memoria en ultima iteracion: %d 	(SwapAMemoria)\n", bytesleidos)
 	}
 	defer file.Close()
+
+	globals.MetricasProceso[globals.Instruction.Pid].ContadorSubidasAMemoria++
+
 	return 1
 }
 

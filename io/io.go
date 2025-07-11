@@ -32,7 +32,7 @@ func main() {
 	}()
 
 	go func() {
-		log.Printf("Servidor IO corriendo en puerto 8003.")
+		//log.Printf("Servidor IO corriendo en puerto 8003.")
 		if err := http.ListenAndServe(":8003", nil); err != nil {
 			log.Fatalf("Error al iniciar el servidor HTTP: %s", err)
 		}

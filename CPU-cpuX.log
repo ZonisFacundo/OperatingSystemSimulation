@@ -2932,3 +2932,46 @@ DUMP_MEMORY
 [CPU-cpuX] 2025/07/10 05:26:53 Se envio syscall a Kernel.
 [CPU-cpuX] 2025/07/10 05:26:53 Interrupción. Deteniendo proceso PID 0
 [CPU-cpuX] 2025/07/10 05:26:53 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/11 16:49:38 CPU cpuX inicializada correctamente.
+[CPU-cpuX] 2025/07/11 16:49:38 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/11 16:49:38 Conexión realizada con exito con el Kernel.
+[CPU-cpuX] 2025/07/11 16:49:38 Esperando nuevo proceso...
+[CPU-cpuX] 2025/07/11 16:49:38 Servidor HTTP activo en puerto 8004.
+[CPU-cpuX] 2025/07/11 16:49:41 El Kernel envio PID: 0 - PC: 0
+[CPU-cpuX] 2025/07/11 16:49:41 Proceso recibido - PID: 0, PC: 0
+[CPU-cpuX] 2025/07/11 16:49:41 Notificando CPU de un nuevo proceso entrante.
+[CPU-cpuX] 2025/07/11 16:49:41 Ejecutando: PID=0, PC=0
+[CPU-cpuX] 2025/07/11 16:49:41 Instruction given: WRITE 10 ESPERO_QUE_TENGAS_UN_HERMOSO_DIA_MAESTRO
+[CPU-cpuX] 2025/07/11 16:49:41 ## PID: <0> - FETCH - Program Counter: <0>.
+[CPU-cpuX] 2025/07/11 16:49:41 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/11 16:49:41 >> TLB MISS: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/11 16:49:41 Desplazamiento?: 10
+[CPU-cpuX] 2025/07/11 16:49:41 que es esto?:  [0 0 0 0 0 0]
+[CPU-cpuX] 2025/07/11 16:49:41 Conexion establecida con exito.
+[CPU-cpuX] 2025/07/11 16:49:41 Recibido de memoria el frame: 0
+[CPU-cpuX] 2025/07/11 16:49:41 Dirección física calculada: 10
+[CPU-cpuX] 2025/07/11 16:49:41 >> CACHE MISS: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/11 16:49:49 Error al recibir respuesta.
+[CPU-cpuX] 2025/07/11 16:49:49 >> Agregando en TLB: PID=0, Pagina=0, DirFis=10
+[CPU-cpuX] 2025/07/11 16:49:49 TLB[0] = PID:0 - Pag:0 - Dir:10
+[CPU-cpuX] 2025/07/11 16:49:49 WRITE a Memoria y agregado a Cache y TLB: PID=0, Pag=0, DirFis=10
+[CPU-cpuX] 2025/07/11 16:49:49 Ejecutando: PID=0, PC=1
+[CPU-cpuX] 2025/07/11 16:49:49 Instruction given: 
+WRITE 10 ESPERO_QUE_TENGAS_UN_HERMOSO_DIA_MAESTRO
+[CPU-cpuX] 2025/07/11 16:49:49 ## PID: <0> - FETCH - Program Counter: <1>.
+[CPU-cpuX] 2025/07/11 16:49:49 Buscando en TLB: PID=0 Pag=0
+[CPU-cpuX] 2025/07/11 16:49:49 >> TLB HIT: PID=0, Pagina=0 -> DirFis=10
+[CPU-cpuX] 2025/07/11 16:49:49 >> CACHE HIT: PID=0, Pagina=0
+[CPU-cpuX] 2025/07/11 16:49:49 WRITE en Cache: PID=0, Pag=0, Datos=ESPERO_QUE_TENGAS_UN_HERMOSO_DIA_MAESTRO
+[CPU-cpuX] 2025/07/11 16:49:49 Ejecutando: PID=0, PC=2
+[CPU-cpuX] 2025/07/11 16:49:49 Instruction given: 
+INIT_PROC archi2.txt 250
+[CPU-cpuX] 2025/07/11 16:49:49 ## PID: <0> - FETCH - Program Counter: <2>.
+[CPU-cpuX] 2025/07/11 16:49:49 ## PID: 0 - Ejecutando -> INSTRUCCION: INIT_PROC - TAM: 250 - ARCHIVO: archi2.txt
+[CPU-cpuX] 2025/07/11 16:49:49 syscall enviada: INIT_PROC
+[CPU-cpuX] 2025/07/11 16:49:49 El Kernel envio PID: 0 - PC: 2
+[CPU-cpuX] 2025/07/11 16:49:49 Proceso recibido - PID: 0, PC: 2
+[CPU-cpuX] 2025/07/11 16:49:49 CPU ya ejecutando. No se notifica de nuevo proceso
+[CPU-cpuX] 2025/07/11 16:49:49 Se envio syscall a Kernel.
+[CPU-cpuX] 2025/07/11 16:49:49 Interrupción. Deteniendo proceso PID 0
+[CPU-cpuX] 2025/07/11 16:49:49 Esperando nuevo proceso...

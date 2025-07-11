@@ -1,11 +1,5 @@
 package main
 
-/*
-SI DE CAUSALIDAD VES QUE LAS COSAS NO ANDAN CUANDO CAMBIAS
-VALORES EN EL CONFIG
-ES PORQUE POR AHI EN CPU ESTAN HARDCODEANDO VALORES (TAM PAGINA) PARA PROBARLO
-POR SI NOS OLVIDAMOS
-*/
 import (
 	"fmt"
 	"log"
@@ -36,7 +30,7 @@ func main() {
 		}()
 	*/
 	auxiliares.MostrarMemoriaKernel()
-
+	http.HandleFunc("POST /HANDSHAKE", utilsMemoria.HandshakeACpu)
 	http.HandleFunc("POST /SWAPADISCO", utilsMemoria.RetornoClienteKernelServidorMemoriaSwapADisco)
 	http.HandleFunc("POST /KERNELMEMORIADUMP", utilsMemoria.RetornoClienteKernelServidorMemoriaDumpDelProceso)
 	http.HandleFunc("POST /READ", utilsMemoria.RetornoClienteCPUServidorMEMORIARead)

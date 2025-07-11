@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
-	//"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
+
 )
 
 type Config struct {
@@ -87,14 +87,14 @@ func CargarConfig(path string, instanceID string) {
 
 	conjuntodebytes, err := os.ReadFile(path)
 	if err != nil {
-		log.Printf("ATENCION \n ATENCION\n error al recibir los datos del .json \n esto ocurre porque NO ESTAS EJECUTANDO EL PROYECTO DESDE EL DIRECTORIO CORRESPONDIENTE \n, el path que recibe el cargar config espera que ejecutes los programas desde el directorio ~/tp-2025-1c-NutriGO, seguramente lo estas haciendo desde ~/tp-2025-1c-NutriGO/nombredelmodulo\n")
+		log.Printf("ATENCION: error al leer config.json. Verificá que estés ejecutando desde el directorio raíz del proyecto.\n")
 		return
 	}
 
 	var configgenerica Config
 	err = json.Unmarshal(conjuntodebytes, &configgenerica) //traducimos de .json a go digamosle
 	if err != nil {
-		log.Printf("Error al decodificar datos JSON -> GOLANG")
+		log.Printf("Error al decodificar JSON -> struct de Go")
 		return
 	}
 
