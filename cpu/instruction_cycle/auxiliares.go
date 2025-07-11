@@ -81,7 +81,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 		log.Printf("Error al decodificar el JSON.\n")
 	}
 
-	log.Printf("Recibido de memoria el frame: %d", frame.Frame)
+	log.Printf("PID: %d - OBTENER MARCO - Página: %d - Marco: %d", globals.ID.Pid, globals.ID.NroPag, frame)
 
 	globals.ID.Frame = frame.Frame
 

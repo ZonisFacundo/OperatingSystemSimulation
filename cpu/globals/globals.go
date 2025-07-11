@@ -92,14 +92,18 @@ func CargarConfig(path string, instanceID string) {
 	}
 
 	var configgenerica Config
-	err = json.Unmarshal(conjuntodebytes, &configgenerica) //traducimos de .json a go digamosle
+	err = json.Unmarshal(conjuntodebytes, &configgenerica)
 	if err != nil {
 		log.Printf("Error al decodificar JSON -> struct de Go")
 		return
 	}
 
-	ClientConfig = &configgenerica //hacemos que nuestro puntero (variable global) apunte a donde guardamos los datos
-	configgenerica.Instance_id = instanceID
+	if configgenerica.Instance_id != instanceID {
+		log.Fatalf("ERROR: El instance_id en el config.json es '%s', pero ejecutaste la CPU como '%s'.", configgenerica.Instance_id, instanceID)
+	}
+
+	ClientConfig = &configgenerica
+	log.Printf("Configuración cargada para la instancia '%s'", instanceID)
 }
 
 func InitCache() {

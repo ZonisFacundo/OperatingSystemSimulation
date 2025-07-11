@@ -92,11 +92,11 @@ func Decode(instruccion globals.Instruccion) {
 	memoryManagement := mmu.MMU{
 		Pc:                  instruccion.Pc,
 		Pid:                 instruccion.Pid,
-		TamPagina:           64,
-		Niveles:             5,
-		Cant_entradas_tabla: 4,
-		TablasPaginas:       make(map[int]int)}
-
+		TamPagina:           globals.ClientConfig.Page_size,
+		Niveles:             globals.ClientConfig.Niveles,
+		Cant_entradas_tabla: globals.ClientConfig.Entradas,
+		TablasPaginas:       make(map[int]int),
+	}
 	partesDelString := strings.Fields(instruccion.InstructionType)
 
 	instruccion.InstructionType = partesDelString[0]
