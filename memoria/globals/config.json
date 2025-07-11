@@ -1,12 +1,12 @@
 {
-    "port_memory": 8002,
-    "memory_size": 4096,
-    "page_size": 64,
-    "entries_per_page": 4,
-    "number_of_levels": 5,
-    "memory_delay": 1500,
-    "swapfile_path": "/home/utnso/swapfile.bin",
-    "swap_delay": 15000,
-    "log_level": "DEBUG",
-    "dump_path": "/home/utnso/dump_files/"
+  "dump_path": "/home/utnso/dump_files/",
+  "entries_per_page": 4,
+  "log_level": "DEBUG",
+  "memory_delay": 1500,
+  "memory_size": 4096,
+  "number_of_levels": 5,
+  "page_size": 64,
+  "port_memory": 8002,
+  "swap_delay": 15000,
+  "swapfile_path": "/home/utnso/swapfile.bin"
 }

@@ -1,8 +1,8 @@
 {
-    "ip_kernel": "127.0.0.1",
-    "port_kernel": 8001,
-    "port_io": 8003,
-    "ip_io": "127.0.0.1",
-    "log_level": "DEBUG",
-    "instance_id": "IO-impresora"
+  "instance_id": "IO-impresora",
+  "ip_io": "1.1.1.1",
+  "ip_kernel": "3.3.3.3",
+  "log_level": "DEBUG",
+  "port_io": 8003,
+  "port_kernel": 8001
 }
