@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 )
 
-// Modifica los campos deseados de un archivo JSON si existen
 func modifyJSONFile(filePath string, io, cpu, kernel, memoria string) error {
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {

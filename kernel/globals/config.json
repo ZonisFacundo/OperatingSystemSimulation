@@ -1,8 +1,8 @@
 {
   "alpha": 0.5,
   "initial_estimate": 10000,
-  "ip_kernel": "3.3.3.3",
-  "ip_memory": "4.4.4.4",
+  "ip_kernel": "127.0.0.1",
+  "ip_memory": "127.0.0.1",
   "log_level": "DEBUG",
   "port_kernel": 8001,
   "port_memory": 8002,
