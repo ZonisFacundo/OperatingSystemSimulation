@@ -99,8 +99,8 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("El Kernel envio PID: %d - PC: %d", request.Pid, request.Pc)
 
-	globals.ID.ProcessValues.Pid = request.Pid
-	globals.ID.ProcessValues.Pc = request.Pc
+	globals.ID.Pid = request.Pid
+	globals.ID.Pc = request.Pc
 
 	var respuesta utilsCPU.RespuestaKernel
 	respuesta.Mensaje = "PC y PID recbidos correctamente"
