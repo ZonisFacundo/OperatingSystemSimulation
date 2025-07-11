@@ -27,14 +27,13 @@ func RecibirDatosIO(w http.ResponseWriter, r *http.Request) {
 
 	var request HandshakepaqueteIO
 
-	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
+	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	//Leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("El cliente nos mando esto: \n nombre: %s  \n puerto: %d \n IP: %s \n", request.Nombre, request.Puerto, request.Ip) //capaz que hay que sacarlo
+	//og.Printf("El cliente nos mando esto: \n nombre: %s  \n puerto: %d \n IP: %s \n", request.Nombre, request.Puerto, request.Ip)
 
 	CrearStructIO(request.Ip, request.Puerto, request.Nombre)
 
@@ -83,16 +82,14 @@ func RecibirDatosCPU(w http.ResponseWriter, r *http.Request) {
 
 	var request HandshakepaqueteCPU
 
-	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
+	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("Handshake recibido: Port: %d - Instance: %s - Ip: %s", request.Puerto, request.Instancia, request.Ip)
+	//log.Printf("Handshake recibido: Port: %d - Instance: %s - Ip: %s", request.Puerto, request.Instancia, request.Ip)
 
-	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuesta RespuestaalCPU
 	respuesta.Mensaje = "Conexion realizada con exito"
 	respuestaJSON, err := json.Marshal(respuesta)
@@ -111,25 +108,23 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 	var request HandshakepaqueteCPUPCB
 
-	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
+	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	//leo lo que nos mando el cliente, en este caso un struct de dos strings y un int
-	log.Printf("contexto de devolucion del proceso: %s", request.Syscall)
+	//log.Printf("contexto de devolucion del proceso: %s", request.Syscall)
 
-	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuesta RespuestaalCPU
 
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return
 	}
-	log.Printf("Conexion establecida con exito \n")
+	//log.Printf("Conexion establecida con exito \n")
 	cpuServidor := ObtenerCpu(request.InstanciaCPU)
-	PCBUtilizar := ObtenerPCB(cpuServidor.Pid) // ya no hace falta porque esta en el struct
+	PCBUtilizar := ObtenerPCB(cpuServidor.Pid)
 	PCBUtilizar.Pc = request.Pc
 	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
 
@@ -178,7 +173,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		w.Write(respuestaJSON)
 		return
 	}
-	log.Printf("PID: %d PC: %d", request.Pid, request.Pc)
+
 	w.WriteHeader(http.StatusFound)
 	w.Write(respuestaJSON)
 
@@ -192,25 +187,23 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		//aca tiene que haber un logger
+
 		log.Printf("Error al convertir a json.")
 		return
 	}
-	cliente := http.Client{} //crea un "cliente"
+	cliente := http.Client{}
 
-	url := fmt.Sprintf("http://%s:%d/KERNELIO", ioServer.Ip, ioServer.Port) //url del server
+	url := fmt.Sprintf("http://%s:%d/KERNELIO", ioServer.Ip, ioServer.Port)
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
-
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson))
 	if err != nil {
-		//aca tiene que haber un logger
+
 		log.Printf("Error al generar la peticion al server.\n")
 		return
 	}
 
-	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
-
-	respuestaJSON, err := cliente.Do(req) //recibe la respuesta del server
+	req.Header.Set("Content-Type", "application/json")
+	respuestaJSON, err := cliente.Do(req)
 
 	if err != nil {
 		FinalizarProceso(pcb)
@@ -218,10 +211,9 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 
 	}
 
-	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+	defer respuestaJSON.Body.Close()
 
-	log.Printf("Conexion establecida con exito \n")
-	//pasamos de JSON a formato bytes lo que nos paso el paquete
+	//log.Printf("Conexion establecida con exito \n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -230,13 +222,15 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 	var respuesta PaqueteRecibidoDeIO
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		//log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
 
 	if respuestaJSON.StatusCode == http.StatusOK {
 
-		log.Printf("La respuesta del I/O %s fue: %s\n", ioServer.Instancia, respuesta.Mensaje)
+		//log.Printf("La respuesta del I/O %s fue: %s\n", ioServer.Instancia, respuesta.Mensaje)
+
+		log.Printf("## (<%d>) finalizó IO y pasa a READY \n", pcb.Pid)
 
 		if EstaEnColaBlock(pcb) {
 			PasarReady(pcb, ColaBlock)
@@ -257,23 +251,23 @@ func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int, cola []*PCB) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		//aca tiene que haber un logger
+
 		log.Printf("Error al convertir a json.")
 		return
 	}
-	cliente := http.Client{} //crea un "cliente"
+	cliente := http.Client{}
 
-	url := fmt.Sprintf("http://%s:%d/KERNELMEMORIA", ip, puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/KERNELMEMORIA", ip, puerto)
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson))
 
 	if err != nil {
-		//aca tiene que haber un logger
+
 		log.Printf("Error al generar la peticion al server.\n")
 		return
 	}
 
-	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
+	req.Header.Set("Content-Type", "application/json")
 
 	respuestaJSON, err := cliente.Do(req)
 	if err != nil {
@@ -282,31 +276,26 @@ func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int, cola []*PCB) {
 
 	}
 
-	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+	defer respuestaJSON.Body.Close()
 
-	log.Printf("Pregunto si puedo pasar a ready un proceso \n")
-	//pasamos de JSON a formato bytes lo que nos paso el paquete
+	//log.Printf("Pregunto si puedo pasar a ready un proceso \n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
 		return
 	}
 
-	//pasamos la respuesta de JSON a formato paquete que nos mando el server
-
-	var respuesta PaqueteRecibidoDeMemoria //para eso declaramos una variable con el struct que esperamos que nos envie el server
-	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
+	var respuesta PaqueteRecibidoDeMemoria
+	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		//log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	//log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
 	if respuestaJSON.StatusCode == http.StatusOK {
-		log.Printf("Se pasa el proceso PID: %d a READY", pcb.Pid)
+		//log.Printf("Se pasa el proceso PID: %d a READY", pcb.Pid)
 		PasarReady(pcb, cola)
 	}
-
-	//en mi caso era un mensaje, por eso el struct tiene mensaje string, vos por ahi estas esperando 14 ints, no necesariamente un struct
 
 }
 
@@ -319,26 +308,23 @@ func EnviarProcesoACPU(pcb *PCB, cpu *CPU) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		//aca tiene que haber un logger
 		log.Printf("Error al convertir a json.")
 		return
 	}
 
-	cliente := http.Client{} // Crea un "cliente"
+	cliente := http.Client{}
 
-	url := fmt.Sprintf("http://%s:%d/KERNELCPU", cpu.Ip, cpu.Port) //url del server
+	url := fmt.Sprintf("http://%s:%d/KERNELCPU", cpu.Ip, cpu.Port)
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson))
 
 	if err != nil {
 
-		//aca tiene que haber un logger
 		log.Printf("Error al generar la peticion al server.\n")
 		return
 	}
 
-	req.Header.Set("Content-Type", "application/json") // Le avisa al server que manda la data en json format
-
+	req.Header.Set("Content-Type", "application/json")
 	respuestaJSON, err := cliente.Do(req)
 	if err != nil {
 		log.Printf("Error al recibir respuesta.\n")
@@ -346,28 +332,27 @@ func EnviarProcesoACPU(pcb *PCB, cpu *CPU) {
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
-		log.Printf("Código de respuesta del server: %d\n", respuestaJSON.StatusCode)
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		//log.Printf("Código de respuesta del server: %d\n", respuestaJSON.StatusCode)
+		//log.Printf("Status de respuesta el server no fue la esperada.\n")
 		return
 	}
 
-	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+	defer respuestaJSON.Body.Close()
+	//log.Printf("Conexion establecida con exito \n")
 
-	log.Printf("Conexion establecida con exito \n")
-	//pasamos de JSON a formato bytes lo que nos paso el paquete
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
 		return
-	} //pasamos la respuesta de JSON a formato paquete que nos mando el server
+	}
 
 	var respuesta PaqueteRecibido
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		//log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	//log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
 
 }
 
@@ -379,25 +364,23 @@ func InterrumpirCPU(cpu *CPU) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		//aca tiene que haber un logger
 		log.Printf("Error al convertir a json.")
 		return
 	}
 
-	cliente := http.Client{} // Crea un "cliente"
+	cliente := http.Client{}
 
-	url := fmt.Sprintf("http://%s:%d/INTERRUPCIONCPU", cpu.Ip, cpu.Port) //url del server
+	url := fmt.Sprintf("http://%s:%d/INTERRUPCIONCPU", cpu.Ip, cpu.Port)
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson))
 
 	if err != nil {
 
-		//aca tiene que haber un logger
 		log.Printf("Error al generar la peticion al server.\n")
 		return
 	}
 
-	req.Header.Set("Content-Type", "application/json") // Le avisa al server que manda la data en json format
+	req.Header.Set("Content-Type", "application/json")
 
 	respuestaJSON, err := cliente.Do(req)
 	if err != nil {
@@ -406,32 +389,32 @@ func InterrumpirCPU(cpu *CPU) {
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
-		log.Printf("Código de respuesta del server: %d\n", respuestaJSON.StatusCode)
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		//log.Printf("Código de respuesta del server: %d\n", respuestaJSON.StatusCode)
+		//log.Printf("Status de respuesta el server no fue la esperada.\n")
 		return
 	}
 
-	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+	defer respuestaJSON.Body.Close()
 
-	log.Printf("Conexion establecida con exito \n")
-	//pasamos de JSON a formato bytes lo que nos paso el paquete
+	//	log.Printf("Conexion establecida con exito \n")
+
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
 		return
-	} //pasamos la respuesta de JSON a formato paquete que nos mando el server
+	}
 
 	var respuesta PaqueteRecibidoDeCPU
 	pcb := ObtenerPCB(respuesta.Pid)
 	pcb.Pc = respuesta.Pc
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		//log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
 	//log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
-	log.Printf("PID: %d PC: %d", respuesta.Pid, respuesta.Pc)
-} //falta la respuesta de CPU
+	//log.Printf("PID: %d PC: %d", respuesta.Pid, respuesta.Pc)
+}
 
 func InformarMemoriaFinProceso(pcb *PCB, ip string, puerto int) {
 
@@ -441,23 +424,21 @@ func InformarMemoriaFinProceso(pcb *PCB, ip string, puerto int) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		//aca tiene que haber un logger
 		log.Printf("Error al convertir a json.")
 		return
 	}
-	cliente := http.Client{} //crea un "cliente"
+	cliente := http.Client{}
 
-	url := fmt.Sprintf("http://%s:%d/FinProceso", ip, puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/FinProceso", ip, puerto)
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson))
 
 	if err != nil {
-		//aca tiene que haber un logger
 		log.Printf("Error al generar la peticion al server.\n")
 		return
 	}
 
-	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
+	req.Header.Set("Content-Type", "application/json")
 
 	respuestaJSON, err := cliente.Do(req)
 	if err != nil {
@@ -466,22 +447,19 @@ func InformarMemoriaFinProceso(pcb *PCB, ip string, puerto int) {
 
 	}
 
-	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+	defer respuestaJSON.Body.Close()
+	//log.Printf("Conexion establecida con exito \n")
 
-	log.Printf("Conexion establecida con exito \n")
-	//pasamos de JSON a formato bytes lo que nos paso el paquete
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
 		return
 	}
 
-	//pasamos la respuesta de JSON a formato paquete que nos mando el server
-
-	var respuesta PaqueteRecibidoDeMemoria //para eso declaramos una variable con el struct que esperamos que nos envie el server
-	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
+	var respuesta PaqueteRecibidoDeMemoria
+	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		//log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
@@ -490,7 +468,7 @@ func InformarMemoriaFinProceso(pcb *PCB, ip string, puerto int) {
 
 }
 
-func CrearPCB(tamanio int, archivo string) { //pid unico arranca de 0
+func CrearPCB(tamanio int, archivo string) {
 	pcbUsar := &PCB{
 		Pid:                ContadorPCB,
 		Pc:                 0,
@@ -544,11 +522,9 @@ func CrearPCBPrueba(tamanio int, archivo string) { //pid unico arranca de 0
 */
 
 func LeerConsola() string {
-	// Leer de la consola
 	reader := bufio.NewReader(os.Stdin)
 	log.Println("Presione enter para inciar el planificador")
 	text, _ := reader.ReadString('\n')
-	//log.Print(text)
 	return text
 }
 
@@ -556,7 +532,7 @@ func IniciarPlanifcador(tamanio int, archivo string) {
 	for true {
 		text := LeerConsola()
 		if text == "\n" {
-			log.Printf("Planificador de largo plazo ejecutando")
+			//log.Printf("Planificador de largo plazo ejecutando")
 			CrearPCB(tamanio, archivo)
 			break
 		}
@@ -565,7 +541,7 @@ func IniciarPlanifcador(tamanio int, archivo string) {
 
 func PlanificadorLargoPlazo() {
 	for true {
-		<-SemLargoPlazo //wait()
+		<-SemLargoPlazo
 		if len(ColaSuspReady) != 0 {
 			MutexColaNew.Lock()
 			pcbChequear := CriterioColaNew(ColaSuspReady)
@@ -579,7 +555,7 @@ func PlanificadorLargoPlazo() {
 			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaNew)
 
 		} else {
-			SemLargoPlazo <- struct{}{} //signal()
+			SemLargoPlazo <- struct{}{}
 			time.Sleep(1 * time.Second)
 
 		}
@@ -591,23 +567,22 @@ func PlanificadorCortoPlazo() {
 		<-SemCortoPlazo
 
 		if len(ColaReady) != 0 {
-			//log.Printf("Planificador de corto plazo ejecutando")
-			//time.Sleep(10 * time.Second)
 			MutexColaReady.Lock()
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
 			CPUDisponible, noEsVacio := TraqueoCPU()
 			if noEsVacio {
-				log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid) //solo para saber que esta funcionando
+				//log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid)
 				PasarExec(pcbChequear)
 				CPUDisponible.Disponible = false
-				CPUDisponible.Pid = pcbChequear.Pid //le asigno el pid al cpu que lo va a ejecutar
+				CPUDisponible.Pid = pcbChequear.Pid
 				EnviarProcesoACPU(pcbChequear, CPUDisponible)
 
 			} else if hayDesalojo {
 				pcbDesalojar, cpuDesalojar := RafagaMasLargaDeLosCPU()
 				if calcularRafagaEstimada(pcbChequear) < CalcularTiempoRestanteEjecucion(pcbDesalojar) {
 					InterrumpirCPU(cpuDesalojar)
+					log.Printf("## (<%d>) - Desalojado por algoritmo SJF/SRT \n", cpuDesalojar.Pid)
 					PasarReady(pcbDesalojar, ListaExec)
 					PasarExec(pcbChequear)
 					cpuDesalojar.Pid = pcbChequear.Pid
@@ -678,7 +653,7 @@ func RafagaMasLargaDeLosCPU() (*PCB, *CPU) {
 	}
 	pcbEstimacionMasLarga := ListaExec[0]
 	for _, pcb := range ListaExec {
-		if CalcularTiempoRestanteEjecucion(pcb) >= CalcularTiempoRestanteEjecucion(pcbEstimacionMasLarga) { //estamiacionAnterior - calcularTiempoEnExec
+		if CalcularTiempoRestanteEjecucion(pcb) >= CalcularTiempoRestanteEjecucion(pcbEstimacionMasLarga) {
 			pcbEstimacionMasLarga = pcb
 		}
 	}
@@ -701,7 +676,7 @@ func PasarReady(pcb *PCB, colaSacar []*PCB) {
 	MutexColaReady.Lock()
 	ColaReady = append(ColaReady, pcb)
 	MutexColaReady.Unlock()
-	MutexColaNew.Lock() //este mutex deberia moverse a otro lado porque no estas nunca seguro de que sea la cola new
+	MutexColaNew.Lock()
 	ColaNew = removerPCB(ColaNew, pcb)
 	ColaBlock = removerPCB(ColaBlock, pcb)
 	ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
@@ -749,7 +724,7 @@ func PasarBlocked(pcb *PCB) {
 
 func PasarSuspBlock(pcb *PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado SUSP.BLOCKED \n", pcb.Pid, pcb.EstadoActual)
-	//HacerSwap(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+	SwapDelProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	MutexColaSuspBlock.Lock()
 	ColaBlock = append(ColaSuspBlock, pcb)
 	MutexColaSuspBlock.Unlock()
@@ -799,9 +774,10 @@ func CriterioColaReady() (*PCB, bool) {
 		return FIFO(ColaReady), false
 	} else if globals.ClientConfig.Scheduler_algorithm == "SJF" {
 		return Sjf(), false
-	} else {
+	} else if globals.ClientConfig.Scheduler_algorithm == " SJF/SRT" {
 		return Sjf(), true
 	}
+	return &PCB{}, false
 }
 
 func TraqueoCPU() (*CPU, bool) {
@@ -811,7 +787,7 @@ func TraqueoCPU() (*CPU, bool) {
 		}
 	}
 	return nil, false
-} //Esto busca un cpu disponible
+}
 
 func crearStructCPU(ip string, puerto int, instancia string) {
 	ListaCPU = append(ListaCPU, CPU{
@@ -835,7 +811,7 @@ func CrearStructCPU2(ip string, puerto int, instancia string) CPU {
 func ObtenerCpu(instancia string) *CPU {
 	for i := range ListaCPU {
 		if ListaCPU[i].Instancia == instancia {
-			return &ListaCPU[i] // → la dirección del elemento real
+			return &ListaCPU[i]
 		}
 	}
 	return nil
@@ -844,21 +820,20 @@ func ObtenerCpu(instancia string) *CPU {
 func ObtenerCpuEnFuncionDelPid(pid int) *CPU {
 	for i := range ListaCPU {
 		if ListaCPU[i].Pid == pid {
-			return &ListaCPU[i] // → la dirección del elemento real
+			return &ListaCPU[i]
 		}
 	}
 	return nil
-} //Nos dice que instancia de CPU es
+}
 
 func FinalizarProceso(pcb *PCB) {
-	log.Printf("El proceso PID: %d termino su ejecucion y se paso a EXIT \n", pcb.Pid)
+	//log.Printf("El proceso PID: %d termino su ejecucion y se paso a EXIT \n", pcb.Pid)
 	pcb.EstadoActual = "EXIT"
 	pcb.MetricaEstados["EXIT"]++
-	ColaExit = append(ColaExit, pcb) //es un esquema de como podria finalizar el proceso, puede cambiarse esto
+	ColaExit = append(ColaExit, pcb)
 	InformarMemoriaFinProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	log.Printf("## (<%d>) - Finaliza el proceso \n", pcb.Pid)
-	//Métricas de Estado: “## (<PID>) - Métricas de estado: NEW (NEW_COUNT) (NEW_TIME), READY (READY_COUNT) (READY_TIME), …”
-	log.Printf("## (<%d>) - Métricas de estado: NEW NEW_COUNT: %d NEW_TIME: %d, READY READY_COUNT: %d READY_TIME: %d, EXECUTE EXECUTE_COUNT: %d EXECUTE_TIME: %d, BLOCKED BLOCKED_COUNT: %d BLOCKED_TIME: %d", pcb.Pid, pcb.MetricaEstados["NEW"], pcb.TiempoEstados["NEW"], pcb.MetricaEstados["READY"], pcb.TiempoEstados["READY"], pcb.MetricaEstados["EXECUTE"], pcb.TiempoEstados["EXECUTE"], pcb.MetricaEstados["BLOCKED"], pcb.TiempoEstados["BLOCKED"])
+	log.Printf("## (<%d>) - Métricas de estado: NEW NEW_COUNT: %d NEW_TIME: %d, READY READY_COUNT: %d READY_TIME: %d, EXECUTE EXECUTE_COUNT: %d EXECUTE_TIME: %d, BLOCKED BLOCKED_COUNT: %d BLOCKED_TIME: %d, SUSP.BLOCKED  SUSP.BLOCKED_COUNT: %d SUSP.BLOCKED_TIME: %d, SUSP.READY  SUSP.READY_COUNT: %d SUSP.READY_TIME: %d \n", pcb.Pid, pcb.MetricaEstados["NEW"], pcb.TiempoEstados["NEW"], pcb.MetricaEstados["READY"], pcb.TiempoEstados["READY"], pcb.MetricaEstados["EXECUTE"], pcb.TiempoEstados["EXECUTE"], pcb.MetricaEstados["BLOCKED"], pcb.TiempoEstados["BLOCKED"], pcb.MetricaEstados["SUSP.BLOCKED"], pcb.TiempoEstados["SUSP.BLOCKED"], pcb.MetricaEstados["SUSP.READY"], pcb.TiempoEstados["SUSP.READY"])
 
 }
 
@@ -875,7 +850,7 @@ func CrearStructIO(ip string, puerto int, instancia string) {
 func ObtenerIO(instancia string) *IO {
 	for i := range ListaIO {
 		if ListaIO[i].Instancia == instancia {
-			return &ListaIO[i] // → la dirección del elemento real
+			return &ListaIO[i]
 		}
 	}
 	return nil
@@ -933,23 +908,21 @@ func DumpDelProceso(pcb *PCB, ip string, puerto int) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		//aca tiene que haber un logger
 		log.Printf("Error al convertir a json.")
 		return
 	}
-	cliente := http.Client{} //crea un "cliente"
+	cliente := http.Client{}
 
-	url := fmt.Sprintf("http://%s:%d/KERNELMEMORIADUMP", ip, puerto) //url del server
+	url := fmt.Sprintf("http://%s:%d/KERNELMEMORIADUMP", ip, puerto)
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson))
 
 	if err != nil {
-		//aca tiene que haber un logger
 		log.Printf("Error al generar la peticion al server.\n")
 		return
 	}
 
-	req.Header.Set("Content-Type", "application/json") //le avisa al server que manda la data en json format
+	req.Header.Set("Content-Type", "application/json")
 
 	respuestaJSON, err := cliente.Do(req)
 	if err != nil {
@@ -958,33 +931,84 @@ func DumpDelProceso(pcb *PCB, ip string, puerto int) {
 
 	}
 
-	defer respuestaJSON.Body.Close() //cerramos algo supuestamente importante de cerrar pero no se que hace
+	defer respuestaJSON.Body.Close()
+	//log.Printf("Conexion establecida con exito \n")
 
-	log.Printf("Conexion establecida con exito \n")
-	//pasamos de JSON a formato bytes lo que nos paso el paquete
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
 		return
 	}
 
-	//pasamos la respuesta de JSON a formato paquete que nos mando el server
-
-	var respuesta PaqueteRecibidoDeMemoria //para eso declaramos una variable con el struct que esperamos que nos envie el server
-	err = json.Unmarshal(body, &respuesta) //pasamos de bytes al formato de nuestro paquete lo que nos mando el server
+	var respuesta PaqueteRecibidoDeMemoria
+	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		//log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
 
-	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	//log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
 
 	if respuestaJSON.StatusCode == http.StatusOK {
 		log.Printf("Se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
 		PasarReady(pcb, ColaBlock)
 	} else {
 		log.Printf("No se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
-		FinalizarProceso(pcb) //Mando a exit al proceso
+		FinalizarProceso(pcb)
+	}
+
+}
+
+func SwapDelProceso(pcb *PCB, ip string, puerto int) {
+
+	var paquete PaqueteEnviadoKERNELaMemoria2
+	paquete.Pid = pcb.Pid
+	paquete.Mensaje = fmt.Sprintf("El proceso PID: %d  requiere que se haga un SWAP del mismo", pcb.Pid)
+
+	PaqueteFormatoJson, err := json.Marshal(paquete)
+	if err != nil {
+		log.Printf("Error al convertir a json.")
+		return
+	}
+	cliente := http.Client{}
+
+	url := fmt.Sprintf("http://%s:%d/SWAPADISCO", ip, puerto)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson))
+
+	if err != nil {
+		log.Printf("Error al generar la peticion al server.\n")
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	respuestaJSON, err := cliente.Do(req)
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+
+	}
+
+	defer respuestaJSON.Body.Close()
+
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	var respuesta PaqueteRecibidoDeMemoria
+	err = json.Unmarshal(body, &respuesta)
+	if err != nil {
+		//log.Printf("Error al decodificar el JSON.\n")
+		return
+	}
+
+	//log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+
+	if respuestaJSON.StatusCode != http.StatusOK {
+		log.Printf("Error al hacer el SWAP")
 	}
 
 }
@@ -1001,7 +1025,7 @@ func removerIO(io *IO) []IO {
 func enviarExitProcesosIO(io *IO) {
 	for _, proceso := range io.ColaProcesos {
 		if proceso.Pcb != nil {
-			log.Printf("El proceso PID: %d  se pasa a EXIT por desconexion del I/O %s", proceso.Pcb.Pid, io.Instancia)
+			//log.Printf("El proceso PID: %d  se pasa a EXIT por desconexion del I/O %s", proceso.Pcb.Pid, io.Instancia)
 			FinalizarProceso(proceso.Pcb)
 		}
 	}

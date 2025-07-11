@@ -84,7 +84,7 @@ func NotificarFinalizacionAlKernel(nombre string, ipKernel string, puertoKernel 
 	}
 	defer respuestaJSON.Body.Close()
 
-	log.Printf("Conexion establecida con exito \n")
+	//log.Printf("Conexion establecida con exito \n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -140,7 +140,7 @@ func PeticionClienteIOServidorKERNEL(nombre string, ipKernel string, puertoKerne
 	}
 	defer respuestaJSON.Body.Close()
 
-	log.Printf("Conexion establecida con exito \n")
+	//log.Printf("Conexion establecida con exito \n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -153,7 +153,7 @@ func PeticionClienteIOServidorKERNEL(nombre string, ipKernel string, puertoKerne
 		log.Printf("Error al decodificar el JSON")
 		return
 	}
-	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	//log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
 
 }
 
