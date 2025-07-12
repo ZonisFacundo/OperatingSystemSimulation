@@ -8,6 +8,7 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/sisoputnfrba/tp-golang/memoria/auxiliares"
 	"github.com/sisoputnfrba/tp-golang/memoria/globals"
@@ -182,12 +183,13 @@ func SwapADisco(pid int) int { //incompleta
 
 func SwapAMemoria(pid int) int {
 
-	file, err := os.OpenFile(fmt.Sprintf("%s/swapfile.bin", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR, 0644)
+	file, err := os.OpenFile(fmt.Sprintf("%s/swapfile.bin", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
 
 	if err != nil {
 		log.Printf("error al abrir el archivo SWAP a la hora de llevarlo a disco para pid: %d    (SwapAMemoria)\n", pid)
 		return -1
 	}
+	time.Sleep(1 * time.Second)
 
 	if EntraEnMemoria(globals.MemoriaKernel[pid].SwapTam) < 0 {
 		log.Printf("No hay espacio para cargar el proceso en MP, pid: %d  tam proceso: %d bytes (SwapAMemoria)\n", pid, globals.MemoriaKernel[pid].SwapTam)
