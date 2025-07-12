@@ -91,8 +91,8 @@ var PaginasDisponibles []int                                                //no
 var PunteroBase *Nodo = nil
 var PaginasSwap []int = make([]int, 0) //la idea es que se vea algo asi por ejemplo: PaginasSwap = [2, 2, 5] --> significa que el primer marco de pagina del swap y el segundo los ocupan paginas del proceso 2, la tercera del proceso 5, si se deswappea el proceso 2 quedaria --> [-1, -1, 5]
 var Contador int = 0
-var ContadorTabla int = 0                     //lo uso para contar donde estamos parados en la tabla de paginas global (la del map del proceso)
-var MetricasProceso = make(map[int]*Metricas) //Uso éste map para guardar las metricas por proceso, ¿debería inicializarlo en 1?
+var ContadorTabla int = 0                                       //lo uso para contar donde estamos parados en la tabla de paginas global (la del map del proceso)
+var MetricasProceso map[int]*Metricas = make(map[int]*Metricas) //Uso éste map para guardar las metricas por proceso, ¿debería inicializarlo en 1?
 
 // FUNCIONES
 func CargarConfig(path string) {
