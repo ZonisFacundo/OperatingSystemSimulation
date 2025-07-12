@@ -232,6 +232,7 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
+	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorReadMemoria++
 }
 
@@ -276,12 +277,8 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 	w.Write(respuestaJSON)
 
 	//registramos en metrica que funco el write
-	if globals.MetricasProceso[globals.Instruction.Pid] == nil {
-		var punteroaux *globals.Metricas = new(globals.Metricas)
 
-		globals.MetricasProceso[globals.Instruction.Pid] = punteroaux
-
-	}
+	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorWriteMemoria++
 
 }

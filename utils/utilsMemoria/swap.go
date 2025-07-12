@@ -173,8 +173,8 @@ func SwapADisco(pid int) int { //incompleta
 	CambiarAMenos1TodasLasTablas(pid)
 	defer file.Close()
 
+	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorBajadasSWAP++
-	
 
 	return 0
 
@@ -213,6 +213,7 @@ func SwapAMemoria(pid int) int {
 	}
 	defer file.Close()
 
+	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorSubidasAMemoria++
 
 	return 1
