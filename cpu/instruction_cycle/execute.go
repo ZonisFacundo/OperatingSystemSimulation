@@ -108,6 +108,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "IO": //IO(Dispositivo y tiempo)
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %d", detalle.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
+		globals.ID.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.Pid,
@@ -121,7 +122,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - TAM: %d - ARCHIVO: %s", detalle.Pid, detalle.InstructionType, detalle.Tamaño, detalle.ArchiInstr)
-
+		globals.ID.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.Pid, globals.ID.Pc,
@@ -132,8 +133,9 @@ func Execute(detalle globals.Instruccion) bool {
 
 		return true
 
-	case "DUMP_MEMORY": //
+	case "DUMP_MEMORY":
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.Pid, detalle.InstructionType)
+		globals.ID.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.Pid,
@@ -146,6 +148,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "EXIT":
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.Pid, detalle.InstructionType)
+		globals.ID.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.Pid,
@@ -155,7 +158,6 @@ func Execute(detalle globals.Instruccion) bool {
 			0,
 			"")
 		return true
-
 	default:
 		fmt.Println("Instrucción inválida.")
 		return false
@@ -324,6 +326,8 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
+		log.Println("chupete en el orto outside")
+		globals.Interruption = true
 
 		log.Printf("Status de respuesta el server no fue la esperada.\n")
 		return
@@ -345,7 +349,7 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 		log.Printf("Error al decodificar el JSON.\n")
 	}
 
-	if respuesta.Mensaje != "interrupcion" {
+	if respuesta.Mensaje == "interrupcion" {
 		globals.Interruption = true
 
 	} else {

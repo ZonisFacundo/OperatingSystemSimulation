@@ -63,7 +63,7 @@ func main() {
 		log.Printf("Servidor HTTP activo en puerto %d.", globals.ClientConfig.Port_cpu)
 		http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
 	}()
-	
+
 	for {
 		log.Println("Esperando nuevo proceso...")
 
@@ -89,11 +89,10 @@ func main() {
 			instruction_cycle.Fetch(globals.ID.Pid, globals.ID.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)
 			instruction_cycle.Execute(globals.ID)
-			globals.ID.Pc++
+
 		}
 	}
 }
-
 
 /*
 LOGS FALTANTES POR PONER:
@@ -106,4 +105,5 @@ Página encontrada en Caché: “PID: <PID> - Cache Hit - Pagina: <NUMERO_PAGINA
 Página faltante en Caché: “PID: <PID> - Cache Miss - Pagina: <NUMERO_PAGINA>”
 Página ingresada en Caché: “PID: <PID> - Cache Add - Pagina: <NUMERO_PAGINA>”
 Página Actualizada de Caché a Memoria: “PID: <PID> - Memory Update - Página: <NUMERO_PAGINA> - Frame: <FRAME_EN_MEMORIA_PRINCIPAL>”
+
 */

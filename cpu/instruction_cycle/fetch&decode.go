@@ -144,6 +144,7 @@ func Decode(instruccion globals.Instruccion) {
 
 		if mmu.EstaTraducida(globals.ID.NroPag) {
 			globals.Tlb.Entradas[globals.ID.PosicionPag].UltimoAcceso = time.Now().UnixNano()
+
 		} else {
 
 			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.Pid, globals.ID.NroPag)

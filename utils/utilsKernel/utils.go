@@ -37,7 +37,6 @@ func RecibirDatosIO(w http.ResponseWriter, r *http.Request) {
 
 	CrearStructIO(request.Ip, request.Puerto, request.Nombre)
 
-	//Respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaIO RespuestaalIO
 	respuestaIO.Mensaje = "conexion realizada con exito"
 	respuestaJSON, err := json.Marshal(respuestaIO)
@@ -127,6 +126,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	PCBUtilizar := ObtenerPCB(cpuServidor.Pid)
 	PCBUtilizar.Pc = request.Pc
 	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
+	respuesta.Mensaje = "NO INTERRUMPAS GIL"
 
 	switch request.Syscall {
 	case "IO":
@@ -136,7 +136,6 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		if ExisteIO(request.Parametro2) {
 			SemCortoPlazo <- struct{}{}
 			ioServidor := ObtenerIO(request.Parametro2)
-			PCBUtilizar.TiempoEnvioBlock = time.Now()
 			go PlanificadorMedianoPlazo(PCBUtilizar)
 			AgregarColaIO(ioServidor, PCBUtilizar, request.Parametro1)
 			PasarBlocked(PCBUtilizar)
@@ -163,7 +162,6 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 
 	case "INIT_PROC":
-		respuesta.Mensaje = "NO INTERRUMPAS GIL"
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
 		CrearPCB(request.Parametro1, request.Parametro2)
 		cpuServidor.Disponible = false
@@ -600,6 +598,7 @@ func PlanificadorCortoPlazo() {
 }
 
 func PlanificadorMedianoPlazo(pcb *PCB) {
+	pcb.TiempoEnvioBlock = time.Now()
 	for true {
 		if EstaEnColaBlock(pcb) {
 			if time.Since(pcb.TiempoEnvioBlock) >= time.Duration(globals.ClientConfig.Suspension_time)*time.Millisecond {
@@ -763,9 +762,10 @@ func removerPCB(cola []*PCB, pcb *PCB) []*PCB {
 func CriterioColaNew(cola []*PCB) *PCB {
 	if globals.ClientConfig.Ready_ingress_algorithm == "FIFO" {
 		return FIFO(cola)
-	} else {
+	} else if globals.ClientConfig.Scheduler_algorithm == "PMCP" {
 		return ProcesoMasChicoPrimero(cola)
 	}
+	return &PCB{}
 
 }
 
@@ -774,7 +774,7 @@ func CriterioColaReady() (*PCB, bool) {
 		return FIFO(ColaReady), false
 	} else if globals.ClientConfig.Scheduler_algorithm == "SJF" {
 		return Sjf(), false
-	} else if globals.ClientConfig.Scheduler_algorithm == " SJF/SRT" {
+	} else if globals.ClientConfig.Scheduler_algorithm == "SJF/SRT" {
 		return Sjf(), true
 	}
 	return &PCB{}, false
