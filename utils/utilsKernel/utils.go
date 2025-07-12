@@ -126,7 +126,6 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	PCBUtilizar := ObtenerPCB(cpuServidor.Pid)
 	PCBUtilizar.Pc = request.Pc
 	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
-	respuesta.Mensaje = "NO INTERRUMPAS GIL"
 
 	switch request.Syscall {
 	case "IO":
@@ -163,6 +162,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 	case "INIT_PROC":
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
+		respuesta.Mensaje = "NO INTERRUMPAS GIL"
 		CrearPCB(request.Parametro1, request.Parametro2)
 		cpuServidor.Disponible = false
 		EnviarProcesoACPU(PCBUtilizar, cpuServidor)
@@ -762,7 +762,7 @@ func removerPCB(cola []*PCB, pcb *PCB) []*PCB {
 func CriterioColaNew(cola []*PCB) *PCB {
 	if globals.ClientConfig.Ready_ingress_algorithm == "FIFO" {
 		return FIFO(cola)
-	} else if globals.ClientConfig.Scheduler_algorithm == "PMCP" {
+	} else if globals.ClientConfig.Ready_ingress_algorithm == "PMCP" {
 		return ProcesoMasChicoPrimero(cola)
 	}
 	return &PCB{}
