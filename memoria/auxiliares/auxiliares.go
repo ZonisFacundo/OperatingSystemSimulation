@@ -112,3 +112,17 @@ func MostrarArchivo(path string) {
 
 	file.Close()
 }
+
+/*
+verifica si existe ya un puntero a metricas para ese pid, en caso de que no exista lo crea
+reservando memoria para un struct de metricas
+*/
+func InicializarSiNoLoEstaMap(pid int) {
+
+	if globals.MetricasProceso[pid] == nil {
+		var punteroaux *globals.Metricas = new(globals.Metricas)
+
+		globals.MetricasProceso[pid] = punteroaux
+
+	}
+}
