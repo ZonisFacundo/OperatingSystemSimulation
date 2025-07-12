@@ -42,7 +42,7 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 	globals.ID.Pc = request.Pc
 
 	var respuesta RespuestaKernel
-	respuesta.Mensaje = "PC y PID recbidos correctamente"
+	respuesta.Mensaje = "PC y PID recibidos correctamente"
 	respuestaJSON, err := json.Marshal(respuesta)
 	if err != nil {
 		return

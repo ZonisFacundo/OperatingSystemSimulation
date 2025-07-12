@@ -32,7 +32,7 @@ func Execute(detalle globals.Instruccion) bool {
 		log.Println("Se ejecuta noop")
 
 	case "WRITE":
-
+		globals.ID.Pc++
 		/// [0 0 1] -> Página: 3 // [0 0 2] -> Página: 3 (porque se reemplazó el contenido en Memoria)
 
 		if globals.ID.DireccionFis >= 0 {
@@ -63,7 +63,7 @@ func Execute(detalle globals.Instruccion) bool {
 		return false
 
 	case "READ":
-
+		globals.ID.Pc++
 		if globals.ID.DireccionFis >= 0 {
 
 			if globals.ClientConfig.Cache_entries > 0 {

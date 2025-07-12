@@ -103,10 +103,10 @@ func MostrarArchivo(path string) {
 		log.Printf("error al leer el archivo (MostrarArchivoPorPagina)\n")
 	}
 
-	log.Printf("MUESTRO ARCHIVO (DUMPEADO) EN BYTES\n")
+	log.Printf("MUESTRO ARCHIVO (DUMPEADO o SWAPEADO) EN BYTES\n")
 	log.Print(datos, "\n\n\n")
 
-	log.Printf("MUESTRO ARCHIVO (DUMPEADO) EN STRING\n")
+	log.Printf("MUESTRO ARCHIVO (DUMPEADO o SWAPEADO) EN STRING\n")
 	s := string(datos)
 	log.Printf("%s\n\n\n", s)
 

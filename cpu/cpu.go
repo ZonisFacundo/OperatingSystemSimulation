@@ -86,12 +86,16 @@ func main() {
 			}
 
 			log.Printf("Ejecutando: PID=%d, PC=%d", globals.ID.Pid, globals.ID.Pc)
+
 			instruction_cycle.Fetch(globals.ID.Pid, globals.ID.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)
 			instruction_cycle.Execute(globals.ID)
 
+			log.Printf("pc: %d", globals.ID.Pc)
+
 		}
 	}
+
 }
 
 /*
