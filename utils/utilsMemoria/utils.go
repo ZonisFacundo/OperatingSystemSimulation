@@ -307,6 +307,30 @@ func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r 
 	w.Write(respuestaJSON)
 
 }
+func RetornoClienteKernelServidorMemoriaFinProceso(w http.ResponseWriter, r *http.Request) {
+
+	//Este paquete lo unico q recibe es el pid para hacerle el dump junto a un mensaje
+	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
+	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	FinalizarProceso(paqueteDeKernel.Pid)
+
+	var respuesta respuestaalKernel
+	respuesta.Mensaje = "PROCESO FINALIZADO CON EXITO \n"
+
+	respuestaJSON, err := json.Marshal(respuesta)
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
 
 /*
 /
@@ -523,7 +547,9 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
 	AsignarValoresATablaDePaginas(paquete.Pid, 0, PunteroAux)
-	ActualizarPaginasDisponibles() //actualiza que paginas estan disponibles en este momento
+	auxiliares.InicializarSiNoLoEstaMap(paquete.Pid)
+	globals.MetricasProceso[paquete.Pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
+	ActualizarPaginasDisponibles()                                     //actualiza que paginas estan disponibles en este momento
 
 	globals.ContadorTabla = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior (es la unica varialbe global de utils)
 
@@ -751,12 +777,18 @@ func CambiarAMenos1TodasLasTablas(pid int) {
 
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
 	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
+	auxiliares.InicializarSiNoLoEstaMap(pid)
+	globals.MetricasProceso[pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
+
 }
 
 func ActualizarTodasLasTablasEnBaseATablaSimple(pid int) {
 	ActualizarPaginasDisponibles()
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
 	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
+	auxiliares.InicializarSiNoLoEstaMap(pid)
+	globals.MetricasProceso[pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
+
 }
 
 /*

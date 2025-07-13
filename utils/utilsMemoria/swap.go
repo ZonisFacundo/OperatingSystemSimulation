@@ -37,6 +37,7 @@ func InicializarSwap() {
 
 func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *http.Request) {
 
+	time.Sleep(time.Duration(globals.ClientConfig.Swap_delay) * (time.Millisecond))
 	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
 	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
 	if err != nil {
@@ -142,7 +143,7 @@ func SwapADisco(pid int) int { //incompleta
 	var bytesEscritosRecien int = 0
 
 	file, err := os.OpenFile(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
-
+	log.Printf("path: %s\n", globals.ClientConfig.Swapfile_path)
 	if err != nil {
 		log.Printf("error al abir el archivo (SwapADisco)\n")
 	}
@@ -159,6 +160,7 @@ func SwapADisco(pid int) int { //incompleta
 	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
 		for j := 0; j < globals.ClientConfig.Page_size; j++ {
 			//buffer[j] = append(buffer, globals.MemoriaPrincipal[((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j])
+			log.Printf("valor al que accedo en memoria: %d", ((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j)
 			buffer[j] = globals.MemoriaPrincipal[((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j]
 		}
 		bytesEscritosRecien, _ = file.Write(buffer)
