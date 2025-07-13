@@ -8,14 +8,14 @@ import (
 
 func EstaEnCache(nroPagina int) bool {
 	for i, entrada := range globals.CachePaginas.Entradas {
-		if entrada.PID == globals.ID.Pid && entrada.NroPag == nroPagina {
+		if entrada.PID == globals.ID.ProcessValues.Pid && entrada.NroPag == nroPagina {
 			globals.ID.PosicionPag = i
 			globals.CachePaginas.Entradas[i].BitUso = true
 			log.Printf(">> CACHE HIT: PID=%d, Pagina=%d", entrada.PID, entrada.NroPag)
 			return true
 		}
 	}
-	log.Printf(">> CACHE MISS: PID=%d, Pagina=%d", globals.ID.Pid, nroPagina)
+	log.Printf(">> CACHE MISS: PID=%d, Pagina=%d", globals.ID.ProcessValues.Pid, nroPagina)
 	return false
 }
 
