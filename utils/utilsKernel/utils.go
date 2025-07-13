@@ -537,26 +537,81 @@ func IniciarPlanifcador(tamanio int, archivo string) {
 	}
 }
 
+/*
+CODIGO PRE CAMBIO DE FACU KERNEL
+
+	func PlanificadorLargoPlazo() {
+		for true {
+			<-SemLargoPlazo
+			if len(ColaSuspReady) != 0 {
+				MutexColaNew.Lock()
+				pcbChequear := CriterioColaNew(ColaSuspReady)
+				MutexColaNew.Unlock()
+				ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaSuspReady)
+
+			} else if len(ColaNew) != 0 {
+				MutexColaNew.Lock()
+				pcbChequear := CriterioColaNew(ColaNew)
+				MutexColaNew.Unlock()
+				ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaNew)
+
+			} /*else {
+			//	SemLargoPlazo <- struct{}{}
+				//time.Sleep(1 * time.Second)
+
+			}
+		}
+	}
+*/
 func PlanificadorLargoPlazo() {
-	for true {
+	for {
 		<-SemLargoPlazo
+
+		// 1) Si hay procesos en SUSP.READY, pasar a READY:
 		if len(ColaSuspReady) != 0 {
+			MutexColaSuspReady.Lock()
+			pcb := CriterioColaNew(ColaSuspReady)
+			// Lo saco de la cola de suspendidos listos
+			ColaSuspReady = removerPCB(ColaSuspReady, pcb)
+			MutexColaSuspReady.Unlock()
+
+			// Y lo paso a READY (dispara SemCortoPlazo internamente)
+			PasarReady(pcb, ColaSuspReady)
+
+			continue // vuelvo al for, ya consumí esta señal
+		}
+
+		// 2) Si hay procesos en SUSP.BLOCKED, hacer swap‑in y pasarlos a SUSP.READY:
+		if len(ColaSuspBlock) != 0 {
+			MutexColaSuspBlock.Lock()
+			pcb := CriterioColaNew(ColaSuspBlock)
+			// Lo quito de SUSP.BLOCKED
+			ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
+			MutexColaSuspBlock.Unlock()
+
+			// Swap‑in en memoria
+			SwapInProceso(pcb)
+
+			// Lo paso a SUSP.READY (no dispara semáforo por defecto)
+			PasarSuspReady(pcb)
+
+			continue
+		}
+
+		// 3) Por último, los procesos NEW entran a memoria:
+		if len(ColaNew) != 0 {
 			MutexColaNew.Lock()
-			pcbChequear := CriterioColaNew(ColaSuspReady)
+			pcb := CriterioColaNew(ColaNew)
+			ColaNew = removerPCB(ColaNew, pcb)
 			MutexColaNew.Unlock()
-			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaSuspReady)
 
-		} else if len(ColaNew) != 0 {
-			MutexColaNew.Lock()
-			pcbChequear := CriterioColaNew(ColaNew)
-			MutexColaNew.Unlock()
-			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaNew)
-
-		} /*else {
-			SemLargoPlazo <- struct{}{}
-			time.Sleep(1 * time.Second)
-
-		}*/
+			ConsultarProcesoConMemoria(
+				pcb,
+				globals.ClientConfig.Ip_memory,
+				globals.ClientConfig.Port_memory,
+				ColaNew,
+			)
+		}
 	}
 }
 
@@ -721,15 +776,39 @@ func PasarBlocked(pcb *PCB) {
 	SemCortoPlazo <- struct{}{}
 }
 
+/*
+CODIGO PREVIO A TOQUETEO FACU
+
+	func PasarSuspBlock(pcb *PCB) {
+		log.Printf("## (<%d>) Pasa del estado %s al estado SUSP.BLOCKED \n", pcb.Pid, pcb.EstadoActual)
+		SwapDelProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+		MutexColaSuspBlock.Lock()
+		ColaBlock = append(ColaSuspBlock, pcb)
+		MutexColaSuspBlock.Unlock()
+		MutexColaBlock.Lock()
+		ColaBlock = removerPCB(ColaBlock, pcb)
+		MutexColaBlock.Unlock()
+		pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
+		pcb.EstadoActual = "SUSP.BLOCKED"
+		pcb.MetricaEstados["SUSP.BLOCKED"]++
+		pcb.TiempoLlegada["SUSP.BLOCKED"] = time.Now()
+	}
+*/
 func PasarSuspBlock(pcb *PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado SUSP.BLOCKED \n", pcb.Pid, pcb.EstadoActual)
 	SwapDelProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+
+	// <<< CAMBIO: añadir a ColaSuspBlock, no a ColaBlock
 	MutexColaSuspBlock.Lock()
-	ColaBlock = append(ColaSuspBlock, pcb)
+	ColaSuspBlock = append(ColaSuspBlock, pcb)
 	MutexColaSuspBlock.Unlock()
+
+	// quitar de la cola BLOCK normal
 	MutexColaBlock.Lock()
 	ColaBlock = removerPCB(ColaBlock, pcb)
 	MutexColaBlock.Unlock()
+
+	// actualizar métricas y estado
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "SUSP.BLOCKED"
 	pcb.MetricaEstados["SUSP.BLOCKED"]++
@@ -1038,4 +1117,35 @@ func enviarExitProcesosIO(io *IO) {
 func InicializarSemaforos() {
 	SemLargoPlazo = make(chan struct{}, 100)
 	SemCortoPlazo = make(chan struct{}, 100)
+}
+
+/*
+NUEVA CONEXION FACU
+EN TEORIA, CUANDO QUERIAN DESWAPPEAR UN PROCESO, LO QUE HACIAN ERA CREAR UNO NUEVO CON ESE MISMO PID
+AHORA NO
+ARMO HTTP PARA DESWAPEAR
+*/
+
+// ATENCION, SI LE VAN A CAMBIAR EL NOMBRE, TIENEN QUE IR A CAMBIARLO TAMBIEN EN SU INVOCACION (PLANI LARGO PLAZO)
+// <<< NUEVO >>> Trae un proceso swappeado devuelta a memoria
+func SwapInProceso(pcb *PCB) {
+	var paquete PaqueteEnviadoKERNELaMemoria2
+	paquete.Pid = pcb.Pid
+	paquete.Mensaje = "SWAP_IN" // o el texto que tu memoria espere
+
+	data, _ := json.Marshal(paquete)
+	cliente := http.Client{}
+	url := fmt.Sprintf("http://%s:%d/SWAPAMEMORIA", globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	if err != nil {
+		log.Printf("Error generando petición SWAP_IN: %v", err)
+		return
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cliente.Do(req)
+	if err != nil {
+		log.Printf("Error en SWAP_IN del PID %d: %v", pcb.Pid, err)
+		return
+	}
+	defer resp.Body.Close()
 }
