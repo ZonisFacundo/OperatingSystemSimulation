@@ -9,8 +9,8 @@ import (
 	"net/http"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
-	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
+	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 // switch para ver que hace dependiendo la instruccion:
@@ -316,13 +316,6 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 		return
 	}
 
-	if respuestaJSON.StatusCode != http.StatusOK {
-
-		log.Println("chupete en el orto outside")
-		globals.Interruption = true
-
-	}
-
 	defer respuestaJSON.Body.Close()
 
 	log.Printf("Se envio syscall a Kernel.\n")
@@ -333,6 +326,11 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 	}
 
 	var respuesta utilsCPU.RespuestaKernel
+
+	if respuestaJSON.StatusCode != http.StatusOK {
+		log.Println("chupete en el orto outside")
+		globals.Interruption = true
+	}
 
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {

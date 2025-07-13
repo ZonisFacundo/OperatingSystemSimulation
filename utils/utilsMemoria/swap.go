@@ -82,6 +82,7 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.Printf(" el swap tam de este proceso es: %d", globals.MemoriaKernel[paqueteDeKernel.Pid].SwapTam)
 
 	retorno := EntraEnMemoria(len(globals.MemoriaKernel[paqueteDeKernel.Pid].TablaSimple)) //se fija si entra en memoria o no
 
@@ -172,6 +173,7 @@ func SwapADisco(pid int) int { //incompleta
 	// TO DO: IMPLEMENTAR DONDE SE VAN A GUARDAR LAS PAGINAS, SI HAY ESPACIO INFINITO O NO
 
 	auxiliares.ActualizarSwapInfo(currentPos, bytesEscritos, pid)
+	log.Printf("SWAP FINALIZADO, MUESTRO DATOS DEL SWAP DEL PROCESO \n PID: %d \n Posicion en disco: %d \n tam en swap: %d\n", pid, globals.MemoriaKernel[pid].SwapStart, globals.MemoriaKernel[pid].SwapTam)
 
 	CambiarAMenos1TodasLasTablas(pid)
 	defer file.Close()
