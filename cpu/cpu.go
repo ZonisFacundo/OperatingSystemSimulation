@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 	"sync"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
@@ -18,29 +17,15 @@ func main() {
 		log.Fatal("Error: Debe indicar el identificador de la CPU como argumento, por ejemplo: ./cpu cpuX")
 	}
 
-	instanceID := os.Args[1] // "cpuX" o "cpu2"
-	configSuffix := instanceID
-
-	if strings.HasPrefix(instanceID, "cpu") {
-		configSuffix = instanceID[3:] // Quita "cpu"
-	}
-
-	configPath := fmt.Sprintf("./cpu/globals/config%s.json", configSuffix)
-
-	log.Printf("Usando config: %s para instancia: %s\n", configPath, instanceID)
+	instanceID := os.Args[1]
 	procesoNuevo := make(chan struct{})
 	var mutexInterrupcion sync.Mutex
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
-	globals.CargarConfig(configPath, instanceID)
+	globals.CargarConfig("./cpu/globals/config.json", instanceID)
 
 	instruction_cycle.RecibirDatosMMU(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
-
-	globals.AlgoritmoReemplazo = globals.ClientConfig.Cache_replacement
-	globals.AlgoritmoReemplazoTLB = globals.ClientConfig.Tlb_replacement
-	globals.InitTlb()
-	globals.InitCache()
 
 	utilsCPU.EnvioPortKernel(
 		globals.ClientConfig.Ip_kernel,
@@ -52,8 +37,9 @@ func main() {
 
 	go func() {
 		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
-			utilsCPU.RecibirPCyPID(w, r)
-			log.Printf("Proceso recibido - PID: %d, PC: %d", globals.ID.Pid, globals.ID.Pc)
+			instruction_cycle.RecibirPCyPID(w, r)
+
+			log.Printf("Proceso recibido - PID: %d, PC: %d", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
 			select {
 			case procesoNuevo <- struct{}{}:
 				log.Println("Notificando CPU de un nuevo proceso entrante.")
@@ -63,7 +49,7 @@ func main() {
 		})
 
 		http.HandleFunc("/INTERRUPCIONCPU", func(w http.ResponseWriter, r *http.Request) {
-			utilsCPU.DevolverPidYPCInterrupcion(w, r, globals.ID.Pc, globals.ID.Pid)
+			utilsCPU.DevolverPidYPCInterrupcion(w, r, globals.Instruction.Pc, globals.Instruction.Pid)
 			mutexInterrupcion.Lock()
 			globals.Interruption = true
 			mutexInterrupcion.Unlock()
@@ -73,40 +59,38 @@ func main() {
 		log.Printf("Servidor HTTP activo en puerto %d.", globals.ClientConfig.Port_cpu)
 		http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
 	}()
-
+	
 	for {
 		log.Println("Esperando nuevo proceso...")
 
 		<-procesoNuevo
+
+		log.Printf(" Ejecutando proceso (PID: %d)", globals.Instruction.Pid)
 
 	ejecucion:
 		for {
 			mutexInterrupcion.Lock()
 
 			interrumpido := globals.Interruption
+
 			if interrumpido {
 				globals.Interruption = false
 			}
 			mutexInterrupcion.Unlock()
 
 			if interrumpido {
-				log.Printf("Interrupción. Deteniendo proceso PID %d", globals.ID.Pid)
-				log.Println("Llega interrupción al puerto Interrupt")
+				log.Printf("Interrupción. Deteniendo proceso PID %d", globals.Instruction.Pid)
 				break ejecucion
 			}
 
-			log.Printf("Ejecutando: PID=%d, PC=%d", globals.ID.Pid, globals.ID.Pc)
-
-			instruction_cycle.Fetch(globals.ID.Pid, globals.ID.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+			log.Printf("Ejecutando: PID=%d, PC=%d", globals.Instruction.Pid, globals.Instruction.Pc)
+			instruction_cycle.Fetch(globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)
 			instruction_cycle.Execute(globals.ID)
-
-			log.Printf("pc: %d", globals.ID.Pc)
-
 		}
 	}
-
 }
+
 
 /*
 LOGS FALTANTES POR PONER:
@@ -119,5 +103,4 @@ Página encontrada en Caché: “PID: <PID> - Cache Hit - Pagina: <NUMERO_PAGINA
 Página faltante en Caché: “PID: <PID> - Cache Miss - Pagina: <NUMERO_PAGINA>”
 Página ingresada en Caché: “PID: <PID> - Cache Add - Pagina: <NUMERO_PAGINA>”
 Página Actualizada de Caché a Memoria: “PID: <PID> - Memory Update - Página: <NUMERO_PAGINA> - Frame: <FRAME_EN_MEMORIA_PRINCIPAL>”
-
 */

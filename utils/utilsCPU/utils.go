@@ -8,12 +8,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 )
 
 func ConfigurarLogger(cpuId string) {
-	fmt.Println("CONFIGURANDO LOGGER PARA: ", cpuId)
 	logFileName := fmt.Sprintf("CPU-%s.log", cpuId)
 	logFile, err := os.OpenFile(logFileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 	if err != nil {
@@ -25,33 +22,6 @@ func ConfigurarLogger(cpuId string) {
 
 	//prefija cada línea de log con el cpuId:
 	log.SetPrefix(fmt.Sprintf("[CPU-%s] ", cpuId))
-}
-
-func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
-	// var request HandshakeKERNEL
-
-	var request Proceso
-
-	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	log.Printf("El Kernel envio PID: %d - PC: %d", request.Pid, request.Pc)
-
-	globals.ID.Pid = request.Pid
-	globals.ID.Pc = request.Pc
-
-	var respuesta RespuestaKernel
-	respuesta.Mensaje = "PC y PID recibidos correctamente"
-	respuestaJSON, err := json.Marshal(respuesta)
-	if err != nil {
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(respuestaJSON)
 }
 
 func EnvioPortKernel(ip string, puerto int, instancia string, portcpu int, ipcpu string) {
@@ -135,3 +105,4 @@ func DevolverPidYPCInterrupcion(w http.ResponseWriter, r *http.Request, pc int, 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 }
+

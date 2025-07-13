@@ -81,7 +81,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 		log.Printf("Error al decodificar el JSON.\n")
 	}
 
-	log.Printf("PID: %d - OBTENER MARCO - Página: %d - Marco: %d", globals.ID.Pid, globals.ID.NroPag, frame)
+	log.Printf("Recibido de memoria el frame: %d", frame.Frame)
 
 	globals.ID.Frame = frame.Frame
 
@@ -99,8 +99,8 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("El Kernel envio PID: %d - PC: %d", request.Pid, request.Pc)
 
-	globals.ID.Pid = request.Pid
-	globals.ID.Pc = request.Pc
+	globals.ID.ProcessValues.Pid = request.Pid
+	globals.ID.ProcessValues.Pc = request.Pc
 
 	var respuesta utilsCPU.RespuestaKernel
 	respuesta.Mensaje = "PC y PID recbidos correctamente"
