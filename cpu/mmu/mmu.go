@@ -7,33 +7,39 @@ import (
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 )
 
-func TraducirDireccion(direccionLogica int, pid int, nroPagina int) []int {
+type MMU struct {
+	Pc                  int
+	Pid                 int
+	Niveles             int
+	TamPagina           int
+	Cant_entradas_tabla int
+	TablasPaginas       map[int]int
+}
 
-	if globals.ClientConfig.Page_size == 0 { //Tampagina
+func TraducirDireccion(direccionLogica int,memoryManagement MMU, pid int, nroPagina int) []int {
+
+	if memoryManagement.TamPagina == 0 {
 		log.Fatalf("Error: TamPagina no puede ser 0. Verificá la configuración o la inicialización de la MMU.")
 	}
 
 	// Crear un slice para guardar las entradas de las tablas de páginas
-	entradas := make([]int, globals.ClientConfig.Niveles)
+	entradas := make([]int, memoryManagement.Niveles)
 
 	// Calcular las entradas de la tabla de páginas para cada nivel
-	for x := 1; x <= globals.ClientConfig.Niveles; x++ {
-		exp := globals.ClientConfig.Niveles - x
-		divisor := int(math.Pow(float64(globals.ClientConfig.Entradas), float64(exp)))
+	for x := 1; x <= memoryManagement.Niveles; x++ {
+		exp := memoryManagement.Niveles - x
+		divisor := int(math.Pow(float64(memoryManagement.Cant_entradas_tabla), float64(exp)))
 
 		// Calculamos la entrada en el nivel X
-		entradaNivelX := (nroPagina / divisor) % globals.ClientConfig.Entradas
+		entradaNivelX := (nroPagina / divisor) % memoryManagement.Cant_entradas_tabla
 		entradas[x-1] = entradaNivelX
 	}
 
-	desplazamiento := direccionLogica % globals.ClientConfig.Page_size
+	desplazamiento := direccionLogica % memoryManagement.TamPagina
 
-	log.Printf("Desplazamiento?: %d", desplazamiento)
 	globals.ID.Desplazamiento = desplazamiento
 
 	resultado := append([]int{pid}, entradas...) // Agrego el pid al principio del slice y concateno las entradas de nivel
-
-	log.Println("que es esto?: ", resultado)
 
 	return resultado
 

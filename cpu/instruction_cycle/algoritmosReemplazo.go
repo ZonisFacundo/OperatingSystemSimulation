@@ -10,6 +10,12 @@ import(
 
 func ReemplazarTLB_FIFO(entrada globals.Entrada) {
 	tlb := &globals.Tlb
+
+	if tlb.Tamanio == 0 {
+		log.Printf("ERROR: Algoritmo FIFO invocado con TLB de tamaño 0")
+		return
+	}
+	
 	if len(tlb.Entradas) < tlb.Tamanio {
 		tlb.Entradas = append(tlb.Entradas, entrada)
 		return

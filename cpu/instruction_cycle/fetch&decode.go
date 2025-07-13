@@ -89,6 +89,15 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 
 func Decode(instruccion globals.Instruccion) {
 
+	memoryManagement := mmu.MMU{
+		Pc:                  instruccion.ProcessValues.Pc,
+		Pid:                 instruccion.ProcessValues.Pid,
+		TamPagina:           globals.ClientConfig.Page_size,
+		Niveles:             globals.ClientConfig.Niveles,
+		Cant_entradas_tabla: globals.ClientConfig.Entradas,
+		TablasPaginas:       make(map[int]int),
+	}
+
 	partesDelString := strings.Fields(instruccion.InstructionType)
 	instruccion.InstructionType = partesDelString[0]
 
@@ -106,24 +115,19 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Tamaño = instruccion.Tamaño
 
-		nroPagina := globals.ID.DireccionLog / globals.ClientConfig.Page_size
+		globals.ID.ProcessValues.Pid = instruccion.ProcessValues.Pid
+
+		nroPagina := globals.ID.DireccionLog / memoryManagement.TamPagina
 		globals.ID.NroPag = nroPagina
 
-		if mmu.EstaTraducida(nroPagina) {
+		traducida := mmu.EstaTraducida(nroPagina)
+
+		if traducida {
 			globals.Tlb.Entradas[globals.ID.PosicionPag].UltimoAcceso = time.Now().UnixNano()
-			Execute(globals.ID)
 		} else {
-			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, instruccion.ProcessValues.Pid, nroPagina)
-			log.Println("que es esto? (2): ", direccionAEnviar)
+			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, nroPagina)
 			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
-
 			globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
-
-			log.Printf("desplazamiento: %d", globals.ID.Desplazamiento)
-			log.Printf("frame a enviar %d", globals.ID.Frame)
-			log.Printf("page size: %d", globals.ClientConfig.Page_size)
-			log.Printf("direccion a enviar %d", globals.ID.DireccionFis)
-			//Mandar direccion fisica a la TLB junto con el numero de página así queda guardada en "caché".
 		}
 
 	case "WRITE":
@@ -133,31 +137,28 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.DireccionLog = instruccion.DireccionLog
 		globals.ID.Datos = instruccion.Datos
 
-		nroPagina := globals.ID.DireccionLog / globals.ClientConfig.Page_size
-		globals.ID.NroPag = nroPagina
+		globals.ID.ProcessValues.Pid = instruccion.ProcessValues.Pid
 
-		if mmu.EstaTraducida(nroPagina) {
+		globals.ID.NroPag = globals.ID.DireccionLog / memoryManagement.TamPagina
+		// mmu despues deberiamos hacerlo global, porque son parametros que nos deberia pasar memoria (tabla de pags)
+
+		if mmu.EstaTraducida(globals.ID.NroPag) {
 			globals.Tlb.Entradas[globals.ID.PosicionPag].UltimoAcceso = time.Now().UnixNano()
-			Execute(globals.ID)
+
 		} else {
 
-			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, instruccion.ProcessValues.Pid, nroPagina)
-
-			log.Println("dir?: ", direccionAEnviar)
+			direccionAEnviar := mmu.TraducirDireccion(globals.ID.DireccionLog, memoryManagement, instruccion.ProcessValues.Pid, globals.ID.NroPag)
 
 			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
+
 			if globals.ID.Frame < 0 {
-				log.Printf("ERROR ERROR ERROR FACU, te imprimo el frame %d", globals.ID.Frame)
+				log.Printf("ERROR: Frame inválido: %d", globals.ID.Frame)
 			} else {
 				globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
-
-				log.Printf("desplazamiento: %d", globals.ID.Desplazamiento)
-				log.Printf("frame a enviar %d", globals.ID.Frame)
-				log.Printf("page size: %d", globals.ClientConfig.Page_size)
-				log.Printf("direccion a enviar %d", globals.ID.DireccionFis)
+				log.Printf("Dirección física calculada: %d", globals.ID.DireccionFis)
 			}
-			// aca habria que agregar la direccion traducida a la tlb y trabajar con un alg de reemplazo si la tlb esta llena
 		}
+
 	case "INIT_PROC":
 		instruccion.Tamaño, _ = strconv.Atoi(partesDelString[2])
 		instruccion.ArchiInstr = partesDelString[1]

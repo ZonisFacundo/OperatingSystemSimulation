@@ -25,6 +25,11 @@ func main() {
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
 	globals.CargarConfig("./cpu/globals/config.json", instanceID)
 
+	globals.AlgoritmoReemplazo = globals.ClientConfig.Cache_replacement
+	globals.AlgoritmoReemplazoTLB = globals.ClientConfig.Tlb_replacement
+	globals.InitTlb()
+	globals.InitCache()
+
 	instruction_cycle.RecibirDatosMMU(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 
 	utilsCPU.EnvioPortKernel(
@@ -59,13 +64,13 @@ func main() {
 		log.Printf("Servidor HTTP activo en puerto %d.", globals.ClientConfig.Port_cpu)
 		http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_cpu), nil)
 	}()
-	
+
 	for {
 		log.Println("Esperando nuevo proceso...")
 
 		<-procesoNuevo
 
-		log.Printf(" Ejecutando proceso (PID: %d)", globals.Instruction.Pid)
+		log.Printf(" Ejecutando proceso (PID: %d)", globals.ID.ProcessValues.Pid)
 
 	ejecucion:
 		for {
@@ -83,14 +88,13 @@ func main() {
 				break ejecucion
 			}
 
-			log.Printf("Ejecutando: PID=%d, PC=%d", globals.Instruction.Pid, globals.Instruction.Pc)
+			log.Printf("Ejecutando: PID=%d, PC=%d", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
 			instruction_cycle.Fetch(globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)
 			instruction_cycle.Execute(globals.ID)
 		}
 	}
 }
-
 
 /*
 LOGS FALTANTES POR PONER:

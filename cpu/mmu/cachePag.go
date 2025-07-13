@@ -37,11 +37,17 @@ func ReadEnCache() {
 		log.Printf("ReadEnCache: índice de página inválido %d", pos)
 		return
 	}
-	
+
 	contenidoCompleto := globals.CachePaginas.Entradas[pos].Contenido
 	desplazamiento := globals.ID.Desplazamiento
+	tamanio := globals.ID.Tamaño
 
-	lectura := contenidoCompleto[desplazamiento : desplazamiento+globals.ID.Tamaño]
+	if desplazamiento < 0 || desplazamiento+tamanio > len(contenidoCompleto) {
+		log.Printf("ReadEnCache: rango inválido para lectura (desplazamiento %d, tamaño %d, longitud contenido %d)", desplazamiento, tamanio, len(contenidoCompleto))
+		return
+	}
+
+	lectura := contenidoCompleto[desplazamiento : desplazamiento+tamanio]
 	log.Printf("READ en cache: %s", lectura)
 
 	// Marcar uso:

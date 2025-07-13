@@ -47,7 +47,7 @@ func Execute(detalle globals.Instruccion) bool {
 			fmt.Println("WRITE inválido: Direccion fisica inválida.")
 			detalle.Syscall = "WRITE inválido."
 		}
-
+		globals.ID.ProcessValues.Pc++
 		return false
 
 	case "READ":
@@ -79,6 +79,7 @@ func Execute(detalle globals.Instruccion) bool {
 			fmt.Sprintln("READ inválido.")
 			detalle.Syscall = "READ inválido."
 		}
+		globals.ID.ProcessValues.Pc++
 		return false
 
 	case "GOTO":
