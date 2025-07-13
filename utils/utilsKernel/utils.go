@@ -140,9 +140,9 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 			PasarBlocked(PCBUtilizar)
 			log.Printf("## (<%d>) - Bloqueado por IO: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
 			MandarProcesoAIO(ioServidor)
-			//if len(ioServidor.ColaProcesos) > 0 {
-			//ioServidor.ColaProcesos = ioServidor.ColaProcesos[1:]
-			//}
+			if len(ioServidor.ColaProcesos) > 0 {
+				ioServidor.ColaProcesos = ioServidor.ColaProcesos[1:]
+			}
 		} else {
 			FinalizarProceso(PCBUtilizar)
 		}
@@ -229,7 +229,6 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 		//log.Printf("La respuesta del I/O %s fue: %s\n", ioServer.Instancia, respuesta.Mensaje)
 
 		log.Printf("## (<%d>) finalizó IO y pasa a READY \n", pcb.Pid)
-		ioServer.Disponible = true
 
 		if EstaEnColaBlock(pcb) {
 			PasarReady(pcb, ColaBlock)
@@ -553,11 +552,11 @@ func PlanificadorLargoPlazo() {
 			MutexColaNew.Unlock()
 			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaNew)
 
-		} else {
+		} /*else {
 			SemLargoPlazo <- struct{}{}
 			time.Sleep(1 * time.Second)
 
-		}
+		}*/
 	}
 }
 
@@ -590,11 +589,11 @@ func PlanificadorCortoPlazo() {
 				SemCortoPlazo <- struct{}{}
 				time.Sleep(1 * time.Second)
 			}
-		} else {
-			SemCortoPlazo <- struct{}{}
-			time.Sleep(1 * time.Second)
+		} // else {
+		//SemCortoPlazo <- struct{}{}
+		//time.Sleep(1 * time.Second)
 
-		}
+		//}
 	}
 }
 
@@ -894,9 +893,7 @@ func EstaEnColaBlock(pcbChequear *PCB) bool {
 func MandarProcesoAIO(io *IO) {
 	if io.Disponible && len(io.ColaProcesos) > 0 {
 		io.Disponible = false
-		pcbIO := io.ColaProcesos[0]
-		io.ColaProcesos = io.ColaProcesos[1:]
-		go UtilizarIO(io, pcbIO.Pcb, pcbIO.Tiempo)
+		go UtilizarIO(io, io.ColaProcesos[0].Pcb, io.ColaProcesos[0].Tiempo)
 
 	}
 }
@@ -1013,6 +1010,8 @@ func SwapDelProceso(pcb *PCB, ip string, puerto int) {
 	if respuestaJSON.StatusCode != http.StatusOK {
 		log.Printf("Error al hacer el SWAP")
 	}
+
+	SemLargoPlazo <- struct{}{}
 
 }
 

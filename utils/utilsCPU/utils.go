@@ -13,6 +13,7 @@ import (
 )
 
 func ConfigurarLogger(cpuId string) {
+	fmt.Println("CONFIGURANDO LOGGER PARA: ", cpuId)
 	logFileName := fmt.Sprintf("CPU-%s.log", cpuId)
 	logFile, err := os.OpenFile(logFileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 	if err != nil {
@@ -27,7 +28,8 @@ func ConfigurarLogger(cpuId string) {
 }
 
 func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
-	//var request HandshakeKERNEL
+	// var request HandshakeKERNEL
+
 	var request Proceso
 
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente

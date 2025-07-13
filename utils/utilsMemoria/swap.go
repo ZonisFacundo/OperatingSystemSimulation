@@ -141,7 +141,7 @@ func SwapADisco(pid int) int { //incompleta
 	var bytesEscritos int = 0
 	var bytesEscritosRecien int = 0
 
-	file, err := os.OpenFile(fmt.Sprintf("%s/swapfile.bin", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+	file, err := os.OpenFile(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
 
 	if err != nil {
 		log.Printf("error al abir el archivo (SwapADisco)\n")
@@ -177,13 +177,20 @@ func SwapADisco(pid int) int { //incompleta
 	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorBajadasSWAP++
 
+	log.Printf("\n\tmuestro el contenido del SWAP\t\n")
+
+	auxiliares.MostrarArchivo(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path))
+
 	return 0
 
 }
 
+//guardo esto por las dudas
+//	file, err := os.OpenFile(fmt.Sprintf("%s/swapfile.bin", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR, 0644) //no deberia |os.O_CREATE nunca
+
 func SwapAMemoria(pid int) int {
 
-	file, err := os.OpenFile(fmt.Sprintf("%s/swapfile.bin", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR, 0644) //no deberia |os.O_CREATE nunca
+	file, err := os.OpenFile(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR, 0644) //no deberia |os.O_CREATE nunca
 
 	if err != nil {
 		log.Printf("error al abrir el archivo SWAP a la hora de llevarlo a disco para pid: %d    (SwapAMemoria)\n", pid)

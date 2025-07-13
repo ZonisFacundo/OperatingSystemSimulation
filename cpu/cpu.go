@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
@@ -17,13 +18,22 @@ func main() {
 		log.Fatal("Error: Debe indicar el identificador de la CPU como argumento, por ejemplo: ./cpu cpuX")
 	}
 
-	instanceID := os.Args[1]
+	instanceID := os.Args[1] // "cpuX" o "cpu2"
+	configSuffix := instanceID
+
+	if strings.HasPrefix(instanceID, "cpu") {
+		configSuffix = instanceID[3:] // Quita "cpu"
+	}
+
+	configPath := fmt.Sprintf("./cpu/globals/config%s.json", configSuffix)
+
+	log.Printf("Usando config: %s para instancia: %s\n", configPath, instanceID)
 	procesoNuevo := make(chan struct{})
 	var mutexInterrupcion sync.Mutex
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
-	globals.CargarConfig("./cpu/globals/config.json", instanceID)
+	globals.CargarConfig(configPath, instanceID)
 
 	instruction_cycle.RecibirDatosMMU(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 
