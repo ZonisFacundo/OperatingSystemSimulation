@@ -160,7 +160,7 @@ func SwapADisco(pid int) int { //incompleta
 	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
 		for j := 0; j < globals.ClientConfig.Page_size; j++ {
 			//buffer[j] = append(buffer, globals.MemoriaPrincipal[((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j])
-			log.Printf("valor al que accedo en memoria: %d", ((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j)
+			//log.Printf("valor al que accedo en memoria: %d", ((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j)
 			buffer[j] = globals.MemoriaPrincipal[((globals.MemoriaKernel[pid].TablaSimple[i])*globals.ClientConfig.Page_size)+j]
 		}
 		bytesEscritosRecien, _ = file.Write(buffer)
@@ -192,6 +192,7 @@ func SwapADisco(pid int) int { //incompleta
 
 func SwapAMemoria(pid int) int {
 
+	log.Printf("ENTRE A SWAPpppp ")
 	file, err := os.OpenFile(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR, 0644) //no deberia |os.O_CREATE nunca
 
 	if err != nil {
@@ -236,7 +237,7 @@ lo mismo que reservarmemoria pero para procesos que ya existen
 verifica si el proceso entra en memoria y en tal caso asigna las paginas al proceso en la tabla simple, ademas actualiza las paginasdisponibles del globals con las nuevas del proceso
 */
 
-func ReservarMemoriaSwapeado(pid int, tam int) int {
+func ReservarMemoriaSwapeado(pid int, tam int) {
 
 	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
 
@@ -257,10 +258,10 @@ func ReservarMemoriaSwapeado(pid int, tam int) int {
 
 					auxiliares.MostrarProceso(pid)
 
-					return 1 //devuelvo numero positivo para indicar que fue un exito, asignamos todas las paginas al proceso
+					return
 				}
 			}
 		}
 	}
-	return -1
+	return
 }
