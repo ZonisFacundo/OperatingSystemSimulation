@@ -43,7 +43,7 @@ func main() {
 	log.Printf("Servidor corriendo (Memoria) en puerto %d.\n", globals.ClientConfig.Port_memory)
 
 	addr := fmt.Sprintf("%s:%d",
-		globals.ClientConfig.Ip_memory,   // la IP que leíste de config.json
+		globals.ClientConfig.Ip_memory,   // la IP
 		globals.ClientConfig.Port_memory, // el puerto
 	)
 

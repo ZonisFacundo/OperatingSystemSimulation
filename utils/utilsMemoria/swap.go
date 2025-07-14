@@ -161,9 +161,8 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		w.Write(respuestaJSON)
 
 		var pagi globals.Pagina
-		pagi, _ = LeerPaginaCompleta(10 * globals.ClientConfig.Page_size)
-		log.Printf("LEO PAGINA 10: \n\n\n%b\n\n\n", pagi.Info)
-		log.Printf("\n\nbyte numero 645: %d\n\n", globals.MemoriaPrincipal[645])
+		pagi, _ = LeerPaginaCompleta(0 * globals.ClientConfig.Page_size)
+		log.Printf("LEO PAGINA 0: \n\n\n%b\n\n\n", pagi.Info)
 		auxiliares.Mostrarmemoria()
 		globals.Sem_Swap.Unlock()
 
@@ -239,9 +238,10 @@ func SwapADisco(pid int) int { //incompleta
 //	file, err := os.OpenFile(fmt.Sprintf("%s/swapfile.bin", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR, 0644) //no deberia |os.O_CREATE nunca
 
 func SwapAMemoria(pid int) int {
+	var bytestotales int = 0
 
 	log.Printf("ENTRE A SWAPpppp ")
-	file, err := os.OpenFile(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR, 0644) //no deberia |os.O_CREATE nunca
+	file, err := os.OpenFile(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path), os.O_RDWR, 0644) //no deberia |os.O_CREATE nunca
 
 	if err != nil {
 		log.Printf("error al abrir el archivo SWAP a la hora de llevarlo a disco para pid: %d    (SwapAMemoria)\n", pid)
@@ -257,20 +257,25 @@ func SwapAMemoria(pid int) int {
 
 	ActualizarTodasLasTablasEnBaseATablaSimple(pid) //actualiza tabla de paginas multinivel y paginas disponibles
 
+	pos, _ := file.Seek(globals.MemoriaKernel[pid].SwapStart, io.SeekStart)
+	log.Printf("posicion donde estamos parados, listos para copiar de disco: %d, posicion donde arranca el proceso %d en disco: %d", pos, pid, globals.MemoriaKernel[pid].SwapStart)
 	//ADMINISTRATIVAMENTE, TODO TERMINADO, AHORA NOS QUEDA ACTUALIZAR LA IMAGEN EN MP
 
 	var bufferPagina []byte = make([]byte, globals.ClientConfig.Page_size)
 
-	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
+	for i := 0; i < (globals.MemoriaKernel[pid].SwapTam / globals.ClientConfig.Page_size); i++ {
+
 		//bufferPagina, _ = os.ReadFile(fmt.Sprintf("%s/swapfile.bin", globals.ClientConfig.Swapfile_path))
+
 		bytesleidos, _ := file.Read(bufferPagina)
 
 		for j := 0; j < bytesleidos; j++ {
-			globals.MemoriaPrincipal[globals.MemoriaKernel[pid].TablaSimple[i]*globals.ClientConfig.Page_size] = bufferPagina[j]
+			globals.MemoriaPrincipal[globals.MemoriaKernel[pid].TablaSimple[i]*globals.ClientConfig.Page_size+j] = bufferPagina[j]
 		}
-		log.Printf("bytes leidos de disco y copiados en memoria en ultima iteracion: %d 	(SwapAMemoria)\n", bytesleidos)
+		bytestotales += bytesleidos
 	}
 	defer file.Close()
+	log.Printf("bytes leidos de disco y copiados en memoria: %d 	(SwapAMemoria)\n", bytestotales)
 
 	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorSubidasAMemoria++
