@@ -8,6 +8,7 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/sisoputnfrba/tp-golang/memoria/auxiliares"
 	"github.com/sisoputnfrba/tp-golang/memoria/globals"
@@ -88,9 +89,16 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
-	log.Printf("estamos mandandole a CPU, del pid: %d la instrucion del pc: %d la cual es %s \n\n", globals.Instruction.Pid, globals.Instruction.Pc, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
+
+	log.Printf("\n\n\n%s", globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
+	time.Sleep(4 * time.Second)
+	//log.Printf("\nla longitud del archivo de instrucciones es: %d\n\n", len(globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones))
+
+	//log.Printf("estamos mandandole a CPU, del pid: %d la instrucion del pc: %d la cual es %s \n\n", globals.Instruction.Pid, globals.Instruction.Pc, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
 	respuestaCpu.Mensaje = globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]
+
 	respuestaJSON, err := json.Marshal(respuestaCpu)
+
 	if err != nil {
 		return
 	}
@@ -115,7 +123,7 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo con esta ruta: %s \n", (PaqueteInfoProceso).Pid, (PaqueteInfoProceso).TamProceso, (PaqueteInfoProceso.Archivo))
 
 	//el kernel quiere saber si podemos guardar eso en memoria, para eso vamos a consultar el espacio que tenemos
-	DondeGuardarProceso = EntraEnMemoriaYVerificaSiYaExiste(PaqueteInfoProceso.TamProceso, PaqueteInfoProceso.Pid) //devuelve menor a 0 si no entra en memoria el proceso
+	DondeGuardarProceso = EntraEnMemoria(PaqueteInfoProceso.TamProceso) //devuelve menor a 0 si no entra en memoria el proceso
 
 	if DondeGuardarProceso == -1 {
 		log.Printf("NO HAY ESPACIO EN MEMORIA PARA GUARDAR EL PROCESO \n")
@@ -418,7 +426,7 @@ func ReservarMemoria(tam int, pid int) int {
 	frames.TablaSimple = make([]int, 0) //inicializa el slice donde vamos a guardar la tabla de paginas simple para el proceso
 
 	var PaginasEncontradas int = 0
-	if EntraEnMemoriaYVerificaSiYaExiste(tam, pid) >= 0 {
+	if EntraEnMemoria(tam) >= 0 {
 		for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
 
 			if globals.PaginasDisponibles[i] == 0 {
@@ -439,6 +447,8 @@ func ReservarMemoria(tam int, pid int) int {
 	return -1
 }
 
+/*
+SOLO USAR SI EN ALGUN TEST TRATAN DE CREAR UN PROCESO CON UN PID QUE YA FUE USADO, EN TEORIA NO
 func EntraEnMemoriaYVerificaSiYaExiste(tam int, pid int) int {
 
 	for key, _ := range globals.MemoriaKernel {
@@ -465,7 +475,7 @@ func EntraEnMemoriaYVerificaSiYaExiste(tam int, pid int) int {
 	}
 	return -1 //no entra en memoria
 }
-
+*/
 /*
 	QUE HACE ENTRAENMEMORIA?
 

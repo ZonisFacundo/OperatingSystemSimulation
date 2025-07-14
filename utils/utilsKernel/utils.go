@@ -129,7 +129,6 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 	switch request.Syscall {
 	case "IO":
-		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
 		respuesta.Mensaje = "interrupcion"
 		cpuServidor.Disponible = true
 		if ExisteIO(request.Parametro2) {
@@ -142,9 +141,9 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 			MandarProcesoAIO(ioServidor)
 			log.Printf("YA LO MANDE A IO PARA PID: (<%d>) - IO SERVIDOR INSTANCIA: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
 
-			if len(ioServidor.ColaProcesos) > 0 {
+			/*if len(ioServidor.ColaProcesos) > 0 {
 				ioServidor.ColaProcesos = ioServidor.ColaProcesos[1:]
-			}
+			}*/
 		} else {
 			FinalizarProceso(PCBUtilizar)
 		}
@@ -237,19 +236,20 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 			log.Printf("pasa de blocked a ready el pid %d\n", pcb.Pid)
 			PasarReady(pcb, ColaBlock)
 			//RemoverDeColaProcesoIO(ioServer)
-			ioServer.Disponible = true
 
 		} else if EstaEnColaSuspBlock(pcb) {
 			log.Printf("pasa desde %s a susp ready el pid %d\n", pcb.EstadoActual, pcb.Pid)
 
 			PasarSuspReady(pcb)
 			//RemoverDeColaProcesoIO(ioServer)
-			ioServer.Disponible = true
+
 		} else {
 			log.Printf("mira flaco, este pcb no esta ni en blocked ni en susp blocked \n")
 		}
-
+		ioServer.Disponible = true
+		RemoverDeColaProcesoIO(ioServer)
 		MandarProcesoAIO(ioServer)
+
 	}
 }
 
@@ -308,13 +308,16 @@ func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int, cola []*PCB) {
 	var respuesta PaqueteRecibidoDeMemoria
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
-		//log.Printf("Error al decodificar el JSON.\n")
+		log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	//log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	log.Printf("La respuesta del server memoria fue: %s\n", respuesta.Mensaje)
 	if respuestaJSON.StatusCode == http.StatusOK {
-		//log.Printf("Se pasa el proceso PID: %d a READY", pcb.Pid)
+		log.Printf("Se pasa el proceso PID: %d a READY", pcb.Pid)
 		PasarReady(pcb, cola)
+	} else {
+		log.Printf("no se puede pasar a ready al PID: %d porque memoria basicamnete nos dijo que hay quilombo", pcb.Pid)
+
 	}
 
 }
@@ -559,7 +562,6 @@ func IniciarPlanifcador(tamanio int, archivo string) {
 	}
 }
 
-// CODIGO PRE CAMBIO DE FACU KERNEL
 // Dejo nuestro planificador porque es el que deberia de funcar mas mejor (aproposito)
 
 func PlanificadorLargoPlazo() {
@@ -595,6 +597,8 @@ func PlanificadorLargoPlazo() {
 
 	}
 }
+
+// CODIGO PRE CAMBIO DE FACU KERNEL
 
 /*
 func PlanificadorLargoPlazo() {
@@ -949,6 +953,21 @@ func ObtenerCpuEnFuncionDelPid(pid int) *CPU {
 	}
 	return nil
 }
+func FinalizarProceso(pcb *PCB) {
+	//log.Printf("El proceso PID: %d termino su ejecucion y se paso a EXIT \n", pcb.Pid)
+	pcb.EstadoActual = "EXIT"
+	log.Printf("\n\nEl proceso PID: %d esta tratande de exitearrrrrr \n", pcb.Pid)
+	pcb.MetricaEstados["EXIT"]++
+	log.Printf("El proceso PID: %d paso por el map con las manos arriba tomando tequila \n\n\n", pcb.Pid)
+
+	ColaExit = append(ColaExit, pcb)
+	InformarMemoriaFinProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+	log.Printf("## (<%d>) - Finaliza el proceso \n", pcb.Pid)
+	log.Printf("## (<%d>) - Métricas de estado: NEW NEW_COUNT: %d NEW_TIME: %d, READY READY_COUNT: %d READY_TIME: %d, EXECUTE EXECUTE_COUNT: %d EXECUTE_TIME: %d, BLOCKED BLOCKED_COUNT: %d BLOCKED_TIME: %d, SUSP.BLOCKED  SUSP.BLOCKED_COUNT: %d SUSP.BLOCKED_TIME: %d, SUSP.READY  SUSP.READY_COUNT: %d SUSP.READY_TIME: %d \n", pcb.Pid, pcb.MetricaEstados["NEW"], pcb.TiempoEstados["NEW"], pcb.MetricaEstados["READY"], pcb.TiempoEstados["READY"], pcb.MetricaEstados["EXECUTE"], pcb.TiempoEstados["EXECUTE"], pcb.MetricaEstados["BLOCKED"], pcb.TiempoEstados["BLOCKED"], pcb.MetricaEstados["SUSP.BLOCKED"], pcb.TiempoEstados["SUSP.BLOCKED"], pcb.MetricaEstados["SUSP.READY"], pcb.TiempoEstados["SUSP.READY"])
+}
+
+/*
+FACU facu funcion original (no modificada por facu)
 
 func FinalizarProceso(pcb *PCB) {
 	//log.Printf("El proceso PID: %d termino su ejecucion y se paso a EXIT \n", pcb.Pid)
@@ -960,6 +979,7 @@ func FinalizarProceso(pcb *PCB) {
 	log.Printf("## (<%d>) - Métricas de estado: NEW NEW_COUNT: %d NEW_TIME: %d, READY READY_COUNT: %d READY_TIME: %d, EXECUTE EXECUTE_COUNT: %d EXECUTE_TIME: %d, BLOCKED BLOCKED_COUNT: %d BLOCKED_TIME: %d, SUSP.BLOCKED  SUSP.BLOCKED_COUNT: %d SUSP.BLOCKED_TIME: %d, SUSP.READY  SUSP.READY_COUNT: %d SUSP.READY_TIME: %d \n", pcb.Pid, pcb.MetricaEstados["NEW"], pcb.TiempoEstados["NEW"], pcb.MetricaEstados["READY"], pcb.TiempoEstados["READY"], pcb.MetricaEstados["EXECUTE"], pcb.TiempoEstados["EXECUTE"], pcb.MetricaEstados["BLOCKED"], pcb.TiempoEstados["BLOCKED"], pcb.MetricaEstados["SUSP.BLOCKED"], pcb.TiempoEstados["SUSP.BLOCKED"], pcb.MetricaEstados["SUSP.READY"], pcb.TiempoEstados["SUSP.READY"])
 
 }
+*/
 
 func CrearStructIO(ip string, puerto int, instancia string) {
 	ListaIO = append(ListaIO, IO{
@@ -1000,7 +1020,7 @@ func AgregarColaIO(io *IO, pcb *PCB, tiempo int) {
 	func RemoverDeColaProcesoIO(io *IO) []PCBIO {
 		//return append(io.ColaProcesos[:0], io.ColaProcesos[1+0:]...)
 	}
-
+*/
 func RemoverDeColaProcesoIO(io *IO) {
 	if len(io.ColaProcesos) == 0 {
 		return
@@ -1008,13 +1028,19 @@ func RemoverDeColaProcesoIO(io *IO) {
 	// Reconstruye la slice sin el primer elemento
 	io.ColaProcesos = io.ColaProcesos[1:]
 }
-*/
 
 func ObtenerPCB(pid int) *PCB {
+
 	for _, pcb := range ListaExec {
 		if pcb.Pid == pid {
 			return pcb
 		}
+	}
+	//FACU Facu facu
+	//si llega aca es porque no encontro en la listaEXECUTE a dicho pid (ocurre en EXIT que lo saca de esa lista antes de ejecutar esto, entonces rompe todo cuando se quiere acceder a un PCB nulo como el que devuelven)
+	//dejo esto como esta y voy a finalizar proceso, saco el acceso a EXIT a ese PCB y lo muevo a justo antes de que se lo quite de la lista execute
+	for i := 0; i < 20; i++ {
+		log.Printf("voy a devolver uno nulo pibeeeeee dice el proceso de pid: %d\n", pid)
 	}
 	return &PCB{}
 }
@@ -1029,7 +1055,7 @@ func EstaEnColaBlock(pcbChequear *PCB) bool {
 }
 
 func MandarProcesoAIO(io *IO) {
-	log.Printf("hola, quiero usar IO \n")
+
 	if io.Disponible && len(io.ColaProcesos) > 0 {
 		io.Disponible = false
 		go UtilizarIO(io, io.ColaProcesos[0].Pcb, io.ColaProcesos[0].Tiempo)
