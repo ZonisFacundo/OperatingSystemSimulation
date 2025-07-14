@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
@@ -93,6 +94,10 @@ var PaginasSwap []int = make([]int, 0) //la idea es que se vea algo asi por ejem
 var Contador int = 0
 var ContadorTabla int = 0                                       //lo uso para contar donde estamos parados en la tabla de paginas global (la del map del proceso)
 var MetricasProceso map[int]*Metricas = make(map[int]*Metricas) //Uso éste map para guardar las metricas por proceso, ¿debería inicializarlo en 1?
+
+//SEMAFOROS
+
+var Sem_Swap sync.Mutex
 
 // FUNCIONES
 func CargarConfig(path string) {

@@ -38,10 +38,17 @@ func InicializarSwap() {
 func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *http.Request) {
 
 	time.Sleep(time.Duration(globals.ClientConfig.Swap_delay) * (time.Millisecond))
+
+	log.Printf("\n\n KERNEL SOLICITO SWAP DE MEMORIA A DISCO (suspension) (RetornoClienteKernelServidorMemoriaSwapADisco)\n\n")
+
+	globals.Sem_Swap.Lock()
+
 	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
 	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		globals.Sem_Swap.Unlock()
+
 		return
 	}
 
@@ -54,11 +61,15 @@ func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *htt
 
 		respuestaJSON, err := json.Marshal(respuesta)
 		if err != nil {
+			globals.Sem_Swap.Unlock()
+
 			return
 		}
 
 		w.WriteHeader(http.StatusNotImplemented)
 		w.Write(respuestaJSON)
+		globals.Sem_Swap.Unlock()
+
 		return
 	} else {
 
@@ -66,25 +77,37 @@ func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *htt
 
 		respuestaJSON, err := json.Marshal(respuesta)
 		if err != nil {
+			globals.Sem_Swap.Unlock()
+
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
 		w.Write(respuestaJSON)
+		globals.Sem_Swap.Unlock()
+
 		return
 	}
+
 }
 func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *http.Request) {
+
+	time.Sleep(time.Duration(globals.ClientConfig.Swap_delay) * (time.Millisecond))
+	log.Printf("\n\n KERNEL SOLICITO SWAP DE DISCO A MEMORIA (des - suspension) (RetornoClienteKernelServidorMemoriaSwapAMemoria)\n\n")
+
+	globals.Sem_Swap.Lock()
 
 	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
 	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		globals.Sem_Swap.Unlock()
+
 		return
 	}
 	log.Printf(" el swap tam de este proceso es: %d", globals.MemoriaKernel[paqueteDeKernel.Pid].SwapTam)
 
-	retorno := EntraEnMemoria(len(globals.MemoriaKernel[paqueteDeKernel.Pid].TablaSimple)) //se fija si entra en memoria o no
+	retorno := EntraEnMemoria(globals.MemoriaKernel[paqueteDeKernel.Pid].SwapTam) //se fija si entra en memoria o no
 
 	var respuesta respuestaalKernel
 
@@ -94,11 +117,15 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 
 		respuestaJSON, err := json.Marshal(respuesta)
 		if err != nil {
+			globals.Sem_Swap.Unlock()
+
 			return
 		}
 
 		w.WriteHeader(http.StatusInsufficientStorage)
 		w.Write(respuestaJSON)
+		globals.Sem_Swap.Unlock()
+
 		return
 
 	} else {
@@ -109,11 +136,15 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 
 			respuestaJSON, err := json.Marshal(respuesta)
 			if err != nil {
+				globals.Sem_Swap.Unlock()
+
 				return
 			}
 
 			w.WriteHeader(http.StatusNotImplemented)
 			w.Write(respuestaJSON)
+			globals.Sem_Swap.Unlock()
+
 			return
 		}
 
@@ -121,11 +152,21 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 
 		respuestaJSON, err := json.Marshal(respuesta)
 		if err != nil {
+			globals.Sem_Swap.Unlock()
+
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
 		w.Write(respuestaJSON)
+
+		var pagi globals.Pagina
+		pagi, _ = LeerPaginaCompleta(10 * globals.ClientConfig.Page_size)
+		log.Printf("LEO PAGINA 10: \n\n\n%b\n\n\n", pagi.Info)
+		log.Printf("\n\nbyte numero 645: %d\n\n", globals.MemoriaPrincipal[645])
+		auxiliares.Mostrarmemoria()
+		globals.Sem_Swap.Unlock()
+
 		return
 	}
 }
@@ -185,6 +226,11 @@ func SwapADisco(pid int) int { //incompleta
 
 	auxiliares.MostrarArchivo(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path))
 
+	/* DEBUG 13-07
+	for i := 0; i < globals.ClientConfig.Memory_size; i++ {
+		globals.MemoriaPrincipal[i] = 0
+	}
+	*/
 	return 0
 
 }
@@ -201,7 +247,6 @@ func SwapAMemoria(pid int) int {
 		log.Printf("error al abrir el archivo SWAP a la hora de llevarlo a disco para pid: %d    (SwapAMemoria)\n", pid)
 		return -1
 	}
-	time.Sleep(1 * time.Second)
 
 	if EntraEnMemoria(globals.MemoriaKernel[pid].SwapTam) < 0 {
 		log.Printf("No hay espacio para cargar el proceso en MP, pid: %d  tam proceso: %d bytes (SwapAMemoria)\n", pid, globals.MemoriaKernel[pid].SwapTam)
@@ -230,6 +275,11 @@ func SwapAMemoria(pid int) int {
 	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorSubidasAMemoria++
 
+	//debug 13-07
+	log.Printf("\n\tmuestro el contenido del SWAP POT[EOTWRYSJGSHG\t\n")
+
+	auxiliares.MostrarArchivo(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path))
+
 	return 1
 }
 
@@ -248,7 +298,10 @@ func ReservarMemoriaSwapeado(pid int, tam int) {
 
 	var PaginasEncontradas int = 0
 	if EntraEnMemoria(tam) >= 0 {
+		log.Printf("printeo tabla de paginas disponibles\n")
+
 		for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
+			log.Printf("%d\n", globals.PaginasDisponibles[i])
 
 			if globals.PaginasDisponibles[i] == 0 {
 				PaginasEncontradas++

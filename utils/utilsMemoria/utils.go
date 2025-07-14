@@ -668,8 +668,10 @@ func LeerPaginaCompleta(direccion int) (globals.Pagina, error) {
 
 	var pagina globals.Pagina
 
+	pagina.Info = make([]byte, globals.ClientConfig.Page_size)
+
 	//reviso varias posibilidades... si el usuario envia una direccion distinta a un inicio de pagina es el obvio pero tambien reviso si de casualidad nos pusieron un tam de memoria no divisible por page size, tambien controlo que no nos envien la ultima direccion de la memoria
-	if direccion%globals.ClientConfig.Page_size != 0 || direccion+globals.ClientConfig.Page_size > globals.ClientConfig.Memory_size {
+	if direccion%globals.ClientConfig.Page_size != 0 || direccion+globals.ClientConfig.Page_size >= globals.ClientConfig.Memory_size {
 
 		log.Printf("ERROR, LA DIRECCION RECIBIDA NO CORRESPONDE A LA DE UN INICIO DE PAGINA \n")
 		return pagina, fmt.Errorf("error")
@@ -678,6 +680,7 @@ func LeerPaginaCompleta(direccion int) (globals.Pagina, error) {
 
 		for i := 0; i < globals.ClientConfig.Page_size; i++ {
 			pagina.Info[i] = globals.MemoriaPrincipal[direccion+i] //vamos recorriendo la pagina en memoria y se la asignamos a la variable que vamos a devolver
+
 		}
 		return pagina, nil
 	} //esa es la forma de go de devolver errores, no la uso en otras partes porque puedo arreglarme con valores negativos o cosas asi que siento que dejan el codigo mas expresivo, al menos para mi, devuelve dos cosas esta funcion.
@@ -737,6 +740,7 @@ func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo)
 
 	}
 }
+
 func ActualizarPaginasDisponibles() {
 
 	//recorro el map de memoria kernel (donte tenemos la tabla simple de cada proceso, basicamente la posita de que proceso tiene cada pagina sale de ahi)
@@ -750,6 +754,7 @@ func ActualizarPaginasDisponibles() {
 	}
 }
 
+/*
 //cambiar 			if contador <= len(globals.MemoriaKernel[pid].TablaSimple) {
 //a menor solo
 //cambiar las llamadas de las funciones actualizar einicializar de 0 a 1
@@ -758,10 +763,10 @@ func ActualizarPaginasDisponibles() {
 Que hace LIberarTablASimple?
 cambia el valor a -1 de todas las paginas asociadas al proceso la tabla simple del proceso que le pases por parametro
 */
-func LiberarTablaSimple(pid int) {
+func LiberarTablaSimpleYPagsDisponibles(pid int) {
 
 	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
-
+		globals.PaginasDisponibles[globals.MemoriaKernel[pid].TablaSimple[i]] = 0
 		globals.MemoriaKernel[pid].TablaSimple[i] = -1
 	}
 }
@@ -772,8 +777,8 @@ Que hace CambiarAMenos1TodasLasTablas
 cambia a -1 toda la data relacionada a paginas del proceso, o sea, lo borras/mandas a swap, entonces tenes que llamar a esta funcion poruqe sino queda como si siguiera en memoria
 */
 func CambiarAMenos1TodasLasTablas(pid int) {
-	LiberarTablaSimple(pid)
-	ActualizarPaginasDisponibles()
+	LiberarTablaSimpleYPagsDisponibles(pid)
+	//ActualizarPaginasDisponibles()
 
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
 	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
@@ -782,7 +787,7 @@ func CambiarAMenos1TodasLasTablas(pid int) {
 
 }
 
-func ActualizarTodasLasTablasEnBaseATablaSimple(pid int) {
+func ActualizarTodasLasTablasEnBaseATablaSimple(pid int) { //no sirve para procesos que fueron quitados de MP
 	ActualizarPaginasDisponibles()
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
 	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
