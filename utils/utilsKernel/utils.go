@@ -773,6 +773,7 @@ func PasarReady(pcb *PCB, colaSacar []*PCB) {
 	ColaNew = removerPCB(ColaNew, pcb)
 	ColaBlock = removerPCB(ColaBlock, pcb)
 	ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
+	ColaSuspReady = removerPCB(ColaSuspReady, pcb)
 	ListaExec = removerPCB(ListaExec, pcb)
 	MutexColaNew.Unlock()
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
@@ -955,6 +956,12 @@ func ObtenerCpuEnFuncionDelPid(pid int) *CPU {
 }
 func FinalizarProceso(pcb *PCB) {
 	//log.Printf("El proceso PID: %d termino su ejecucion y se paso a EXIT \n", pcb.Pid)
+	ColaNew = removerPCB(ColaNew, pcb)
+	ColaReady = removerPCB(ColaReady, pcb)
+	ListaExec = removerPCB(ListaExec, pcb)
+	ColaBlock = removerPCB(ColaBlock, pcb)
+	ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
+	ColaSuspReady = removerPCB(ColaSuspReady, pcb)
 	pcb.EstadoActual = "EXIT"
 	log.Printf("\n\nEl proceso PID: %d esta tratande de exitearrrrrr \n", pcb.Pid)
 	pcb.MetricaEstados["EXIT"]++

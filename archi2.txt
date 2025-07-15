@@ -1,6 +1,5 @@
 WRITE 0 AAAAAAAA
 IO IO-impresora 5000
-INIT_PROC archi2.txt 400 
-IO IO-impresora 8000
 WRITE 0 AAAAAAAA
+IO IO-impresora 8000
 EXIT

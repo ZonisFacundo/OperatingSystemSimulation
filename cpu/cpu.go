@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
@@ -18,12 +19,22 @@ func main() {
 	}
 
 	instanceID := os.Args[1]
+	configSuffix := instanceID
+
+	if strings.HasPrefix(instanceID, "cpu") {
+		configSuffix = instanceID[3:] // Quita "cpu"
+	}
+
+	configPath := fmt.Sprintf("./cpu/globals/config%s.json", configSuffix)
+
+	log.Printf("Usando config: %s para instancia: %s\n", configPath, instanceID)
+
 	procesoNuevo := make(chan struct{})
 	var mutexInterrupcion sync.Mutex
 
 	utilsCPU.ConfigurarLogger(instanceID)
 	log.Printf("CPU %s inicializada correctamente.\n", instanceID)
-	globals.CargarConfig("./cpu/globals/config.json", instanceID)
+	globals.CargarConfig(configPath, instanceID)
 
 	globals.AlgoritmoReemplazo = globals.ClientConfig.Cache_replacement
 	globals.AlgoritmoReemplazoTLB = globals.ClientConfig.Tlb_replacement
@@ -84,7 +95,7 @@ func main() {
 			mutexInterrupcion.Unlock()
 
 			if interrumpido {
-				log.Printf("Interrupción. Deteniendo proceso PID %d", globals.Instruction.Pid)
+				log.Printf("Interrupción. Deteniendo proceso PID %d", globals.ID.ProcessValues.Pid)
 				break ejecucion
 			}
 

@@ -1,5 +1,7 @@
 INIT_PROC archi3.txt 600
 INIT_PROC archi2.txt 400
+INIT_PROC archi2.txt 400
+INIT_PROC archi2.txt 400
 EXIT
 
 

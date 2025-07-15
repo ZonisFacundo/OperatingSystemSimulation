@@ -11,7 +11,9 @@ import (
 )
 
 func ConfigurarLogger(cpuId string) {
+	fmt.Println("CONFIGURANDO LOGGER PARA: ", cpuId)
 	logFileName := fmt.Sprintf("CPU-%s.log", cpuId)
+
 	logFile, err := os.OpenFile(logFileName, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 	if err != nil {
 		panic(err)
@@ -105,4 +107,3 @@ func DevolverPidYPCInterrupcion(w http.ResponseWriter, r *http.Request, pc int, 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 }
-
