@@ -1,12 +1,12 @@
 {
-  "alpha": 0.5,
+  "alpha": 1,
   "initial_estimate": 10000,
   "ip_kernel": "127.0.0.1",
   "ip_memory": "127.0.0.1",
   "log_level": "DEBUG",
   "port_kernel": 8001,
   "port_memory": 8002,
-  "ready_ingress_algorithm": "PMCP",
+  "ready_ingress_algorithm": "FIFO",
   "scheduler_algorithm": "FIFO",
-  "suspension_time": 4500
+  "suspension_time": 1000
 }

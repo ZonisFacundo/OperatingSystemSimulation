@@ -123,7 +123,9 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo con esta ruta: %s \n", (PaqueteInfoProceso).Pid, (PaqueteInfoProceso).TamProceso, (PaqueteInfoProceso.Archivo))
 
 	//el kernel quiere saber si podemos guardar eso en memoria, para eso vamos a consultar el espacio que tenemos
+	globals.Sem_Bitmap.Lock()                                           //TODO
 	DondeGuardarProceso = EntraEnMemoria(PaqueteInfoProceso.TamProceso) //devuelve menor a 0 si no entra en memoria el proceso
+	globals.Sem_Bitmap.Unlock()
 
 	if DondeGuardarProceso == -1 {
 		log.Printf("NO HAY ESPACIO EN MEMORIA PARA GUARDAR EL PROCESO \n")
@@ -223,12 +225,12 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	}
 	var ContenidoDireccion globals.BytePaquete
 	ContenidoDireccion.Info = make([]byte, PaqueteDireccion.Tamaño)
-
+	globals.Sem_Mem.Lock()
 	for i := 0; i < PaqueteDireccion.Tamaño; i++ {
 
 		ContenidoDireccion.Info[i] = globals.MemoriaPrincipal[PaqueteDireccion.Direccion]
 	}
-
+	globals.Sem_Mem.Unlock()
 	respuestaJSON, err := json.Marshal(ContenidoDireccion)
 	if err != nil {
 		return
@@ -258,10 +260,12 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 	bytardos := []byte(PaqueteInfoWrite.Contenido)
 
+	globals.Sem_Mem.Lock()
 	for i := 0; i < len(PaqueteInfoWrite.Contenido); i++ {
 		//log.Printf("%b", bytardos[i])
 		globals.MemoriaPrincipal[PaqueteInfoWrite.Direccion+i] = bytardos[i]
 	}
+	globals.Sem_Mem.Unlock()
 	var rta respuestaalCPU
 	rta.Mensaje = "OK\n"
 
@@ -274,13 +278,15 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 	auxiliares.Mostrarmemoria()
 	log.Printf("\n\n")
 
-	//log.Printf("\n\nMUESTRO LA tabla de paginas multinivel de pid 0\n\n")
+	/*
+		MUCHISIMO CUIDADO, GLOBALS,CONTAOR Y MOSTRAR TABLA O DESCOMENTAS AMBAS O COMENTAS AMBAS, PORQUE HAY RACE CONDITION SINO, EL PUNTO ES QUE ES MERAMENTE PARA DEBUG EL MOSTRAR ASI QUE NO VALE LA PENA HACER ALGO AL RESPECTO
+		//log.Printf("\n\nMUESTRO LA tabla de paginas multinivel de pid 0\n\n")
 
-	globals.ContadorTabla = 0
-	//descomentar si queres ver la tabla de paginas
-	//var PunteritoAux *globals.Nodo = globals.MemoriaKernel[0].PunteroATablaDePaginas
-	//MostrarTablaMultinivel(0, 0, PunteritoAux)
-
+		//globals.ContadorTabla = 0
+		//descomentar si queres ver la tabla de paginas
+		//var PunteritoAux *globals.Nodo = globals.MemoriaKernel[0].PunteroATablaDePaginas
+		//MostrarTablaMultinivel(0, 0, PunteritoAux)
+	*/
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
@@ -494,11 +500,11 @@ func EntraEnMemoria(tam int) int {
 			PaginasEncontradas++
 
 			if PaginasEncontradas == int(PaginasNecesarias) {
-
 				return 1 //devuelvo numero positivo para indicar que  entra
 			}
 		}
 	}
+
 	return -2 //no entra en memoria
 }
 
@@ -539,7 +545,7 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	if ReservarMemoria(paquete.TamProceso, paquete.Pid) < 0 { //ReservarMemoria devuelve <0 si hubo un error, si no hubieron errores actualiza el map y reserva la memoria para el proceso
 
-		log.Printf("error al reservar memoria para el proceso de pid: %d (CrearProceso)", (paquete).Pid)
+		log.Printf("error al reservar memoria para el proceso de pid: %d,  (CrearProceso)", (paquete).Pid)
 		return
 	}
 
@@ -556,12 +562,15 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	//ahora nos queda asignarle los marcos correspondientes al proceso segun la tabla de paginas simple que ya tenemos creada
 
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
+	globals.Sem_Contador.Lock()
+	globals.ContadorTabla = 0
 	AsignarValoresATablaDePaginas(paquete.Pid, 0, PunteroAux)
+	globals.ContadorTabla = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior (es la unica varialbe global de utils)
+	globals.Sem_Contador.Unlock()
+
 	auxiliares.InicializarSiNoLoEstaMap(paquete.Pid)
 	globals.MetricasProceso[paquete.Pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
 	ActualizarPaginasDisponibles()                                     //actualiza que paginas estan disponibles en este momento
-
-	globals.ContadorTabla = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior (es la unica varialbe global de utils)
 
 	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d  (CrearProceso) \n", paquete.Pid, paquete.TamProceso)
 }
@@ -687,11 +696,12 @@ func LeerPaginaCompleta(direccion int) (globals.Pagina, error) {
 		return pagina, fmt.Errorf("error")
 
 	} else {
-
+		globals.Sem_Mem.Lock()
 		for i := 0; i < globals.ClientConfig.Page_size; i++ {
 			pagina.Info[i] = globals.MemoriaPrincipal[direccion+i] //vamos recorriendo la pagina en memoria y se la asignamos a la variable que vamos a devolver
 
 		}
+		globals.Sem_Mem.Unlock()
 		return pagina, nil
 	} //esa es la forma de go de devolver errores, no la uso en otras partes porque puedo arreglarme con valores negativos o cosas asi que siento que dejan el codigo mas expresivo, al menos para mi, devuelve dos cosas esta funcion.
 
@@ -711,11 +721,12 @@ func ActualizarPaginaCompleta(PaginaNueva globals.Pagina, direccion int) {
 		log.Printf("ERROR, LA DIRECCION RECIBIDA NO CORRESPONDE A LA DE UN INICIO DE PAGINA \n")
 
 	} else {
-
+		globals.Sem_Mem.Lock()
 		for i := 0; i < globals.ClientConfig.Page_size; i++ {
 			globals.MemoriaPrincipal[direccion+i] = PaginaNueva.Info[i]
 
 		}
+		globals.Sem_Mem.Unlock()
 
 	}
 }
@@ -791,7 +802,11 @@ func CambiarAMenos1TodasLasTablas(pid int) {
 	//ActualizarPaginasDisponibles()
 
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
+	globals.Sem_Contador.Lock()
+	globals.ContadorTabla = 0
 	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
+	globals.ContadorTabla = 0
+	globals.Sem_Contador.Unlock()
 	auxiliares.InicializarSiNoLoEstaMap(pid)
 	globals.MetricasProceso[pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
 
@@ -800,7 +815,11 @@ func CambiarAMenos1TodasLasTablas(pid int) {
 func ActualizarTodasLasTablasEnBaseATablaSimple(pid int) { //no sirve para procesos que fueron quitados de MP
 	ActualizarPaginasDisponibles()
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
+	globals.Sem_Contador.Lock()
+	globals.ContadorTabla = 0
 	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
+	globals.Sem_Contador.Unlock()
+	globals.ContadorTabla = 0
 	auxiliares.InicializarSiNoLoEstaMap(pid)
 	globals.MetricasProceso[pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
 
@@ -871,6 +890,7 @@ func MemoryDump(pid int) {
 	defer file.Close()
 }
 
+// TODO COMENTAR ANTES DE TERMINAR PARA EVITAR RACE CONDITION EN CONTADORES
 func MostrarTablaMultinivel(pid int, nivel int, PunteroAux *globals.Nodo) {
 
 	if nivel == globals.ClientConfig.Number_of_levels-1 { //significa que ya estamos parados en el nivel que contiene los marcos

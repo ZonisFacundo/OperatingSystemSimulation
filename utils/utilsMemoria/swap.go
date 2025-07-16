@@ -2,7 +2,6 @@ package utilsMemoria
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"math"
@@ -22,7 +21,7 @@ crea un archivo con la ruta indicada en el config
 */
 
 func InicializarSwap() {
-	file, err := os.Create(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path))
+	file, err := os.Create(globals.ClientConfig.Swapfile_path)
 
 	if err != nil {
 		log.Printf("error al crear el archivo swap (InicializarSwap)\n")
@@ -107,7 +106,9 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 	}
 	log.Printf(" el swap tam de este proceso es: %d", globals.MemoriaKernel[paqueteDeKernel.Pid].SwapTam)
 
+	globals.Sem_Bitmap.Lock()
 	retorno := EntraEnMemoria(globals.MemoriaKernel[paqueteDeKernel.Pid].SwapTam) //se fija si entra en memoria o no
+	globals.Sem_Bitmap.Unlock()
 
 	var respuesta respuestaalKernel
 
@@ -183,7 +184,7 @@ func SwapADisco(pid int) int { //incompleta
 	var bytesEscritos int = 0
 	var bytesEscritosRecien int = 0
 
-	file, err := os.OpenFile(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path), os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+	file, err := os.OpenFile(globals.ClientConfig.Swapfile_path, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
 	log.Printf("path: %s\n", globals.ClientConfig.Swapfile_path)
 	if err != nil {
 		log.Printf("error al abir el archivo (SwapADisco)\n")
@@ -223,7 +224,7 @@ func SwapADisco(pid int) int { //incompleta
 
 	log.Printf("\n\tmuestro el contenido del SWAP\t\n")
 
-	auxiliares.MostrarArchivo(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path))
+	auxiliares.MostrarArchivo(globals.ClientConfig.Swapfile_path)
 
 	/* DEBUG 13-07
 	for i := 0; i < globals.ClientConfig.Memory_size; i++ {
@@ -241,18 +242,22 @@ func SwapAMemoria(pid int) int {
 	var bytestotales int = 0
 
 	log.Printf("ENTRE A SWAPpppp ")
-	file, err := os.OpenFile(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path), os.O_RDWR, 0644) //no deberia |os.O_CREATE nunca
+	file, err := os.OpenFile(globals.ClientConfig.Swapfile_path, os.O_RDWR, 0644) //no deberia |os.O_CREATE nunca
 
 	if err != nil {
 		log.Printf("error al abrir el archivo SWAP a la hora de llevarlo a disco para pid: %d    (SwapAMemoria)\n", pid)
 		return -1
 	}
-
+	globals.Sem_Bitmap.Lock()
 	if EntraEnMemoria(globals.MemoriaKernel[pid].SwapTam) < 0 {
+		globals.Sem_Bitmap.Unlock()
+
 		log.Printf("No hay espacio para cargar el proceso en MP, pid: %d  tam proceso: %d bytes (SwapAMemoria)\n", pid, globals.MemoriaKernel[pid].SwapTam)
 		return -1
 	}
+	globals.Sem_Bitmap.Unlock()
 
+	//ya esta protegido de race conditions esta funcion
 	ReservarMemoriaSwapeado(pid, globals.MemoriaKernel[pid].SwapTam)
 
 	ActualizarTodasLasTablasEnBaseATablaSimple(pid) //actualiza tabla de paginas multinivel y paginas disponibles
@@ -281,9 +286,9 @@ func SwapAMemoria(pid int) int {
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorSubidasAMemoria++
 
 	//debug 13-07
-	log.Printf("\n\tmuestro el contenido del SWAP POT[EOTWRYSJGSHG\t\n")
+	log.Printf("\n\tmuestro el contenido del SWAP PARA DEBUGEAR MAS QUE NADA\t\n")
 
-	auxiliares.MostrarArchivo(fmt.Sprintf("%s", globals.ClientConfig.Swapfile_path))
+	auxiliares.MostrarArchivo(globals.ClientConfig.Swapfile_path)
 
 	return 1
 }
@@ -302,6 +307,9 @@ func ReservarMemoriaSwapeado(pid int, tam int) {
 	frames.TablaSimple = make([]int, 0) //inicializa el slice donde vamos a guardar la tabla de paginas simple para el proceso
 
 	var PaginasEncontradas int = 0
+
+	globals.Sem_Bitmap.Lock()
+
 	if EntraEnMemoria(tam) >= 0 {
 		log.Printf("printeo tabla de paginas disponibles\n")
 
@@ -318,10 +326,14 @@ func ReservarMemoriaSwapeado(pid int, tam int) {
 
 					auxiliares.MostrarProceso(pid)
 
+					globals.Sem_Bitmap.Unlock()
+
 					return
 				}
 			}
 		}
 	}
-	return
+
+	globals.Sem_Bitmap.Unlock()
+
 }
