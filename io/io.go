@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"syscall"
 	"strings"
-	"fmt"
+	"syscall"
 
 	"github.com/sisoputnfrba/tp-golang/io/globals"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsIO"
@@ -18,7 +18,7 @@ func main() {
 	instanceID := os.Args[1]
 	configSuffix := instanceID
 
-	if strings.HasPrefix(instanceID, "cpu") {
+	if strings.HasPrefix(instanceID, "IO-") {
 		configSuffix = instanceID[3:] // Quita "IO-" las instancias deberian empezar con IO-
 	}
 
@@ -35,7 +35,7 @@ func main() {
 
 	done := make(chan bool, 1)
 
-	utilsIO.ConfigurarLogger(nombre)  //nombre e instance_ID son lo mismo(no lo toco para no romper nada)
+	utilsIO.ConfigurarLogger(nombre) //nombre e instance_ID son lo mismo(no lo toco para no romper nada)
 	utilsIO.PeticionClienteIOServidorKERNEL(nombre, globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Ip_io, globals.ClientConfig.Port_io)
 	http.HandleFunc("/KERNELIO", utilsIO.RetornoClienteKERNELServidorIO)
 
