@@ -138,17 +138,6 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusInsufficientStorage) //http tiene un mensaje de error especificamente para esto, tremendo
 		w.Write(respuestaJSON)
 		return
-	} else if DondeGuardarProceso == -2 {
-		log.Printf("YA EXISTE UN PROCESO CON ESE PID  \n")
-		respuestaKernel.Mensaje = "YA EXISTE UN PROCESO CON ESE PID\n"
-		respuestaJSON, err := json.Marshal(respuestaKernel)
-		if err != nil {
-			return
-		}
-
-		w.WriteHeader(http.StatusInsufficientStorage) //http tiene un mensaje de error especificamente para esto, tremendo
-		w.Write(respuestaJSON)
-		return
 	} else {
 
 		/*
@@ -505,7 +494,7 @@ func EntraEnMemoria(tam int) int {
 		}
 	}
 
-	return -2 //no entra en memoria
+	return -1 //no entra en memoria
 }
 
 func LeerArchivoYCargarMap(FilePath string, Pid int) {
