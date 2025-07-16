@@ -100,6 +100,7 @@ func main() {
 			}
 
 			log.Printf("Ejecutando: PID=%d, PC=%d", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
+
 			instruction_cycle.Fetch(globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)
 			globals.ID.ProcessValues.Pc++

@@ -89,6 +89,29 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 
 func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 	//var request HandshakeKERNEL
+
+	/*
+		err := json.NewDecoder(r.Body).Decode(&request)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		//log.Printf("Handshake recibido: Port: %d - Instance: %s - Ip: %s", request.Puerto, request.Instancia, request.Ip)
+
+		var respuesta RespuestaalCPU
+		respuesta.Mensaje = "Conexion realizada con exito"
+		respuestaJSON, err := json.Marshal(respuesta)
+		if err != nil {
+			return
+		}
+
+		crearStructCPU(request.Ip, request.Puerto, request.Instancia)
+
+		w.WriteHeader(http.StatusOK)
+		w.Write(respuestaJSON)
+
+	}*/
 	var request utilsCPU.Proceso
 
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
@@ -97,10 +120,10 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("El Kernel envio PID: %d - PC: %d", request.Pid, request.Pc)
-
 	globals.ID.ProcessValues.Pid = request.Pid
 	globals.ID.ProcessValues.Pc = request.Pc
+
+	log.Printf("El Kernel envio PID: %d - PC: %d", request.Pid, request.Pc)
 
 	var respuesta utilsCPU.RespuestaKernel
 	respuesta.Mensaje = "PC y PID recbidos correctamente"
@@ -111,6 +134,7 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
+
 }
 
 func RecibirDatosMMU(ip string, puerto int) {
@@ -172,5 +196,4 @@ func RecibirDatosMMU(ip string, puerto int) {
 	log.Printf("imprimo el tam de pagina: %d", globals.ClientConfig.Page_size)
 
 	log.Printf("Conexión realizada con exito con el Kernel.")
-
 }
