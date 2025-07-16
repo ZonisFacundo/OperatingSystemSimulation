@@ -510,7 +510,6 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 		log.Printf("Error al leer el archivo enviado por Kernel Pid: %d", Pid)
 		return
 	}
-	var ultimo int
 	for i := 0; i < (len(buffer)); i++ {
 
 		if buffer[i] == 10 { //ASCII para \n
@@ -518,11 +517,8 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 			Line = ""
 		}
 		Line += string(buffer[i]) //va armando un string caracter a caracter hasta formar una instruccion (cuando lee \n)
-		ultimo = i
 	}
-	Line += string(buffer[ultimo])                                  //Lo vuelvo a agregar porque le falta el ultimo \n
-	Contenido.Instrucciones = append(Contenido.Instrucciones, Line) //agrega la instruccion al slice de strings (donde cada elemento (cada string) es una instruccion)
-
+	Contenido.Instrucciones = append(Contenido.Instrucciones, Line) //Lo vuelvo a agregar porque le falta el ultimo
 	//	globals.MemoriaKernel[Pid].Instrucciones = Contenido.Instrucciones    esto no anda, hay que hacerlo con una copia //carga instrucciones al map global, lo que verdaderamente importa
 	auxiliares.ActualizarInstrucciones(Contenido, Pid) //esta funcion es la que hace que ande copiar el contenido en memoria
 
