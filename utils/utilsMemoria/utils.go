@@ -91,7 +91,7 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	var respuestaCpu respuestaalCPU
 
 	log.Printf("\n\n\n%s", globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
-	time.Sleep(4 * time.Second)
+	time.Sleep(2 * time.Second)
 	//log.Printf("\nla longitud del archivo de instrucciones es: %d\n\n", len(globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones))
 
 	//log.Printf("estamos mandandole a CPU, del pid: %d la instrucion del pc: %d la cual es %s \n\n", globals.Instruction.Pid, globals.Instruction.Pc, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
@@ -510,7 +510,7 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 		log.Printf("Error al leer el archivo enviado por Kernel Pid: %d", Pid)
 		return
 	}
-
+	var ultimo int
 	for i := 0; i < (len(buffer)); i++ {
 
 		if buffer[i] == 10 { //ASCII para \n
@@ -518,8 +518,11 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 			Line = ""
 		}
 		Line += string(buffer[i]) //va armando un string caracter a caracter hasta formar una instruccion (cuando lee \n)
-
+		ultimo = i
 	}
+	Line += string(buffer[ultimo])                                  //Lo vuelvo a agregar porque le falta el ultimo \n
+	Contenido.Instrucciones = append(Contenido.Instrucciones, Line) //agrega la instruccion al slice de strings (donde cada elemento (cada string) es una instruccion)
+
 	//	globals.MemoriaKernel[Pid].Instrucciones = Contenido.Instrucciones    esto no anda, hay que hacerlo con una copia //carga instrucciones al map global, lo que verdaderamente importa
 	auxiliares.ActualizarInstrucciones(Contenido, Pid) //esta funcion es la que hace que ande copiar el contenido en memoria
 
