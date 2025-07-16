@@ -13,11 +13,11 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"sync"
+	//"sync"
 )
 
 func main() {
-	var wg sync.WaitGroup
+	//var wg sync.WaitGroup
 	globals.CargarConfig("./kernel/globals/config.json")
 	utilsKernel.ConfigurarLogger()
 	archivo := os.Args[1]
@@ -46,5 +46,5 @@ func main() {
 	http.HandleFunc("POST /finIO", utilsKernel.FinalizarIO)
 	log.Printf("Servidor corriendo.\n")
 	http.ListenAndServe(fmt.Sprintf(":%d", globals.ClientConfig.Port_kernel), nil)
-	wg.Wait()
+	//wg.Wait()
 }
