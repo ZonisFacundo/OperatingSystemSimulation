@@ -12,11 +12,12 @@ type Config struct {
 	Ip_kernel   string `json:"ip_kernel"`
 	Port_kernel int    `json:"port_kernel"`
 	Log_level   string `json:"log_level"`
+	Instance_id string `json:"instance_id"` //agregue (Bren)
 }
 
 var ClientConfig *Config
 
-func CargarConfig(path string) {
+func CargarConfig(path string, instanceID string) {
 
 	conjuntodebytes, err := os.ReadFile(path)
 	if err != nil {
@@ -32,5 +33,5 @@ func CargarConfig(path string) {
 	}
 
 	ClientConfig = &configgenerica //hacemos que nuestro puntero (variable global) apunte a donde guardamos los datos
-
+	configgenerica.Instance_id = instanceID //BREN
 }
