@@ -375,7 +375,7 @@ func EnviarProcesoACPU(pcb *PCB, cpu *CPU) {
 		//log.Printf("Error al decodificar el JSON.\n")
 		return
 	}
-	//log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+	log.Printf("La respuesta del server CPU fue: %s\n", respuesta.Mensaje)
 
 }
 
@@ -1048,6 +1048,7 @@ func ObtenerPCB(pid int) *PCB {
 	//dejo esto como esta y voy a finalizar proceso, saco el acceso a EXIT a ese PCB y lo muevo a justo antes de que se lo quite de la lista execute
 	for i := 0; i < 20; i++ {
 		log.Printf("voy a devolver uno nulo pibeeeeee dice el proceso de pid: %d\n", pid)
+		time.Sleep(100 * time.Second)
 	}
 	return &PCB{}
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
@@ -84,6 +85,7 @@ var Tlb TLB
 var CachePaginas CacheDePaginas
 var AlgoritmoReemplazo string
 var AlgoritmoReemplazoTLB string
+var MutexNecesario sync.Mutex
 
 func CargarConfig(path string, instanceID string) {
 
