@@ -1,3 +1,8 @@
-WRITE 0 JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ
-GOTO 0
+WRITE 0 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA      
+WRITE 64 BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB     
+READ 0 20                                  
+WRITE 128 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC    
+READ 64 20                                     
+READ 128 20                                   
+READ 0 20                                
 EXIT
