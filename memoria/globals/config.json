@@ -4,7 +4,7 @@
   "ip_memory": "127.0.0.1",
   "log_level": "DEBUG",
   "memory_delay": 500,
-  "memory_size": 2500,
+  "memory_size": 4096,
   "number_of_levels": 1,
   "page_size": 32,
   "port_memory": 8002,
