@@ -234,7 +234,7 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 
 		if pcb.EstadoActual == "BLOCKED" {
 			log.Printf("pasa de blocked a ready el pid %d\n", pcb.Pid)
-			PasarReady(pcb, ColaBlock)
+			PasarReady(pcb)
 			//RemoverDeColaProcesoIO(ioServer)
 
 		} else if pcb.EstadoActual == "SUSP.BLOCKED" {
@@ -314,7 +314,7 @@ func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int, cola []*PCB) {
 	log.Printf("La respuesta del server memoria fue: %s\n", respuesta.Mensaje)
 	if respuestaJSON.StatusCode == http.StatusOK {
 		log.Printf("Se pasa el proceso PID: %d a READY", pcb.Pid)
-		PasarReady(pcb, cola)
+		PasarReady(pcb)
 	} else {
 		log.Printf("no se puede pasar a ready al PID: %d porque memoria basicamnete nos dijo que hay quilombo", pcb.Pid)
 
@@ -676,7 +676,7 @@ func PlanificadorCortoPlazo() {
 				if calcularRafagaEstimada(pcbChequear) < CalcularTiempoRestanteEjecucion(pcbDesalojar) {
 					InterrumpirCPU(cpuDesalojar)
 					log.Printf("## (<%d>) - Desalojado por algoritmo SJF/SRT \n", cpuDesalojar.Pid)
-					PasarReady(pcbDesalojar, ListaExec)
+					PasarReady(pcbDesalojar)
 					PasarExec(pcbChequear)
 					cpuDesalojar.Pid = pcbChequear.Pid
 				}
@@ -765,7 +765,7 @@ func calcularRafagaEstimada(pcb *PCB) float32 {
 	return globals.ClientConfig.Alpha*pcb.RafagaAnterior + (1-globals.ClientConfig.Alpha)*pcb.EstimacionAnterior
 }
 
-func PasarReady(pcb *PCB, colaSacar []*PCB) {
+func PasarReady(pcb *PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado READY  \n", pcb.Pid, pcb.EstadoActual)
 	MutexColaReady.Lock()
 	ColaReady = append(ColaReady, pcb)
@@ -1123,7 +1123,7 @@ func DumpDelProceso(pcb *PCB, ip string, puerto int) {
 
 	if respuestaJSON.StatusCode == http.StatusOK {
 		log.Printf("Se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
-		PasarReady(pcb, ColaBlock)
+		PasarReady(pcb)
 	} else {
 		log.Printf("No se pudo hacer el DUMP del proceso con el PID: %d ", pcb.Pid)
 		FinalizarProceso(pcb)
@@ -1239,6 +1239,37 @@ func SwapInProceso(pcb *PCB) {
 	if err != nil {
 		log.Printf("Error en SWAP_IN del PID %d: %v", pcb.Pid, err)
 		return
+	}
+
+	respuestaJSON, err := cliente.Do(req)
+	if err != nil {
+		log.Printf("Error al recibir respuesta.\n")
+		return
+
+	}
+
+	defer respuestaJSON.Body.Close()
+
+	//log.Printf("Pregunto si puedo pasar a ready un proceso \n")
+	body, err := io.ReadAll(respuestaJSON.Body)
+
+	if err != nil {
+		return
+	}
+
+	var respuesta PaqueteRecibidoDeMemoria
+	err = json.Unmarshal(body, &respuesta)
+	if err != nil {
+		log.Printf("Error al decodificar el JSON.\n")
+		return
+	}
+	log.Printf("La respuesta del server memoria fue: %s\n", respuesta.Mensaje)
+	if respuestaJSON.StatusCode == http.StatusOK {
+		log.Printf("Se pasa el proceso PID: %d a READY desde SUSP.READY", pcb.Pid)
+		PasarReady(pcb)
+	} else {
+		log.Printf("no se puede pasar a ready al PID: %d porque memoria basicamnete nos dijo que hay quilombo", pcb.Pid)
+
 	}
 	defer resp.Body.Close()
 }
