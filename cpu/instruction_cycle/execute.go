@@ -348,10 +348,18 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 		return
 	}
 
+	var contenido string
+
+	if globals.ID.InstructionType == "READ" {
+		contenido = globals.ID.ValorLeido
+	} else if globals.ID.InstructionType == "WRITE" {
+		contenido = globals.ID.Datos
+	}
+
 	entrada := globals.EntradaCacheDePaginas{
 		PID:             globals.ID.ProcessValues.Pid,
 		NroPag:          nroPagina,
-		Contenido:       globals.ID.Datos,
+		Contenido:       contenido,
 		DireccionFisica: direccionFisica,
 		Modificada:      false,
 		BitUso:          true,
