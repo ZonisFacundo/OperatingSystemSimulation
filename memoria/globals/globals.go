@@ -101,6 +101,9 @@ var Sem_Swap sync.Mutex
 var Sem_Mem sync.Mutex
 var Sem_Bitmap sync.Mutex
 var Sem_Contador sync.Mutex
+var Sem_Instruccion sync.Mutex
+var Sem_MemoriaKernel sync.Mutex
+var Sem_Metricas sync.Mutex
 
 // FUNCIONES
 func CargarConfig(path string) {
