@@ -40,16 +40,14 @@ func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *htt
 
 	log.Printf("\n\n KERNEL SOLICITO SWAP DE MEMORIA A DISCO (suspension) (RetornoClienteKernelServidorMemoriaSwapADisco)\n\n")
 
-	globals.Sem_Swap.Lock()
-
 	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
 	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		globals.Sem_Swap.Unlock()
 
 		return
 	}
+	globals.Sem_Swap.Lock()
 
 	retorno := SwapADisco(paqueteDeKernel.Pid)
 
