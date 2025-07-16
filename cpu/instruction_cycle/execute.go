@@ -21,7 +21,7 @@ func Execute(detalle globals.Instruccion) bool {
 	case "NOOP":
 		log.Println("Se ejecuta noop")
 		globals.ID.ProcessValues.Pc++
-		return false  
+		return false
 
 	case "WRITE":
 
@@ -43,8 +43,8 @@ func Execute(detalle globals.Instruccion) bool {
 				AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 				log.Printf("PID: %d - Cache Add - Pagina: %d", globals.ID.ProcessValues.Pid, globals.ID.NroPag)
 			}
-			log.Printf("## PID: %d - Ejecutando -> %s - DIRECCION: %d - DATOS: %s",
-				detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.DireccionFis, globals.ID.Datos)
+			log.Printf("PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s",
+			globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.Datos)
 		} else {
 			fmt.Println("WRITE inválido: Direccion fisica inválida.")
 			detalle.Syscall = "WRITE inválido."
@@ -61,21 +61,19 @@ func Execute(detalle globals.Instruccion) bool {
 					mmu.ReadEnCache()
 				} else {
 					Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
-					log.Printf("TLB tamanio: %d", globals.Tlb.Tamanio)
 					AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
 					AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 					log.Printf("PID: %d - Cache Add - Pagina: %d", globals.ID.ProcessValues.Pid, globals.ID.NroPag)
 				}
 			} else {
 				Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
-				log.Printf("TLB tamanio: %d", globals.Tlb.Tamanio)
 				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
 				AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 				log.Printf("PID: %d - Cache Add - Pagina: %d", globals.ID.ProcessValues.Pid, globals.ID.NroPag)
 			}
 
-			log.Printf("## PID: %d - Ejecutando -> %s - DIRECCION: %d - SIZE: %d",
-				detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.DireccionFis, globals.ID.Tamaño)
+			log.Printf("PID: %d - Acción: LEER - Dirección Física: %d - Valor: %s",
+				globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.ValorLeido)
 
 		} else {
 			fmt.Sprintln("READ inválido.")
@@ -276,6 +274,8 @@ func Read(ip string, port int, direccion int, tamaño int) {
 
 	log.Printf("Valor en memoria: [%s]", informacion) // Nos devuelve memoria el mensaje de escritura.
 
+	globals.ID.ValorLeido = informacion //guardo el contenido que lee memoria en una variable global
+
 }
 
 func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, syscall string, parametro1 int, parametro2 string) { // si no reciben parametros que sean  0 y "" que nosostros ahi no los usamos
@@ -343,6 +343,10 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 
 // agregar en cache segun algortimo
 func AgregarEnCache(nroPagina int, direccionFisica int) {
+	if globals.CachePaginas.Tamanio == 0 {
+		return
+	}
+
 	entrada := globals.EntradaCacheDePaginas{
 		PID:             globals.ID.ProcessValues.Pid,
 		NroPag:          nroPagina,
@@ -368,29 +372,33 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 }
 
 func AgregarEnTLB(nroPagina int, direccion int) {
-	entrada := globals.Entrada{
-		PID:       globals.ID.ProcessValues.Pid, // <-- este valor es clave
-		NroPagina: nroPagina,
-		Direccion: direccion,
-	}
-
-	if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
-		log.Printf(">> Agregando en TLB: PID=%d, Pagina=%d, DirFis=%d", entrada.PID, entrada.NroPagina, entrada.Direccion)
-		globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
-		for i, e := range globals.Tlb.Entradas {
-			log.Printf("TLB[%d] = PID:%d - Pag:%d - Dir:%d", i, e.PID, e.NroPagina, e.Direccion)
+	if globals.ClientConfig.Tlb_entries > 0 {
+		entrada := globals.Entrada{
+			PID:       globals.ID.ProcessValues.Pid, // <-- este valor es clave
+			NroPagina: nroPagina,
+			Direccion: direccion,
 		}
-		return
+
+		if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
+			log.Printf(">> Agregando en TLB: PID=%d, Pagina=%d, DirFis=%d", entrada.PID, entrada.NroPagina, entrada.Direccion)
+			globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
+			for i, e := range globals.Tlb.Entradas {
+				log.Printf("TLB[%d] = PID:%d - Pag:%d - Dir:%d", i, e.PID, e.NroPagina, e.Direccion)
+			}
+			return
+		} else {
+			log.Printf(">> Agregando en TLB: PID=%d, Pagina=%d, DirFis=%d", entrada.PID, entrada.NroPagina, entrada.Direccion)
+
+			switch globals.ClientConfig.Tlb_replacement {
+			case "FIFO":
+				ReemplazarTLB_FIFO(entrada)
+			case "LRU":
+				ReemplazarTLB_LRU(entrada)
+			default:
+				log.Printf("Algoritmo de reemplaza incorrecto.\n")
+			}
+		}
 	} else {
-		log.Printf(">> Agregando en TLB: PID=%d, Pagina=%d, DirFis=%d", entrada.PID, entrada.NroPagina, entrada.Direccion)
-
-		switch globals.ClientConfig.Tlb_replacement {
-		case "FIFO":
-			ReemplazarTLB_FIFO(entrada)
-		case "LRU":
-			ReemplazarTLB_LRU(entrada)
-		default:
-			log.Printf("Algoritmo de reemplaza incorrecto.\n")
-		}
+		fmt.Printf("Entradas de TLB: %d. No hay TLB", globals.ClientConfig.Tlb_entries)
 	}
 }

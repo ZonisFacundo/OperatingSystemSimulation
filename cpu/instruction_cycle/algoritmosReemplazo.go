@@ -26,6 +26,10 @@ func ReemplazarTLB_FIFO(entrada globals.Entrada) {
 }
 
 func ReemplazarTLB_LRU(entrada globals.Entrada) {
+	if globals.Tlb.Tamanio == 0 {
+		log.Printf("Algoritmo LRU invocado con TLB de tamaño 0")
+		return
+	}
 	tlb := &globals.Tlb
 	now := time.Now().UnixNano()
 
@@ -50,6 +54,10 @@ func ReemplazarTLB_LRU(entrada globals.Entrada) {
 }
 
 func ReemplazarConCLOCK(entradaNueva globals.EntradaCacheDePaginas) {
+	if globals.CachePaginas.Tamanio == 0 || len(globals.CachePaginas.Entradas) == 0 {
+		log.Printf("Algoritmo CLOCK invocado con caché deshabilitada")
+		return
+	}
 	cache := &globals.CachePaginas
 	tamanio := cache.Tamanio
 	for {
@@ -77,6 +85,10 @@ func ReemplazarConCLOCK(entradaNueva globals.EntradaCacheDePaginas) {
 }
 
 func ReemplazarConCLOCKM(entradaNueva globals.EntradaCacheDePaginas) {
+	if globals.CachePaginas.Tamanio == 0 || len(globals.CachePaginas.Entradas) == 0 {
+		log.Printf("Algoritmo CLOCK-M invocado con caché deshabilitada")
+		return
+	}
 	cache := &globals.CachePaginas
 	tamanio := cache.Tamanio
 
@@ -112,6 +124,4 @@ func ReemplazarConCLOCKM(entradaNueva globals.EntradaCacheDePaginas) {
 			cache.Entradas[i].BitUso = false
 		}
 	}
-
-
 }

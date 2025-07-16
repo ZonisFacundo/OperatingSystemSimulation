@@ -56,6 +56,8 @@ func ReadEnCache() {
 
 	lectura := contenidoCompleto[desplazamiento : desplazamiento+tamanio]
 	log.Printf("READ en cache: %s", lectura)
+	log.Printf("PID: %d - Acción: LEER - Dirección Física: %d - Valor: %s",
+	globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, lectura)
 
 	// Marcar uso:
 	globals.CachePaginas.Entradas[pos].BitUso = true

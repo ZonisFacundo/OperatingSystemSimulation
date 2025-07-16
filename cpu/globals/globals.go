@@ -44,6 +44,7 @@ type Instruccion struct { // instruccion obtenida de memoria
 	Dispositivo     string                `json:"dispositive"`
 	NroPag          int                   `json:"page_number"`
 	PosicionPag     int                   `json:"pos_number"`
+	ValorLeido      string                `json:"read_value"`
 }
 
 type TLB struct {
@@ -104,6 +105,9 @@ func CargarConfig(path string, instanceID string) {
 }
 
 func InitCache() {
+	if ClientConfig.Cache_entries == 0 {
+		log.Printf("Caché deshabilitada.")
+	}
 	CachePaginas = CacheDePaginas{
 		Entradas:     make([]EntradaCacheDePaginas, 0, ClientConfig.Cache_entries),
 		Tamanio:      ClientConfig.Cache_entries,
@@ -112,6 +116,9 @@ func InitCache() {
 }
 
 func InitTlb() {
+	if ClientConfig.Tlb_entries == 0 {
+		log.Printf("TLB deshabilitada.")
+	}
 	Tlb = TLB{
 		Entradas:       make([]Entrada, 0, ClientConfig.Tlb_entries),
 		Tamanio:        ClientConfig.Tlb_entries,
