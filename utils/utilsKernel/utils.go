@@ -962,6 +962,7 @@ func FinalizarProceso(pcb *PCB) {
 	ColaBlock = removerPCB(ColaBlock, pcb)
 	ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
 	ColaSuspReady = removerPCB(ColaSuspReady, pcb)
+	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "EXIT"
 	log.Printf("\n\nEl proceso PID: %d esta tratande de exitearrrrrr \n", pcb.Pid)
 	pcb.MetricaEstados["EXIT"]++
