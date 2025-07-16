@@ -2,6 +2,7 @@ package mmu
 
 import (
 	"log"
+	"time"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 )
@@ -20,6 +21,9 @@ func EstaEnCache(nroPagina int) bool {
 }
 
 func WriteEnCache(datos string) {
+
+	time.Sleep(time.Duration(globals.ClientConfig.Cache_delay) * time.Millisecond)
+
 	pos := globals.ID.PosicionPag
 	if pos < 0 || pos >= len(globals.CachePaginas.Entradas) {
 		log.Printf("WriteEnCache: índice de página inválido %d", pos)
@@ -32,6 +36,9 @@ func WriteEnCache(datos string) {
 }
 
 func ReadEnCache() {
+
+	time.Sleep(time.Duration(globals.ClientConfig.Cache_delay) * time.Millisecond)
+
 	pos := globals.ID.PosicionPag
 	if pos < 0 || pos >= len(globals.CachePaginas.Entradas) {
 		log.Printf("ReadEnCache: índice de página inválido %d", pos)

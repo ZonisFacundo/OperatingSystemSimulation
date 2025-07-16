@@ -20,6 +20,8 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "NOOP":
 		log.Println("Se ejecuta noop")
+		globals.ID.ProcessValues.Pc++
+		return false  
 
 	case "WRITE":
 
@@ -153,8 +155,6 @@ func Execute(detalle globals.Instruccion) bool {
 		fmt.Println("Instrucción inválida.")
 		return false
 	}
-
-	return false
 }
 
 func Write(ip string, port int, direccion int, contenido string) {
