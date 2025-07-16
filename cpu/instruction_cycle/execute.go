@@ -20,7 +20,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "NOOP":
 		log.Println("Se ejecuta noop")
-		globals.ID.ProcessValues.Pc++
+		//globals.ID.ProcessValues.Pc++
 		return false
 
 	case "WRITE":
@@ -44,12 +44,12 @@ func Execute(detalle globals.Instruccion) bool {
 				log.Printf("PID: %d - Cache Add - Pagina: %d", globals.ID.ProcessValues.Pid, globals.ID.NroPag)
 			}
 			log.Printf("PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s",
-			globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.Datos)
+				globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.Datos)
 		} else {
 			fmt.Println("WRITE inválido: Direccion fisica inválida.")
 			detalle.Syscall = "WRITE inválido."
 		}
-		globals.ID.ProcessValues.Pc++
+		//globals.ID.ProcessValues.Pc++
 		return false
 
 	case "READ":
@@ -79,7 +79,7 @@ func Execute(detalle globals.Instruccion) bool {
 			fmt.Sprintln("READ inválido.")
 			detalle.Syscall = "READ inválido."
 		}
-		globals.ID.ProcessValues.Pc++
+		//globals.ID.ProcessValues.Pc++
 		return false
 
 	case "GOTO":
@@ -90,6 +90,7 @@ func Execute(detalle globals.Instruccion) bool {
 		detalle.Syscall = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
 
 		globals.ID.ProcessValues.Pc = pcInstrNew
+		// globals.ID.ProcessValues.Pc++
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.ProcessValues.Pc)
 		return false
 
@@ -97,7 +98,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "IO": //IO(Dispositivo y tiempo)
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
-		globals.ID.ProcessValues.Pc++
+		//globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.ProcessValues.Pid,
@@ -112,7 +113,7 @@ func Execute(detalle globals.Instruccion) bool {
 	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - TAM: %d - ARCHIVO: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Tamaño, detalle.ArchiInstr)
 
-		globals.ID.ProcessValues.Pc++
+		// globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc,
@@ -125,7 +126,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "DUMP_MEMORY": //
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.ProcessValues.Pid, detalle.InstructionType)
-		globals.ID.ProcessValues.Pc++
+		//globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.ProcessValues.Pid,
@@ -138,7 +139,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "EXIT":
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.ProcessValues.Pid, detalle.InstructionType)
-		globals.ID.ProcessValues.Pc++
+		// globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.ProcessValues.Pid,

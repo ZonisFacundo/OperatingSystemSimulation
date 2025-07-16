@@ -694,7 +694,7 @@ func PlanificadorCortoPlazo() {
 func PlanificadorMedianoPlazo(pcb *PCB) {
 	pcb.TiempoEnvioBlock = time.Now()
 	for true {
-		if EstaEnColaBlock(pcb) {
+		if pcb.EstadoActual == "BLOCKED" {
 			if time.Since(pcb.TiempoEnvioBlock) >= time.Duration(globals.ClientConfig.Suspension_time)*time.Millisecond {
 				PasarSuspBlock(pcb)
 				break
@@ -1009,7 +1009,7 @@ func ObtenerIO(instancia string) *IO {
 
 func ExisteIO(instancia string) bool {
 	for _, io := range ListaIO {
-		if io.Instancia == instancia {
+		if io.Instancia == instancia { //"IO-"+
 			return true
 		}
 	}
