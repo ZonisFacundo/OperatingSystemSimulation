@@ -232,12 +232,12 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 
 		log.Printf("## (<%d>) finalizó IO y pasa a READY \n", pcb.Pid)
 
-		if EstaEnColaBlock(pcb) {
+		if pcb.EstadoActual == "BLOCKED" {
 			log.Printf("pasa de blocked a ready el pid %d\n", pcb.Pid)
 			PasarReady(pcb, ColaBlock)
 			//RemoverDeColaProcesoIO(ioServer)
 
-		} else if EstaEnColaSuspBlock(pcb) {
+		} else if pcb.EstadoActual == "SUSP.BLOCKED" {
 			log.Printf("pasa desde %s a susp ready el pid %d\n", pcb.EstadoActual, pcb.Pid)
 
 			PasarSuspReady(pcb)
@@ -571,7 +571,8 @@ func PlanificadorLargoPlazo() {
 			MutexColaNew.Lock()
 			pcbChequear := CriterioColaNew(ColaSuspReady)
 			MutexColaNew.Unlock()
-			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaSuspReady)
+			SwapInProceso(pcbChequear)
+			//ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaSuspReady)
 
 			/*
 				MutexColaSuspReady.Lock()                      // <<< CAMBIO: lock de ColaSuspReady (antes MutexColaNew)
@@ -876,7 +877,6 @@ func PasarSuspReady(pcb *PCB) {
 	pcb.MetricaEstados["SUSP.READY"]++
 	pcb.TiempoLlegada["SUSP.READY"] = time.Now()
 
-	SwapInProceso(pcb)
 }
 
 func removerPCB(cola []*PCB, pcb *PCB) []*PCB {
