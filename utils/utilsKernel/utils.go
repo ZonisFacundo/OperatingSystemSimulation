@@ -355,8 +355,8 @@ func EnviarProcesoACPU(pcb *PCB, cpu *CPU) {
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
-		//log.Printf("Código de respuesta del server: %d\n", respuestaJSON.StatusCode)
-		//log.Printf("Status de respuesta el server no fue la esperada.\n")
+		log.Printf("Código de respuesta del server: %d\n", respuestaJSON.StatusCode)
+		log.Printf("Status de respuesta el server no fue la esperada.\n")
 		return
 	}
 
@@ -1222,54 +1222,64 @@ ARMO HTTP PARA DESWAPEAR
 // ATENCION, SI LE VAN A CAMBIAR EL NOMBRE, TIENEN QUE IR A CAMBIARLO TAMBIEN EN SU INVOCACION (PLANI LARGO PLAZO)
 // <<< NUEVO >>> Trae un proceso swappeado devuelta a memoria
 func SwapInProceso(pcb *PCB) {
-	var paquete PaqueteEnviadoKERNELaMemoria2
-	paquete.Pid = pcb.Pid
-	paquete.Mensaje = "SWAP_IN" // o el texto que tu memoria espere
+	if pcb == nil {
+		log.Printf("SwapInProceso recibió pcb == nil")
+		return
+	}
 
-	data, _ := json.Marshal(paquete)
-	cliente := http.Client{}
-	url := fmt.Sprintf("http://%s:%d/SWAPAMEMORIA", globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+	// Preparo paquete
+	paquete := PaqueteEnviadoKERNELaMemoria2{
+		Pid:     pcb.Pid,
+		Mensaje: "SWAP_IN",
+	}
+	data, err := json.Marshal(paquete)
+	if err != nil {
+		log.Printf("Error armando JSON SwapInProceso: %v", err)
+		return
+	}
+
+	url := fmt.Sprintf("http://%s:%d/SWAPAMEMORIA",
+		globals.ClientConfig.Ip_memory,
+		globals.ClientConfig.Port_memory,
+	)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	if err != nil {
 		log.Printf("Error generando petición SWAP_IN: %v", err)
 		return
 	}
 	req.Header.Set("Content-Type", "application/json")
-	resp, err := cliente.Do(req)
+
+	// Hago la petición
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Printf("Error en SWAP_IN del PID %d: %v", pcb.Pid, err)
 		return
 	}
+	// ¡Defer al toque, antes de cualquier ReadAll!
+	defer resp.Body.Close()
 
-	respuestaJSON, err := cliente.Do(req)
-	/*if err != nil {
-		log.Printf("Error al recibir respuesta.\n")
-		return
-
-	}*/
-
-	defer respuestaJSON.Body.Close()
-
-	//log.Printf("Pregunto si puedo pasar a ready un proceso \n")
-	body, err := io.ReadAll(respuestaJSON.Body)
-
+	// Leo el cuerpo
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Printf("Error leyendo body SWAP_IN: %v", err)
 		return
 	}
 
+	// Parseo JSON
 	var respuesta PaqueteRecibidoDeMemoria
-	err = json.Unmarshal(body, &respuesta)
-	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+	if err := json.Unmarshal(body, &respuesta); err != nil {
+		log.Printf("Error decodificando JSON SWAP_IN: %v", err)
 		return
 	}
+
+	// Analizo código HTTP
 	log.Printf("La respuesta del server memoria fue: %s\n", respuesta.Mensaje)
-	if respuestaJSON.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusOK {
 		log.Printf("Se pasa el proceso PID: %d a READY desde SUSP.READY", pcb.Pid)
 		PasarReady(pcb)
 	} else {
-		log.Printf("no se puede pasar a ready al PID: %d porque memoria basicamnete nos dijo que hay quilombo", pcb.Pid)
-
+		log.Printf("No se puede pasar a READY al PID %d: %s",
+			pcb.Pid, respuesta.Mensaje,
+		)
 	}
-	defer resp.Body.Close()
 }
