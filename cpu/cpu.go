@@ -29,7 +29,7 @@ func main() {
 
 	log.Printf("Usando config: %s para instancia: %s\n", configPath, instanceID)
 
-	procesoNuevo := make(chan struct{})
+	procesoNuevo := make(chan struct{}, 1)
 	var mutexInterrupcion sync.Mutex
 
 	utilsCPU.ConfigurarLogger(instanceID)
@@ -53,19 +53,21 @@ func main() {
 
 	go func() {
 		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
+			globals.MutexNecesario.Lock()
 			instruction_cycle.RecibirPCyPID(w, r)
+			globals.MutexNecesario.Unlock()
 
 			log.Printf("Proceso recibido - PID: %d, PC: %d", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
 			select {
 			case procesoNuevo <- struct{}{}:
-				log.Println("Notificando CPU de un nuevo proceso entrante.")
+				log.Println("## Se notifica a CPU de un proceso entrante.")
 			default:
-				log.Println("CPU ya ejecutando. No se notifica de nuevo proceso")
+				log.Println("## CPU ya ejecutando. No se notifica de nuevo proceso.")
 			}
 		})
 
 		http.HandleFunc("/INTERRUPCIONCPU", func(w http.ResponseWriter, r *http.Request) {
-			utilsCPU.DevolverPidYPCInterrupcion(w, r, globals.Instruction.Pc, globals.Instruction.Pid)
+			utilsCPU.DevolverPidYPCInterrupcion(w, r, globals.ID.ProcessValues.Pc, globals.ID.ProcessValues.Pid)
 			mutexInterrupcion.Lock()
 			globals.Interruption = true
 			mutexInterrupcion.Unlock()
@@ -77,11 +79,11 @@ func main() {
 	}()
 
 	for {
-		log.Println("Esperando nuevo proceso...")
+		log.Println("## Esperando ingreso de un nuevo proceso.")
 
 		<-procesoNuevo
 
-		log.Printf(" Ejecutando proceso (PID: %d)", globals.ID.ProcessValues.Pid)
+		log.Printf("## Ejecutando proceso (PID: %d)", globals.ID.ProcessValues.Pid)
 
 	ejecucion:
 		for {
@@ -95,11 +97,17 @@ func main() {
 			mutexInterrupcion.Unlock()
 
 			if interrumpido {
-				log.Printf("Interrupción. Deteniendo proceso PID %d", globals.ID.ProcessValues.Pid)
+				log.Printf("## Interrupción. Deteniendo proceso PID %d", globals.ID.ProcessValues.Pid)
 				break ejecucion
 			}
 
-			log.Printf("Ejecutando: PID=%d, PC=%d", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
+			globals.MutexNecesario.Lock()
+			pid := globals.ID.ProcessValues.Pid
+			pc := globals.ID.ProcessValues.Pc
+			globals.MutexNecesario.Unlock()
+
+			log.Printf("## Ejecutando -> PID: %d, PC: %d", pid, pc)
+
 			instruction_cycle.Fetch(globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)
 			globals.ID.ProcessValues.Pc++

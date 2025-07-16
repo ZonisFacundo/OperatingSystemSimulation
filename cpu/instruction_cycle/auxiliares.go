@@ -88,19 +88,23 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 }
 
 func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
-	//var request HandshakeKERNEL
 	var request utilsCPU.Proceso
 
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("entro aca2")
 		return
 	}
 
-	log.Printf("El Kernel envio PID: %d - PC: %d", request.Pid, request.Pc)
+	//globals.MutexNecesario.Lock()
 
 	globals.ID.ProcessValues.Pid = request.Pid
 	globals.ID.ProcessValues.Pc = request.Pc
+
+	log.Println("Recibido PID y PC de KERNEL:", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
+
+	//globals.MutexNecesario.Unlock()
 
 	var respuesta utilsCPU.RespuestaKernel
 	respuesta.Mensaje = "PC y PID recbidos correctamente"
@@ -111,6 +115,7 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
+
 }
 
 func RecibirDatosMMU(ip string, puerto int) {
@@ -169,8 +174,6 @@ func RecibirDatosMMU(ip string, puerto int) {
 	globals.ClientConfig.Entradas = respuesta.Entradas
 	globals.ClientConfig.Page_size = respuesta.TamPag
 	globals.ClientConfig.Niveles = respuesta.Niveles
-	log.Printf("imprimo el tam de pagina: %d", globals.ClientConfig.Page_size)
 
 	log.Printf("Conexión realizada con exito con el Kernel.")
-
 }
