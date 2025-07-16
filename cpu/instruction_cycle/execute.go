@@ -90,8 +90,8 @@ func Execute(detalle globals.Instruccion) bool {
 		detalle.Syscall = fmt.Sprintf("PC actualizado en: %d ", pcInstrNew)
 
 		globals.ID.ProcessValues.Pc = pcInstrNew
-		// globals.ID.ProcessValues.Pc++
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - VALUE: %d", detalle.ProcessValues.Pid, detalle.InstructionType, globals.ID.ProcessValues.Pc)
+		globals.ID.ProcessValues.Pc--
 		return false
 
 	// SYSCALLS.
