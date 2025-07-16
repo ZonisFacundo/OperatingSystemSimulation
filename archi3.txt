@@ -1,5 +1,2 @@
-IO IO-mouse 5000
-WRITE 0 ZZZZZZ
-IO IO-mouse 8000
-IO IO-impresora 8000
+NOOP 
 EXIT

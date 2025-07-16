@@ -1242,11 +1242,11 @@ func SwapInProceso(pcb *PCB) {
 	}
 
 	respuestaJSON, err := cliente.Do(req)
-	if err != nil {
+	/*if err != nil {
 		log.Printf("Error al recibir respuesta.\n")
 		return
 
-	}
+	}*/
 
 	defer respuestaJSON.Body.Close()
 
