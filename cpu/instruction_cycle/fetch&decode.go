@@ -82,7 +82,7 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 		return
 	}
 
-	log.Printf("Instruction given: %s\n", respuesta.Mensaje) // Nos manda memoria la instrucción.
+	log.Printf("Instruccion recibida de Memoria: %s\n", respuesta.Mensaje) // Nos manda memoria la instrucción.
 
 	globals.ID.InstructionType = respuesta.Mensaje
 }
@@ -140,7 +140,6 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.ProcessValues.Pid = instruccion.ProcessValues.Pid
 
 		globals.ID.NroPag = globals.ID.DireccionLog / memoryManagement.TamPagina
-		// mmu despues deberiamos hacerlo global, porque son parametros que nos deberia pasar memoria (tabla de pags)
 
 		if mmu.EstaTraducida(globals.ID.NroPag) {
 			globals.Tlb.Entradas[globals.ID.PosicionPag].UltimoAcceso = time.Now().UnixNano()
@@ -153,9 +152,10 @@ func Decode(instruccion globals.Instruccion) {
 
 			if globals.ID.Frame < 0 {
 				log.Printf("ERROR: Frame inválido: %d", globals.ID.Frame)
+
 			} else {
 				globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
-				log.Printf("Dirección física calculada: %d", globals.ID.DireccionFis)
+				log.Printf("Direccion fisica: %d", globals.ID.DireccionFis)
 			}
 		}
 

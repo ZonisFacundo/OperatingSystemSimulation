@@ -12,11 +12,11 @@ func EstaEnCache(nroPagina int) bool {
 		if entrada.PID == globals.ID.ProcessValues.Pid && entrada.NroPag == nroPagina {
 			globals.ID.PosicionPag = i
 			globals.CachePaginas.Entradas[i].BitUso = true
-			log.Printf(">> CACHE HIT: PID=%d, Pagina=%d", entrada.PID, entrada.NroPag)
+			log.Printf(">> CACHE HIT -> PID: %d, Pagina: %d", entrada.PID, entrada.NroPag)
 			return true
 		}
 	}
-	log.Printf(">> CACHE MISS: PID=%d, Pagina=%d", globals.ID.ProcessValues.Pid, nroPagina)
+	log.Printf(">> CACHE MISS -> PID: %d, Pagina: %d", globals.ID.ProcessValues.Pid, nroPagina)
 	return false
 }
 
@@ -26,7 +26,7 @@ func WriteEnCache(datos string) {
 
 	pos := globals.ID.PosicionPag
 	if pos < 0 || pos >= len(globals.CachePaginas.Entradas) {
-		log.Printf("WriteEnCache: índice de página inválido %d", pos)
+		log.Printf("## WriteEnCache: índice de página inválido %d", pos)
 		return
 	}
 
@@ -41,7 +41,7 @@ func ReadEnCache() {
 
 	pos := globals.ID.PosicionPag
 	if pos < 0 || pos >= len(globals.CachePaginas.Entradas) {
-		log.Printf("ReadEnCache: índice de página inválido %d", pos)
+		log.Printf("## ReadEnCache: índice de página inválido %d", pos)
 		return
 	}
 
@@ -50,14 +50,12 @@ func ReadEnCache() {
 	tamanio := globals.ID.Tamaño
 
 	if desplazamiento < 0 || desplazamiento+tamanio > len(contenidoCompleto) {
-		log.Printf("ReadEnCache: rango inválido para lectura (desplazamiento %d, tamaño %d, longitud contenido %d)", desplazamiento, tamanio, len(contenidoCompleto))
+		log.Printf("## ReadEnCache: rango inválido para lectura (Desplazamiento: %d, Tamaño: %d, Longitud del contenido: %d)", desplazamiento, tamanio, len(contenidoCompleto))
 		return
 	}
 
 	lectura := contenidoCompleto[desplazamiento : desplazamiento+tamanio]
-	log.Printf("READ en cache: %s", lectura)
-	log.Printf("PID: %d - Acción: LEER - Dirección Física: %d - Valor: %s",
-	globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, lectura)
+	log.Printf("## READ en cache: %s", lectura)
 
 	// Marcar uso:
 	globals.CachePaginas.Entradas[pos].BitUso = true

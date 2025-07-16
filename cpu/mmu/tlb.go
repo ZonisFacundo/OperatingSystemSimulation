@@ -6,8 +6,9 @@ import (
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 )
+
 func EstaTraducida(nroPagina int) bool {
-	log.Printf("Buscando en TLB: PID=%d Pag=%d", globals.ID.ProcessValues.Pid, nroPagina)
+	log.Printf("## Buscando en TLB -> PID: %d, Pag: %d", globals.ID.ProcessValues.Pid, nroPagina)
 	now := time.Now().UnixNano()
 
 	for i, entrada := range globals.Tlb.Entradas {
@@ -17,11 +18,11 @@ func EstaTraducida(nroPagina int) bool {
 
 			globals.Tlb.Entradas[i].UltimoAcceso = now
 
-			log.Printf(">> TLB HIT: PID=%d, Pagina=%d -> DirFis=%d", entrada.PID, entrada.NroPagina, entrada.Direccion)
+			log.Printf(">> TLB HIT -> PID: %d, Pagina: %d -> DirFis: %d", entrada.PID, entrada.NroPagina, entrada.Direccion)
 			return true
 		}
 	}
 
-	log.Printf(">> TLB MISS: PID=%d, Pagina=%d", globals.ID.ProcessValues.Pid, nroPagina)
+	log.Printf(">> TLB MISS -> PID: %d, Pagina: %d", globals.ID.ProcessValues.Pid, nroPagina)
 	return false
 }

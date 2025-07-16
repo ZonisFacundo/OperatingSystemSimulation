@@ -20,7 +20,6 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "NOOP":
 		log.Println("Se ejecuta noop")
-		//globals.ID.ProcessValues.Pc++
 		return false
 
 	case "WRITE":
@@ -31,6 +30,7 @@ func Execute(detalle globals.Instruccion) bool {
 					mmu.WriteEnCache(globals.ID.Datos)
 					log.Printf("WRITE en Cache: PID=%d, Pag=%d, Datos=%s", globals.ID.ProcessValues.Pid, globals.ID.NroPag, globals.ID.Datos)
 				} else {
+
 					// leer en memoria y traer la página a la caché
 					Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
 					AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
@@ -49,7 +49,6 @@ func Execute(detalle globals.Instruccion) bool {
 			fmt.Println("WRITE inválido: Direccion fisica inválida.")
 			detalle.Syscall = "WRITE inválido."
 		}
-		//globals.ID.ProcessValues.Pc++
 		return false
 
 	case "READ":
@@ -79,7 +78,6 @@ func Execute(detalle globals.Instruccion) bool {
 			fmt.Sprintln("READ inválido.")
 			detalle.Syscall = "READ inválido."
 		}
-		//globals.ID.ProcessValues.Pc++
 		return false
 
 	case "GOTO":
@@ -98,7 +96,6 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "IO": //IO(Dispositivo y tiempo)
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - DISPOSITIVO: %s - TIME: %d", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Dispositivo, detalle.Tiempo)
-		//globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.ProcessValues.Pid,
@@ -113,7 +110,6 @@ func Execute(detalle globals.Instruccion) bool {
 	case "INIT_PROC": //INIT_PROC (Archivo de instrucciones, Tamaño)
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s - TAM: %d - ARCHIVO: %s", detalle.ProcessValues.Pid, detalle.InstructionType, detalle.Tamaño, detalle.ArchiInstr)
 
-		// globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc,
@@ -126,7 +122,6 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "DUMP_MEMORY": //
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.ProcessValues.Pid, detalle.InstructionType)
-		//globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.ProcessValues.Pid,
@@ -139,7 +134,6 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "EXIT":
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s", detalle.ProcessValues.Pid, detalle.InstructionType)
-		// globals.ID.ProcessValues.Pc++
 		FinEjecucion(globals.ClientConfig.Ip_kernel,
 			globals.ClientConfig.Port_kernel,
 			globals.ID.ProcessValues.Pid,
@@ -211,7 +205,7 @@ func Write(ip string, port int, direccion int, contenido string) {
 		return
 	}
 
-	log.Printf("Respuesta de Memoria: %s\n", respuesta.Mensaje) // Nos devuelve memoria el mensaje de escritura.
+	log.Printf("## Respuesta de Memoria: %s\n", respuesta.Mensaje) // Nos devuelve memoria el mensaje de escritura.
 
 }
 
@@ -273,8 +267,6 @@ func Read(ip string, port int, direccion int, tamaño int) {
 
 	informacion := string(respuesta.Info)
 
-	log.Printf("Valor en memoria: [%s]", informacion) // Nos devuelve memoria el mensaje de escritura.
-
 	globals.ID.ValorLeido = informacion //guardo el contenido que lee memoria en una variable global
 
 }
@@ -288,8 +280,6 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 	paquete.InstanciaCPU = instancia
 	paquete.Parametro1 = parametro1
 	paquete.Parametro2 = parametro2
-
-	log.Printf("syscall enviada: %s", paquete.Syscall)
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
@@ -319,7 +309,6 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 
 	defer respuestaJSON.Body.Close()
 
-	log.Printf("Se envio syscall a Kernel.\n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -329,7 +318,7 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 	var respuesta utilsCPU.RespuestaKernel
 
 	if respuestaJSON.StatusCode != http.StatusOK {
-		log.Println("chupete en el orto outside")
+		log.Println("CHUPETE EN EL ORTO OUTSIDE")
 		globals.Interruption = true
 	}
 
@@ -342,7 +331,7 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 
 }
 
-// agregar en cache segun algortimo
+// agregar en cache segun algoritmo
 func AgregarEnCache(nroPagina int, direccionFisica int) {
 	if globals.CachePaginas.Tamanio == 0 {
 		return
@@ -389,14 +378,9 @@ func AgregarEnTLB(nroPagina int, direccion int) {
 		}
 
 		if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
-			log.Printf(">> Agregando en TLB: PID=%d, Pagina=%d, DirFis=%d", entrada.PID, entrada.NroPagina, entrada.Direccion)
 			globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
-			for i, e := range globals.Tlb.Entradas {
-				log.Printf("TLB[%d] = PID:%d - Pag:%d - Dir:%d", i, e.PID, e.NroPagina, e.Direccion)
-			}
 			return
 		} else {
-			log.Printf(">> Agregando en TLB: PID=%d, Pagina=%d, DirFis=%d", entrada.PID, entrada.NroPagina, entrada.Direccion)
 
 			switch globals.ClientConfig.Tlb_replacement {
 			case "FIFO":

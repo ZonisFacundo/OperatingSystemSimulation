@@ -16,10 +16,10 @@ type MMU struct {
 	TablasPaginas       map[int]int
 }
 
-func TraducirDireccion(direccionLogica int,memoryManagement MMU, pid int, nroPagina int) []int {
+func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int, nroPagina int) []int {
 
 	if memoryManagement.TamPagina == 0 {
-		log.Fatalf("Error: TamPagina no puede ser 0. Verificá la configuración o la inicialización de la MMU.")
+		log.Fatalf("## Error: TamPagina no puede ser 0. Verificá la configuración o la inicialización de la MMU.")
 	}
 
 	// Crear un slice para guardar las entradas de las tablas de páginas

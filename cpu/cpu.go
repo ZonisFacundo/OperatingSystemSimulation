@@ -54,17 +54,15 @@ func main() {
 	go func() {
 		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
 			globals.MutexNecesario.Lock()
-			log.Printf("mutex papa3")
 			instruction_cycle.RecibirPCyPID(w, r)
-			log.Printf("desmutex papa3")
 			globals.MutexNecesario.Unlock()
 
 			log.Printf("Proceso recibido - PID: %d, PC: %d", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
 			select {
 			case procesoNuevo <- struct{}{}:
-				log.Println("Notificando CPU de un nuevo proceso entrante.")
+				log.Println("## Se notifica a CPU de un proceso entrante.")
 			default:
-				log.Println("CPU ya ejecutando. No se notifica de nuevo proceso")
+				log.Println("## CPU ya ejecutando. No se notifica de nuevo proceso.")
 			}
 		})
 
@@ -81,11 +79,11 @@ func main() {
 	}()
 
 	for {
-		log.Println("Esperando nuevo proceso...")
+		log.Println("## Esperando ingreso de un nuevo proceso.")
 
 		<-procesoNuevo
 
-		log.Printf(" Ejecutando proceso (PID: %d)", globals.ID.ProcessValues.Pid)
+		log.Printf("## Ejecutando proceso (PID: %d)", globals.ID.ProcessValues.Pid)
 
 	ejecucion:
 		for {
@@ -99,7 +97,7 @@ func main() {
 			mutexInterrupcion.Unlock()
 
 			if interrumpido {
-				log.Printf("Interrupción. Deteniendo proceso PID %d", globals.ID.ProcessValues.Pid)
+				log.Printf("## Interrupción. Deteniendo proceso PID %d", globals.ID.ProcessValues.Pid)
 				break ejecucion
 			}
 
@@ -108,7 +106,7 @@ func main() {
 			pc := globals.ID.ProcessValues.Pc
 			globals.MutexNecesario.Unlock()
 
-			log.Printf("Ejecutando: PID=%d, PC=%d", pid, pc)
+			log.Printf("## Ejecutando -> PID: %d, PC: %d", pid, pc)
 
 			instruction_cycle.Fetch(globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)

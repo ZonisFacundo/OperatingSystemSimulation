@@ -90,8 +90,6 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 	var request utilsCPU.Proceso
 
-	log.Printf("entro aca")
-
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -176,7 +174,6 @@ func RecibirDatosMMU(ip string, puerto int) {
 	globals.ClientConfig.Entradas = respuesta.Entradas
 	globals.ClientConfig.Page_size = respuesta.TamPag
 	globals.ClientConfig.Niveles = respuesta.Niveles
-	log.Printf("imprimo el tam de pagina: %d", globals.ClientConfig.Page_size)
 
 	log.Printf("Conexión realizada con exito con el Kernel.")
 }
