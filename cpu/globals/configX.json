@@ -1,6 +1,6 @@
 {
   "cache_delay": 250,
-  "cache_entries": 0,
+  "cache_entries": 2,
   "cache_replacement": "CLOCK",
   "instance_id": "cpuX",
   "ip_cpu": "127.0.0.1",
