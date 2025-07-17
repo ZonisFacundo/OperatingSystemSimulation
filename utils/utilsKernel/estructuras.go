@@ -39,10 +39,15 @@ type CPU struct {
 }
 
 type IO struct {
-	Ip           string  `json:"ip"`
-	Port         int     `json:"port"`
+	Ip           string          `json:"ip"`
+	Port         int             `json:"port"`
+	Instancia    string          `json:"instancia"`
+	Disponible   bool            `json:"disponible"`
+	ColaProcesos *ColaProcesosIO `json:"colaprocesos"`
+}
+
+type ColaProcesosIO struct {
 	Instancia    string  `json:"instancia"`
-	Disponible   bool    `json:"disponible"`
 	ColaProcesos []PCBIO `json:"colaprocesos"`
 }
 
