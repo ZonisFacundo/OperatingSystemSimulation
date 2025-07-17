@@ -164,7 +164,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 	case "EXIT":
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
-		respuesta.Mensaje = "interrupcion"
+		respuesta.Mensaje = "interrupcion" //ACA ESTA EL PROBLEMA, puede ser....
 		cpuServidor.Disponible = true
 		log.Printf("\n\n\n este pid quiero matarse %d \n\n\n", PCBUtilizar.Pid)
 		FinalizarProceso(PCBUtilizar)
@@ -509,6 +509,9 @@ func InformarMemoriaFinProceso(pcb *PCB, ip string, puerto int) {
 		return
 	}
 	log.Printf("La respuesta del server fue: %s\n", respuesta.Mensaje)
+
+	log.Printf("\n\n\n LO MATEEEEEE %d \n\n\n", pcb.Pid)
+
 	SemLargoPlazo <- struct{}{}
 	SemCortoPlazo <- struct{}{}
 
@@ -1029,7 +1032,7 @@ func FinalizarProceso(pcb *PCB) {
 	ColaExit = append(ColaExit, pcb)
 	MutexExit.Unlock()
 
-	log.Printf("\n\n\n\n le aviso al tarado de memoria q mate al pid %d \n\n\n", pcb.Pid)
+	log.Printf("\n\n\n le aviso al tarado de memoria q mate al pid %d \n\n\n", pcb.Pid)
 	log.Printf("## (<%d>) - Finaliza el proceso \n", pcb.Pid)
 	log.Printf("## (<%d>) - Métricas de estado: NEW NEW_COUNT: %d NEW_TIME: %d, READY READY_COUNT: %d READY_TIME: %d, EXECUTE EXECUTE_COUNT: %d EXECUTE_TIME: %d, BLOCKED BLOCKED_COUNT: %d BLOCKED_TIME: %d, SUSP.BLOCKED  SUSP.BLOCKED_COUNT: %d SUSP.BLOCKED_TIME: %d, SUSP.READY  SUSP.READY_COUNT: %d SUSP.READY_TIME: %d \n", pcb.Pid, pcb.MetricaEstados["NEW"], pcb.TiempoEstados["NEW"], pcb.MetricaEstados["READY"], pcb.TiempoEstados["READY"], pcb.MetricaEstados["EXECUTE"], pcb.TiempoEstados["EXECUTE"], pcb.MetricaEstados["BLOCKED"], pcb.TiempoEstados["BLOCKED"], pcb.MetricaEstados["SUSP.BLOCKED"], pcb.TiempoEstados["SUSP.BLOCKED"], pcb.MetricaEstados["SUSP.READY"], pcb.TiempoEstados["SUSP.READY"])
 
