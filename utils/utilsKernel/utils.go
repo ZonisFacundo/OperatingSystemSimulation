@@ -62,11 +62,12 @@ func FinalizarIO(w http.ResponseWriter, r *http.Request) {
 	log.Printf("el IO: %s Ip: %s Puerto %d se desconecto", request.Nombre, request.Ip, request.Puerto)
 
 	//ioCerrada := ObtenerIOPlus(request.Nombre, request.Ip, request.Puerto)
+	MutexListaIo.Lock()
 	if HayUnaSola(request.Nombre) {
 		enviarExitProcesosIO(request.Nombre)
 	}
 	ListaIO = removerIO(request.Nombre, request.Ip, request.Puerto)
-
+	MutexListaIo.Unlock()
 	var respuestaIO RespuestaalIO
 	respuestaIO.Mensaje = "conexion realizada con exito"
 	respuestaJSON, err := json.Marshal(respuestaIO)
@@ -987,12 +988,13 @@ func FinalizarProceso(pcb *PCB) {
 	ColaExit = append(ColaExit, pcb)
 	InformarMemoriaFinProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 	log.Printf("## (<%d>) - Finaliza el proceso \n", pcb.Pid)
-	log.Printf("## (<%d>) - Métricas de estado: NEW NEW_COUNT: %d NEW_TIME: %d, READY READY_COUNT: %d READY_TIME: %d, EXECUTE EXECUTE_COUNT: %d EXECUTE_TIME: %d, BLOCKED BLOCKED_COUNT: %d BLOCKED_TIME: %d, SUSP.BLOCKED  SUSP.BLOCKED_COUNT: %d SUSP.BLOCKED_TIME: %d, SUSP.READY  SUSP.READY_COUNT: %d SUSP.READY_TIME: %d \n", pcb.Pid, pcb.MetricaEstados["NEW"], pcb.TiempoEstados["NEW"], pcb.MetricaEstados["READY"], pcb.TiempoEstados["READY"], pcb.MetricaEstados["EXECUTE"], pcb.TiempoEstados["EXECUTE"], pcb.MetricaEstados["BLOCKED"], pcb.TiempoEstados["BLOCKED"], pcb.MetricaEstados["SUSP.BLOCKED"], pcb.TiempoEstados["SUSP.BLOCKED"], pcb.MetricaEstados["SUSP.READY"], pcb.TiempoEstados["SUSP.READY"])
+	log.Printf("## (<%d>) - Métricas de estado: NEW NEW_COUNT: %d NEW_TIME: %d, READY READY_COExisteIOUNT: %d READY_TIME: %d, EXECUTE EXECUTE_COUNT: %d EXECUTE_TIME: %d, BLOCKED BLOCKED_COUNT: %d BLOCKED_TIME: %d, SUSP.BLOCKED  SUSP.BLOCKED_COUNT: %d SUSP.BLOCKED_TIME: %d, SUSP.READY  SUSP.READY_COUNT: %d SUSP.READY_TIME: %d \n", pcb.Pid, pcb.MetricaEstados["NEW"], pcb.TiempoEstados["NEW"], pcb.MetricaEstados["READY"], pcb.TiempoEstados["READY"], pcb.MetricaEstados["EXECUTE"], pcb.TiempoEstados["EXECUTE"], pcb.MetricaEstados["BLOCKED"], pcb.TiempoEstados["BLOCKED"], pcb.MetricaEstados["SUSP.BLOCKED"], pcb.TiempoEstados["SUSP.BLOCKED"], pcb.MetricaEstados["SUSP.READY"], pcb.TiempoEstados["SUSP.READY"])
 
 }
 */
 
 func CrearStructIO(ip string, puerto int, instancia string) {
+	MutexListaIo.Lock()
 	if ExisteIO(instancia) {
 		cola := ObtenerIO(instancia).ColaProcesos
 		ListaIO = append(ListaIO, IO{
@@ -1013,6 +1015,7 @@ func CrearStructIO(ip string, puerto int, instancia string) {
 			Disponible:   true,
 		})
 	}
+	MutexListaIo.Unlock()
 
 }
 
@@ -1082,6 +1085,7 @@ func EstaEnColaBlock(pcbChequear *PCB) bool {
 }
 
 func MandarProcesoAIO(instancia string) {
+	MutexListaIo.Lock()
 	for i := range ListaIO {
 		if ListaIO[i].Instancia == instancia && ListaIO[i].Disponible {
 			io := &ListaIO[i]
@@ -1093,6 +1097,7 @@ func MandarProcesoAIO(instancia string) {
 			}
 		}
 	}
+	MutexListaIo.Unlock()
 
 }
 

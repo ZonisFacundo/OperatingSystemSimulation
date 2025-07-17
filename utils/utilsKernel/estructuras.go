@@ -154,6 +154,7 @@ var MutexListaExec sync.Mutex
 var MutexColaBlock sync.Mutex
 var MutexColaSuspBlock sync.Mutex
 var MutexColaSuspReady sync.Mutex
+var MutexListaIo sync.Mutex
 
 /*
 var MutexFacu sync.Mutex
