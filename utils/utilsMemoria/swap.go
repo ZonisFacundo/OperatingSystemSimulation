@@ -40,19 +40,10 @@ func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *htt
 
 	log.Printf("\n\n KERNEL SOLICITO SWAP DE MEMORIA A DISCO (suspension) (RetornoClienteKernelServidorMemoriaSwapADisco)\n\n")
 
-<<<<<<< HEAD
-=======
-	// globals.Sem_Swap.Lock()
-
->>>>>>> main
 	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
 	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-<<<<<<< HEAD
-=======
-		// globals.Sem_Swap.Unlock()
->>>>>>> main
 
 		return
 	}
@@ -174,9 +165,6 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		w.WriteHeader(http.StatusOK)
 		w.Write(respuestaJSON)
 
-		var pagi globals.Pagina
-		pagi, _ = LeerPaginaCompleta(0 * globals.ClientConfig.Page_size) //ver semaforos adentro
-		log.Printf("LEO PAGINA 0: \n\n\n%b\n\n\n", pagi.Info)
 		//	auxiliares.Mostrarmemoria()
 
 		// globals.Sem_Bitmap.Unlock()

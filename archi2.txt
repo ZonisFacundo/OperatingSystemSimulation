@@ -1,15 +1,4 @@
-<<<<<<< HEAD
-NOOP
-NOOP
-NOOP
-NOOP
-NOOP
-NOOP
-NOOP
-NOOP
-=======
 IO IO-impresora 5000000
 WRITE 0 AAAAAAAA
 IO IO-impresora 8000
->>>>>>> main
 EXIT

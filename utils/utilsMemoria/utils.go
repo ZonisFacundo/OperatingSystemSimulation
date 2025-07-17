@@ -188,10 +188,10 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	//time.Sleep(time.Duration(globals.ClientConfig.Memory_delay*(len(Paquete.DirLogica)-1)) * time.Millisecond)
+	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay*(len(Paquete.DirLogica)-1)) * time.Millisecond)
 
-	//auxiliares.InicializarSiNoLoEstaMap(Paquete.DirLogica[0])
-	//globals.MetricasProceso[Paquete.DirLogica[0]].ContadorAccesosTablaPaginas += (len(Paquete.DirLogica) - 1)
+	auxiliares.InicializarSiNoLoEstaMap(Paquete.DirLogica[0])
+	globals.MetricasProceso[Paquete.DirLogica[0]].ContadorAccesosTablaPaginas += (len(Paquete.DirLogica) - 1)
 	// globals.Sem_MemoriaKernel.Lock()
 	globals.PunteroBase = globals.MemoriaKernel[Paquete.DirLogica[0]].PunteroATablaDePaginas
 	// globals.Sem_MemoriaKernel.Unlock()
