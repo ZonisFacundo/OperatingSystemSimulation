@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
@@ -40,8 +41,6 @@ func Execute(detalle globals.Instruccion) bool {
 			} else {
 				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
 				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
-				AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
-				log.Printf("PID: %d - Cache Add - Pagina: %d", globals.ID.ProcessValues.Pid, globals.ID.NroPag)
 			}
 			log.Printf("PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s",
 				globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.Datos)
@@ -67,8 +66,6 @@ func Execute(detalle globals.Instruccion) bool {
 			} else {
 				Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
 				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
-				AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
-				log.Printf("PID: %d - Cache Add - Pagina: %d", globals.ID.ProcessValues.Pid, globals.ID.NroPag)
 			}
 
 			log.Printf("PID: %d - Acción: LEER - Dirección Física: %d - Valor: %s",
@@ -375,8 +372,8 @@ func AgregarEnTLB(nroPagina int, direccion int) {
 			PID:       globals.ID.ProcessValues.Pid, // <-- este valor es clave
 			NroPagina: nroPagina,
 			Direccion: direccion,
+			UltimoAcceso: time.Now().UnixNano(),
 		}
-
 		if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
 			globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
 			return

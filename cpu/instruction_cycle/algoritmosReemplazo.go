@@ -9,20 +9,20 @@ import(
 )
 
 func ReemplazarTLB_FIFO(entrada globals.Entrada) {
-	tlb := &globals.Tlb
+	//tlb := &globals.Tlb
 
-	if tlb.Tamanio == 0 {
+	if globals.Tlb.Tamanio == 0 {
 		log.Printf("ERROR: Algoritmo FIFO invocado con TLB de tamaño 0")
 		return
 	}
 	
-	if len(tlb.Entradas) < tlb.Tamanio {
-		tlb.Entradas = append(tlb.Entradas, entrada)
+	if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
+		globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
 		return
 	}
 
-	tlb.Entradas[tlb.PosDeReemplazo] = entrada
-	tlb.PosDeReemplazo = (tlb.PosDeReemplazo + 1) % tlb.Tamanio
+	globals.Tlb.Entradas[globals.Tlb.PosDeReemplazo] = entrada
+	globals.Tlb.PosDeReemplazo = (globals.Tlb.PosDeReemplazo + 1) % globals.Tlb.Tamanio
 }
 
 func ReemplazarTLB_LRU(entrada globals.Entrada) {
