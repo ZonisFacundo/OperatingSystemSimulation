@@ -35,7 +35,7 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		log.Printf("Error al convertir a json.\n")
+		log.Printf("## ERROR -> Error al convertir a json.")
 		return
 	}
 	cliente := http.Client{}
@@ -47,7 +47,7 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 	req, err := http.NewRequest("GET", url, bytes.NewBuffer(PaqueteFormatoJson))
 
 	if err != nil {
-		log.Printf("Error al generar la peticion al server.\n")
+		log.Printf("## ERROR -> Error al generar la peticion al server.")
 		return
 	}
 
@@ -55,14 +55,14 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 
 	respuestaJSON, err := cliente.Do(req)
 	if err != nil {
-		log.Printf("Error al recibir respuesta.\n")
+		log.Printf("## ERROR -> Error al recibir respuesta.")
 		return
 
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
 
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		log.Printf("## ERROR -> Status de respuesta el server no fue la esperada.")
 		return
 	}
 	defer respuestaJSON.Body.Close()
@@ -78,11 +78,11 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 
 	err = json.Unmarshal(body, &(respuesta))
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		log.Printf("## ERROR -> Error al decodificar el JSON.")
 		return
 	}
 
-	log.Printf("## Instruccion recibida -> %s\n", respuesta.Mensaje) // Nos manda memoria la instrucción.
+	log.Printf("## Instruccion recibida -> %s.", respuesta.Mensaje) // Nos manda memoria la instrucción.
 
 	globals.ID.InstructionType = respuesta.Mensaje
 }

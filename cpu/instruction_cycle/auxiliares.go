@@ -37,7 +37,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		log.Printf("Error al convertir a json.\n")
+		log.Printf("## ERROR -> Error al convertir a json.")
 		return
 	}
 
@@ -48,7 +48,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
 	if err != nil {
-		log.Printf("Error al generar la peticion al server.\n")
+		log.Printf("## ERROR -> Error al generar la peticion al server.")
 		return
 	}
 
@@ -57,13 +57,13 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 	respuestaJSON, err := cliente.Do(req)
 
 	if err != nil {
-		log.Printf("Error al recibir respuesta.\n")
+		log.Printf("## ERROR -> Error al recibir respuesta.")
 		return
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
 
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		log.Printf("## ERROR -> Status de respuesta el server no fue la esperada.")
 		return
 	}
 	defer respuestaJSON.Body.Close()
@@ -78,7 +78,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 	var frame utilsCPU.MarcoDeMemoria
 	err = json.Unmarshal(body, &frame)
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		log.Printf("## ERROR -> Error al decodificar el JSON.")
 	}
 
 	log.Printf("## FRAME: %d", frame.Frame)
@@ -126,7 +126,7 @@ func RecibirDatosMMU(ip string, puerto int) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		log.Printf("Error al convertir a json.\n")
+		log.Printf("## ERROR -> Error al convertir a json.")
 		return
 	}
 
@@ -137,7 +137,7 @@ func RecibirDatosMMU(ip string, puerto int) {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
 	if err != nil {
-		log.Printf("Error al generar la peticion al server.\n")
+		log.Printf("## ERROR -> Error al generar la peticion al server.")
 		return
 	}
 
@@ -146,13 +146,13 @@ func RecibirDatosMMU(ip string, puerto int) {
 	respuestaJSON, err := cliente.Do(req)
 
 	if err != nil {
-		log.Printf("Error al recibir respuesta.\n")
+		log.Printf("## ERROR -> Error al recibir respuesta.")
 		return
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
 
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		log.Printf("## ERROR -> Status de respuesta el server no fue la esperada.")
 		return
 	}
 	defer respuestaJSON.Body.Close()
@@ -167,7 +167,7 @@ func RecibirDatosMMU(ip string, puerto int) {
 	var respuesta CPUMMU
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		log.Printf("## ERROR -> Error al decodificar el JSON.")
 	}
 
 	globals.ClientConfig.Entradas = respuesta.Entradas
