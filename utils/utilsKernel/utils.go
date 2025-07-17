@@ -63,10 +63,11 @@ func FinalizarIO(w http.ResponseWriter, r *http.Request) {
 
 	//ioCerrada := ObtenerIOPlus(request.Nombre, request.Ip, request.Puerto)
 	MutexListaIo.Lock()
-	if HayUnaSola(request.Nombre) {
+	ListaIO = removerIO(request.Nombre, request.Ip, request.Puerto)
+	if !ExisteIO(request.Nombre) {
 		enviarExitProcesosIO(request.Nombre)
 	}
-	ListaIO = removerIO(request.Nombre, request.Ip, request.Puerto)
+
 	MutexListaIo.Unlock()
 	var respuestaIO RespuestaalIO
 	respuestaIO.Mensaje = "conexion realizada con exito"
@@ -137,10 +138,10 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	MutexObtenerPCB.Lock()
+	//MutexObtenerPCB.Lock()
 	PCBUtilizar.Pc = request.Pc
 	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
-	MutexObtenerPCB.Unlock()
+	//MutexObtenerPCB.Unlock()
 
 	switch request.Syscall {
 	case "IO":
@@ -150,9 +151,10 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		if ExisteIO(request.Parametro2) {
 			//SemCortoPlazo <- struct{}{}
 			//ioServidor := ObtenerIODisponible(request.Parametro2)
-			go PlanificadorMedianoPlazo(PCBUtilizar)
-			AgregarColaIO(request.Parametro2, PCBUtilizar, request.Parametro1)
 			PasarBlocked(PCBUtilizar)
+			AgregarColaIO(request.Parametro2, PCBUtilizar, request.Parametro1)
+			go PlanificadorMedianoPlazo(PCBUtilizar)
+
 			//log.Printf("## (<%d>) - Bloqueado por IO: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
 			MandarProcesoAIO(request.Parametro2)
 			//log.Printf("YA LO MANDE A IO PARA PID: (<%d>) - IO SERVIDOR INSTANCIA: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
@@ -187,7 +189,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		MutexCrearPCB.Unlock()
 		cpuServidor.Disponible = false
 		//santi los puso para probar
-		EnviarProcesoACPU(PCBUtilizar, cpuServidor)
+		//EnviarProcesoACPU(PCBUtilizar, cpuServidor)
 		w.WriteHeader(http.StatusOK)
 
 		w.Write(respuestaJSON)
@@ -451,9 +453,9 @@ func InterrumpirCPU(cpu *CPU) {
 
 	var respuesta PaqueteRecibidoDeCPU
 
-	MutexObtenerPCB.Lock()
+	//MutexObtenerPCB.Lock()
 	pcb := ObtenerPCB(respuesta.Pid)
-	MutexObtenerPCB.Unlock()
+	//MutexObtenerPCB.Unlock()
 
 	pcb.Pc = respuesta.Pc
 	err = json.Unmarshal(body, &respuesta)
@@ -734,28 +736,25 @@ func calcularRafagaEstimada(pcb *PCB) float32 {
 
 func PasarReady(pcb *PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado READY  \n", pcb.Pid, pcb.EstadoActual)
-
-	MutexColaReady.Lock()
-	ColaReady = append(ColaReady, pcb)
-	MutexColaReady.Unlock()
-
 	MutexColaNew.Lock()
+	MutexColaReady.Lock()
+	MutexListaExec.Lock()
 	MutexColaBlock.Lock()
 	MutexColaSuspBlock.Lock()
 	MutexColaSuspReady.Lock()
-	MutexListaExec.Lock()
-
+	ColaReady = append(ColaReady, pcb)
 	ColaNew = removerPCB(ColaNew, pcb)
 	ColaBlock = removerPCB(ColaBlock, pcb)
 	ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
 	ColaSuspReady = removerPCB(ColaSuspReady, pcb)
 	ListaExec = removerPCB(ListaExec, pcb)
 
+	MutexColaNew.Unlock()
+	MutexColaReady.Unlock()
 	MutexListaExec.Unlock()
+	MutexColaBlock.Unlock()
 	MutexColaSuspReady.Unlock()
 	MutexColaSuspBlock.Unlock()
-	MutexColaBlock.Unlock()
-	MutexColaNew.Unlock()
 
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "READY"
@@ -900,12 +899,14 @@ func TraqueoCPU() (*CPU, bool) {
 }
 
 func crearStructCPU(ip string, puerto int, instancia string) {
+	//mutexListaCPU.Lock()
 	ListaCPU = append(ListaCPU, CPU{
 		Ip:         ip,
 		Port:       puerto,
 		Disponible: true,
 		Instancia:  instancia,
 	})
+	//mutexListaCPU.Lock()
 }
 
 func CrearStructCPU2(ip string, puerto int, instancia string) CPU {
@@ -919,15 +920,21 @@ func CrearStructCPU2(ip string, puerto int, instancia string) CPU {
 }
 
 func ObtenerCpu(instancia string) *CPU {
+	mutexListaCPU.Lock()
+	defer mutexListaCPU.Unlock()
 	for i := range ListaCPU {
 		if ListaCPU[i].Instancia == instancia {
 			return &ListaCPU[i]
+
 		}
 	}
 	return nil
+
 }
 
 func ObtenerCpuEnFuncionDelPid(pid int) *CPU {
+	mutexListaCPU.Lock()
+	defer mutexListaCPU.Unlock()
 	for i := range ListaCPU {
 		if ListaCPU[i].Pid == pid {
 			return &ListaCPU[i]
@@ -953,12 +960,12 @@ func FinalizarProceso(pcb *PCB) {
 	ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
 	ColaSuspReady = removerPCB(ColaSuspReady, pcb)
 
-	MutexColaSuspReady.Unlock()
-	MutexColaSuspBlock.Unlock()
-	MutexColaBlock.Unlock()
-	MutexListaExec.Unlock()
-	MutexColaReady.Unlock()
 	MutexColaNew.Unlock()
+	MutexColaReady.Unlock()
+	MutexListaExec.Unlock()
+	MutexColaBlock.Unlock()
+	MutexColaSuspBlock.Unlock()
+	MutexColaSuspReady.Unlock()
 
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "EXIT"
@@ -1061,7 +1068,8 @@ func RemoverDeColaProcesoIO(io *IO) {
 }
 
 func ObtenerPCB(pid int) *PCB {
-
+	MutexListaExec.Lock()
+	defer MutexListaExec.Unlock()
 	for _, pcb := range ListaExec {
 		if pcb.Pid == pid {
 			return pcb
@@ -1308,7 +1316,7 @@ func SwapInProceso(pcb *PCB) {
 	// Analizo código HTTP
 	log.Printf("La respuesta del server memoria fue: %s\n", respuesta.Mensaje)
 	if resp.StatusCode == http.StatusOK {
-		log.Printf("Se pasa el proceso PID: %d a READY desde SUSP.READY entre aca", pcb.Pid)
+		log.Printf("Se pasa el proceso PID: %d a READY desde SUSP.READY", pcb.Pid)
 		PasarReady(pcb)
 	} else {
 		log.Printf("No se puede pasar a READY al PID %d: %s",
