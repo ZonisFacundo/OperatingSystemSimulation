@@ -77,7 +77,6 @@ func HandshakeACpu(w http.ResponseWriter, r *http.Request) {
 }
 
 func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
-
 	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
 
 	// globals.Sem_Instruccion.Lock()
@@ -87,7 +86,15 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 		// globals.Sem_Instruccion.Unlock()
 		return
 	}
-	log.Printf("## PID: %d - Obtener instrucción: %d - Instrucción: %s", globals.Instruction.Pid, globals.Instruction.Pc, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
+	//globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_Instruccion.Lock()
+	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
+	globals.MetricasProceso[globals.Instruction.Pid].ContadorInstruccionesSolicitadas++
+	//globals.Sem_Instruccion.Unlock()
+	//globals.Sem_MemoriaKernel.Unlock()
+	//log.Printf("## PID: <%d> - Obtener instrucción: <%d> - Instrucción: %s\n", globals.Instruction.Pid, globals.Instruction.Pid, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
+
+	log.Printf("## PID: <%d>- Obtener instrucción: <%d> - Instrucción: %s\n", globals.Instruction.Pid, globals.Instruction.Pc, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
 	// globals.Sem_Instruccion.Unlock()
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
@@ -95,7 +102,7 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 	// globals.Sem_MemoriaKernel.Lock()
 	// globals.Sem_Instruccion.Lock()
-	//log.Printf("\n\n\n%s", globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]) ///borrar
+	log.Printf("%s\n", globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]) ///borrar
 	// globals.Sem_Instruccion.Unlock()
 	// globals.Sem_MemoriaKernel.Unlock()
 	//log.Printf("\nla longitud del archivo de instrucciones es: %d\n\n", len(globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones))
@@ -118,6 +125,7 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 }
 
 func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
 
 	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
 	var DondeGuardarProceso int
@@ -190,8 +198,12 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 	}
 	//time.Sleep(time.Duration(globals.ClientConfig.Memory_delay*(len(Paquete.DirLogica)-1)) * time.Millisecond)
 
-	//auxiliares.InicializarSiNoLoEstaMap(Paquete.DirLogica[0])
-	//globals.MetricasProceso[Paquete.DirLogica[0]].ContadorAccesosTablaPaginas += (len(Paquete.DirLogica) - 1)
+	auxiliares.InicializarSiNoLoEstaMap(Paquete.DirLogica[Paquete.DirLogica[0]])
+	for i := 0; i < (len(Paquete.DirLogica) - 1); i++ {
+		time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
+		globals.MetricasProceso[Paquete.DirLogica[0]].ContadorAccesosTablaPaginas++
+	}
+
 	// globals.Sem_MemoriaKernel.Lock()
 	globals.PunteroBase = globals.MemoriaKernel[Paquete.DirLogica[0]].PunteroATablaDePaginas
 	// globals.Sem_MemoriaKernel.Unlock()
@@ -230,7 +242,9 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 		log.Printf("\n\nTAM A LEER ES < 0, ERROR (HTTP Read)\n\n")
 		return
 	}
-	log.Printf("## PID: %d- Lectura - Dir. Física: %d - Tamaño: %d\n", PaqueteDireccion.Pid, PaqueteDireccion.Direccion, PaqueteDireccion.Tamaño)
+
+	log.Printf("## PID: %d - <Escritura/Lectura> - Dir. Física: %d  - Tamaño: %d\n", PaqueteDireccion.Pid, PaqueteDireccion.Direccion, PaqueteDireccion.Tamaño)
+
 	var ContenidoDireccion globals.BytePaquete
 	ContenidoDireccion.Info = make([]byte, PaqueteDireccion.Tamaño)
 	// globals.Sem_Mem.Lock()
@@ -275,7 +289,8 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 	bytardos := []byte(PaqueteInfoWrite.Contenido)
 
-	log.Printf("“## PID: %d - Escritura - Dir. Física: %d - Tamaño: %d\n", PaqueteInfoWrite.Pid, PaqueteInfoWrite.Direccion, len(PaqueteInfoWrite.Contenido))
+	log.Printf("## PID: %d - <Escritura> - Dir. Física: %d  - Tamaño: %d\n", PaqueteInfoWrite.Pid, PaqueteInfoWrite.Direccion, (len(PaqueteInfoWrite.Contenido) - 1))
+
 	// globals.Sem_Mem.Lock()
 	for i := 0; i < len(PaqueteInfoWrite.Contenido); i++ {
 		//log.Printf("%b", bytardos[i])
@@ -292,7 +307,7 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 	//log.Printf("\n\nMUESTRO LA MEMORIA DONDE SE ESCRIBIO LO QUE NOS PIDIO CPU \n\n")
 	//auxiliares.Mostrarmemoria()
-	log.Printf("\n\n")
+	//log.Printf("\n\n")
 
 	/*
 		MUCHISIMO CUIDADO, GLOBALS,CONTAOR Y MOSTRAR TABLA O DESCOMENTAS AMBAS O COMENTAS AMBAS, PORQUE HAY RACE CONDITION SINO, EL PUNTO ES QUE ES MERAMENTE PARA DEBUG EL MOSTRAR ASI QUE NO VALE LA PENA HACER ALGO AL RESPECTO
@@ -317,7 +332,6 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
-
 	//Este paquete lo unico q recibe es el pid para hacerle el dump junto a un mensaje
 	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
 	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
@@ -325,7 +339,8 @@ func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r 
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Printf("## PID: %d - Memory Dump solicitado\n", paqueteDeKernel.Pid)
+	log.Printf("## PID: <%d> - Memory Dump solicitado\n", paqueteDeKernel.Pid)
+
 	MemoryDump(paqueteDeKernel.Pid)
 
 	var respuesta respuestaalKernel
@@ -342,7 +357,6 @@ func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r 
 }
 func RetornoClienteKernelServidorMemoriaFinProceso(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
-
 	//Este paquete lo unico q recibe es el pid para hacerle el dump junto a un mensaje
 	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
 	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente

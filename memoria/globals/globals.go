@@ -49,6 +49,7 @@ type Marco struct {
 type DireccionFisica struct {
 	Direccion int `json:"adress"`
 	Tamaño    int `json:"value"`
+	Pid       int `json:"pid"`
 }
 
 type PaqueteRead struct {
