@@ -91,14 +91,14 @@ func CargarConfig(path string, instanceID string) {
 
 	conjuntodebytes, err := os.ReadFile(path)
 	if err != nil {
-		log.Printf("ATENCION \n ATENCION\n error al recibir los datos del .json \n esto ocurre porque NO ESTAS EJECUTANDO EL PROYECTO DESDE EL DIRECTORIO CORRESPONDIENTE \n, el path que recibe el cargar config espera que ejecutes los programas desde el directorio ~/tp-2025-1c-NutriGO, seguramente lo estas haciendo desde ~/tp-2025-1c-NutriGO/nombredelmodulo\n")
+		log.Printf("## ERROR -> Revisa bien el path del config papulince.")
 		return
 	}
 
 	var configgenerica Config
 	err = json.Unmarshal(conjuntodebytes, &configgenerica) //traducimos de .json a go digamosle
 	if err != nil {
-		log.Printf("Error al decodificar datos JSON -> GOLANG")
+		log.Printf("## ERROR -> Error al decodificar datos JSON -> GOLANG")
 		return
 	}
 
@@ -108,7 +108,7 @@ func CargarConfig(path string, instanceID string) {
 
 func InitCache() {
 	if ClientConfig.Cache_entries == 0 {
-		log.Printf("Caché deshabilitada.")
+		log.Printf("## ERROR -> Cache deshabilitada.")
 	}
 	CachePaginas = CacheDePaginas{
 		Entradas:     make([]EntradaCacheDePaginas, 0, ClientConfig.Cache_entries),
@@ -119,7 +119,7 @@ func InitCache() {
 
 func InitTlb() {
 	if ClientConfig.Tlb_entries == 0 {
-		log.Printf("TLB deshabilitada.")
+		log.Printf("## ERROR -> TLB deshabilitada.")
 	}
 	Tlb = TLB{
 		Entradas:       make([]Entrada, 0, ClientConfig.Tlb_entries),
