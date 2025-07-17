@@ -155,6 +155,10 @@ var MutexColaBlock sync.Mutex
 var MutexColaSuspBlock sync.Mutex
 var MutexColaSuspReady sync.Mutex
 
+var MutexCrearPCB sync.Mutex
+var MutexExit sync.Mutex
+var MutexObtenerPCB sync.Mutex
+
 /*
 var MutexFacu sync.Mutex
 var condFacu = sync.NewCond(&MutexFacu) //labura en conjunto ccon el mutex para poder hacer waits y signals como vimos en la teoria sin romper todo FACU facu

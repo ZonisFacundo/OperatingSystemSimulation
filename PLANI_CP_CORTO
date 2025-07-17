@@ -1,8 +1,5 @@
 NOOP
 NOOP
-NOOP
-NOOP
-NOOP
 IO IO-impresora 3000
 GOTO 0
 EXIT

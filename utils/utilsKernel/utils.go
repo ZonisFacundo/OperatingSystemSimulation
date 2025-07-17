@@ -125,9 +125,20 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	}
 	//log.Printf("Conexion establecida con exito \n")
 	cpuServidor := ObtenerCpu(request.InstanciaCPU)
+	log.Printf("te voy a pedir este pid %d, CACA", cpuServidor.Pid)
+
+	MutexObtenerPCB.Lock()
 	PCBUtilizar := ObtenerPCB(cpuServidor.Pid)
+	MutexObtenerPCB.Unlock()
+
+	if PCBUtilizar == nil {
+		return
+	}
+
+	MutexObtenerPCB.Lock()
 	PCBUtilizar.Pc = request.Pc
 	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
+	MutexObtenerPCB.Unlock()
 
 	switch request.Syscall {
 	case "IO":
@@ -155,6 +166,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
 		respuesta.Mensaje = "interrupcion"
 		cpuServidor.Disponible = true
+		log.Printf("\n\n\n este pid quiero matarse %d \n\n\n", PCBUtilizar.Pid)
 		FinalizarProceso(PCBUtilizar)
 
 	case "DUMP_MEMORY":
@@ -167,8 +179,12 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	case "INIT_PROC":
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
 		respuesta.Mensaje = "NO INTERRUMPAS GIL"
+		//santi los puso para probar
+		MutexCrearPCB.Lock()
 		CrearPCB(request.Parametro1, request.Parametro2)
+		MutexCrearPCB.Unlock()
 		cpuServidor.Disponible = false
+		//santi los puso para probar
 		EnviarProcesoACPU(PCBUtilizar, cpuServidor)
 		w.WriteHeader(http.StatusOK)
 
@@ -431,7 +447,11 @@ func InterrumpirCPU(cpu *CPU) {
 	}
 
 	var respuesta PaqueteRecibidoDeCPU
+
+	MutexObtenerPCB.Lock()
 	pcb := ObtenerPCB(respuesta.Pid)
+	MutexObtenerPCB.Unlock()
+
 	pcb.Pc = respuesta.Pc
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
@@ -570,10 +590,10 @@ func IniciarPlanifcador(tamanio int, archivo string) {
 func PlanificadorLargoPlazo() {
 
 	for true {
-		log.Printf("Entre AL plani largo plazo\n")
+		//log.Printf("Entre AL plani largo plazo\n")
 
 		<-SemLargoPlazo
-		log.Printf("pase el semaforo")
+		//log.Printf("pase el semaforo")
 		if len(ColaSuspReady) != 0 {
 			log.Printf("hay procesos en susp ready")
 			MutexColaNew.Lock()
@@ -599,11 +619,11 @@ func PlanificadorLargoPlazo() {
 			MutexColaNew.Unlock()
 			ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaNew)
 
-		} //else {
-		//	SemLargoPlazo <- struct{}{}
-		//time.Sleep(1 * time.Second)
+		} else {
+			SemLargoPlazo <- struct{}{}
+			//time.Sleep(1 * time.Second)
 
-		//}
+		}
 
 	}
 }
@@ -693,11 +713,11 @@ func PlanificadorCortoPlazo() {
 				SemCortoPlazo <- struct{}{}
 				time.Sleep(1 * time.Second)
 			}
-		} // else {
-		//SemCortoPlazo <- struct{}{}
-		//time.Sleep(1 * time.Second)
+		} else {
+			SemCortoPlazo <- struct{}{}
+			//time.Sleep(1 * time.Second)
 
-		//}
+		}
 	}
 }
 
@@ -779,13 +799,25 @@ func PasarReady(pcb *PCB) {
 	MutexColaReady.Lock()
 	ColaReady = append(ColaReady, pcb)
 	MutexColaReady.Unlock()
+
 	MutexColaNew.Lock()
+	MutexColaBlock.Lock()
+	MutexColaSuspBlock.Lock()
+	MutexColaSuspReady.Lock()
+	MutexListaExec.Lock()
+
 	ColaNew = removerPCB(ColaNew, pcb)
 	ColaBlock = removerPCB(ColaBlock, pcb)
 	ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
 	ColaSuspReady = removerPCB(ColaSuspReady, pcb)
 	ListaExec = removerPCB(ListaExec, pcb)
+
+	MutexListaExec.Unlock()
+	MutexColaSuspReady.Unlock()
+	MutexColaSuspBlock.Unlock()
+	MutexColaBlock.Unlock()
 	MutexColaNew.Unlock()
+
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "READY"
 	pcb.MetricaEstados["READY"]++
@@ -965,22 +997,43 @@ func ObtenerCpuEnFuncionDelPid(pid int) *CPU {
 }
 func FinalizarProceso(pcb *PCB) {
 	//log.Printf("El proceso PID: %d termino su ejecucion y se paso a EXIT \n", pcb.Pid)
+
+	MutexColaNew.Lock()
+	MutexColaReady.Lock()
+	MutexListaExec.Lock()
+	MutexColaBlock.Lock()
+	MutexColaSuspBlock.Lock()
+	MutexColaSuspReady.Lock()
+
 	ColaNew = removerPCB(ColaNew, pcb)
 	ColaReady = removerPCB(ColaReady, pcb)
 	ListaExec = removerPCB(ListaExec, pcb)
 	ColaBlock = removerPCB(ColaBlock, pcb)
 	ColaSuspBlock = removerPCB(ColaSuspBlock, pcb)
 	ColaSuspReady = removerPCB(ColaSuspReady, pcb)
+
+	MutexColaSuspReady.Unlock()
+	MutexColaSuspBlock.Unlock()
+	MutexColaBlock.Unlock()
+	MutexListaExec.Unlock()
+	MutexColaReady.Unlock()
+	MutexColaNew.Unlock()
+
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "EXIT"
-	log.Printf("\n\nEl proceso PID: %d esta tratande de exitearrrrrr \n", pcb.Pid)
+	log.Printf("\n\n El proceso PID: %d esta tratande de exitearrrrrr \n", pcb.Pid)
 	pcb.MetricaEstados["EXIT"]++
 	log.Printf("El proceso PID: %d paso por el map con las manos arriba tomando tequila \n\n\n", pcb.Pid)
 
+	MutexExit.Lock()
 	ColaExit = append(ColaExit, pcb)
-	InformarMemoriaFinProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
+	MutexExit.Unlock()
+
+	log.Printf("\n\n\n\n le aviso al tarado de memoria q mate al pid %d \n\n\n", pcb.Pid)
 	log.Printf("## (<%d>) - Finaliza el proceso \n", pcb.Pid)
 	log.Printf("## (<%d>) - Métricas de estado: NEW NEW_COUNT: %d NEW_TIME: %d, READY READY_COUNT: %d READY_TIME: %d, EXECUTE EXECUTE_COUNT: %d EXECUTE_TIME: %d, BLOCKED BLOCKED_COUNT: %d BLOCKED_TIME: %d, SUSP.BLOCKED  SUSP.BLOCKED_COUNT: %d SUSP.BLOCKED_TIME: %d, SUSP.READY  SUSP.READY_COUNT: %d SUSP.READY_TIME: %d \n", pcb.Pid, pcb.MetricaEstados["NEW"], pcb.TiempoEstados["NEW"], pcb.MetricaEstados["READY"], pcb.TiempoEstados["READY"], pcb.MetricaEstados["EXECUTE"], pcb.TiempoEstados["EXECUTE"], pcb.MetricaEstados["BLOCKED"], pcb.TiempoEstados["BLOCKED"], pcb.MetricaEstados["SUSP.BLOCKED"], pcb.TiempoEstados["SUSP.BLOCKED"], pcb.MetricaEstados["SUSP.READY"], pcb.TiempoEstados["SUSP.READY"])
+
+	InformarMemoriaFinProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 }
 
 /*
