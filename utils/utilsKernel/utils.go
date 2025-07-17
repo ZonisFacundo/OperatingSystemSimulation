@@ -690,10 +690,10 @@ func PlanificadorCortoPlazo() {
 					PasarExec(pcbChequear)
 					cpuDesalojar.Pid = pcbChequear.Pid
 				}
-			} else {
-				SemCortoPlazo <- struct{}{}
-				time.Sleep(1 * time.Second)
-			}
+			} //else {
+			//SemCortoPlazo <- struct{}{}
+			//time.Sleep(1 * time.Second)
+			//}
 		} // else {
 		//SemCortoPlazo <- struct{}{}
 		//time.Sleep(1 * time.Second)
@@ -1010,6 +1010,7 @@ func CrearStructIO(ip string, puerto int, instancia string) {
 			ColaProcesos: cola,
 			Disponible:   true,
 		})
+		MandarProcesoAIO(instancia)
 
 	} else {
 		cola := CrearColaIO(instancia)
@@ -1312,7 +1313,7 @@ func SwapInProceso(pcb *PCB) {
 	// Analizo código HTTP
 	log.Printf("La respuesta del server memoria fue: %s\n", respuesta.Mensaje)
 	if resp.StatusCode == http.StatusOK {
-		log.Printf("Se pasa el proceso PID: %d a READY desde SUSP.READY", pcb.Pid)
+		log.Printf("Se pasa el proceso PID: %d a READY desde SUSP.READY entre aca", pcb.Pid)
 		PasarReady(pcb)
 	} else {
 		log.Printf("No se puede pasar a READY al PID %d: %s",
