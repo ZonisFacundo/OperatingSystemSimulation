@@ -8,5 +8,5 @@
   "port_memory": 8002,
   "ready_ingress_algorithm": "FIFO",
   "scheduler_algorithm": "FIFO",
-  "suspension_time": 3000
+  "suspension_time": 120000
 }
