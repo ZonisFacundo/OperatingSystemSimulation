@@ -1,7 +1,6 @@
 package instruction_cycle
 
-import(
-
+import (
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 
 	"log"
@@ -9,20 +8,20 @@ import(
 )
 
 func ReemplazarTLB_FIFO(entrada globals.Entrada) {
-	tlb := &globals.Tlb
+	//tlb := &globals.Tlb
 
-	if tlb.Tamanio == 0 {
+	if globals.Tlb.Tamanio == 0 {
 		log.Printf("ERROR: Algoritmo FIFO invocado con TLB de tamaño 0")
 		return
 	}
-	
-	if len(tlb.Entradas) < tlb.Tamanio {
-		tlb.Entradas = append(tlb.Entradas, entrada)
+
+	if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
+		globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
 		return
 	}
 
-	tlb.Entradas[tlb.PosDeReemplazo] = entrada
-	tlb.PosDeReemplazo = (tlb.PosDeReemplazo + 1) % tlb.Tamanio
+	globals.Tlb.Entradas[globals.Tlb.PosDeReemplazo] = entrada
+	globals.Tlb.PosDeReemplazo = (globals.Tlb.PosDeReemplazo + 1) % globals.Tlb.Tamanio
 }
 
 func ReemplazarTLB_LRU(entrada globals.Entrada) {
@@ -42,7 +41,7 @@ func ReemplazarTLB_LRU(entrada globals.Entrada) {
 	posVictima := 0
 	minAcceso := tlb.Entradas[0].UltimoAcceso
 
-	for i := 1; i < len(tlb.Entradas); i++ {
+	for i := 1; i < tlb.Tamanio; i++ {
 		if tlb.Entradas[i].UltimoAcceso < minAcceso {
 			posVictima = i
 			minAcceso = tlb.Entradas[i].UltimoAcceso
@@ -55,7 +54,7 @@ func ReemplazarTLB_LRU(entrada globals.Entrada) {
 
 func ReemplazarConCLOCK(entradaNueva globals.EntradaCacheDePaginas) {
 	if globals.CachePaginas.Tamanio == 0 || len(globals.CachePaginas.Entradas) == 0 {
-		log.Printf("Algoritmo CLOCK invocado con caché deshabilitada")
+		log.Printf("## Algoritmo CLOCK invocado -> Caché deshabilitada")
 		return
 	}
 	cache := &globals.CachePaginas
@@ -69,11 +68,11 @@ func ReemplazarConCLOCK(entradaNueva globals.EntradaCacheDePaginas) {
 			if candidato.Modificada {
 				frameBase := candidato.NroPag * globals.ClientConfig.Page_size
 				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, candidato.Contenido)
-				log.Printf("PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, frameBase)
+				log.Printf("## PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, frameBase)
 			}
 
 			*candidato = entradaNueva
-			candidato.BitUso = true  // porque la acabamos de traer y usar
+			candidato.BitUso = true // porque la acabamos de traer y usar
 
 			cache.PosReemplazo = (cache.PosReemplazo + 1) % tamanio
 			return
@@ -86,7 +85,7 @@ func ReemplazarConCLOCK(entradaNueva globals.EntradaCacheDePaginas) {
 
 func ReemplazarConCLOCKM(entradaNueva globals.EntradaCacheDePaginas) {
 	if globals.CachePaginas.Tamanio == 0 || len(globals.CachePaginas.Entradas) == 0 {
-		log.Printf("Algoritmo CLOCK-M invocado con caché deshabilitada")
+		log.Printf("## Algoritmo CLOCK-M -> Caché deshabilitada.")
 		return
 	}
 	cache := &globals.CachePaginas
@@ -112,7 +111,7 @@ func ReemplazarConCLOCKM(entradaNueva globals.EntradaCacheDePaginas) {
 			if !candidato.BitUso && candidato.Modificada {
 				frameBase := candidato.NroPag * globals.ClientConfig.Page_size
 				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, candidato.Contenido)
-				log.Printf("PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, frameBase)
+				log.Printf("## PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, frameBase)
 
 				*candidato = entradaNueva
 				candidato.BitUso = true

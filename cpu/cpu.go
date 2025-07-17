@@ -97,7 +97,7 @@ func main() {
 			mutexInterrupcion.Unlock()
 
 			if interrumpido {
-				log.Printf("## Interrupción. Deteniendo proceso PID %d", globals.ID.ProcessValues.Pid)
+				log.Printf("## Interrupcion recibida -> Deteniendo proceso con PID: %d", globals.ID.ProcessValues.Pid)
 				break ejecucion
 			}
 
