@@ -565,12 +565,18 @@ func IniciarPlanifcador(tamanio int, archivo string) {
 // Dejo nuestro planificador porque es el que deberia de funcar mas mejor (aproposito)
 
 func PlanificadorLargoPlazo() {
+
 	for true {
+		log.Printf("Entre AL plani largo plazo\n")
+
 		<-SemLargoPlazo
+		log.Printf("pase el semaforo")
 		if len(ColaSuspReady) != 0 {
+			log.Printf("hay procesos en susp ready")
 			MutexColaNew.Lock()
 			pcbChequear := CriterioColaNew(ColaSuspReady)
 			MutexColaNew.Unlock()
+
 			SwapInProceso(pcbChequear)
 			//ConsultarProcesoConMemoria(pcbChequear, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, ColaSuspReady)
 

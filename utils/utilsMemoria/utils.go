@@ -186,6 +186,7 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	// globals.Sem_MemoriaKernel.Lock()
 	globals.PunteroBase = globals.MemoriaKernel[Paquete.DirLogica[0]].PunteroATablaDePaginas
 	// globals.Sem_MemoriaKernel.Unlock()
