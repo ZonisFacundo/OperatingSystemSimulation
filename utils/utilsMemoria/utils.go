@@ -77,34 +77,34 @@ func HandshakeACpu(w http.ResponseWriter, r *http.Request) {
 }
 
 func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
-	globals.Sem_Instruccion.Lock()
+	// globals.Sem_Instruccion.Lock()
 	err := json.NewDecoder(r.Body).Decode(&globals.Instruction) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		globals.Sem_Instruccion.Unlock()
+		// globals.Sem_Instruccion.Unlock()
 		return
 	}
 
 	log.Printf("Cliente envio: \n pid: %d \n pc: %d", globals.Instruction.Pid, globals.Instruction.Pc)
-	globals.Sem_Instruccion.Unlock()
+	// globals.Sem_Instruccion.Unlock()
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
 
-	globals.Sem_MemoriaKernel.Lock()
-	globals.Sem_Instruccion.Lock()
+	// globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_Instruccion.Lock()
 	log.Printf("\n\n\n%s", globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]) ///borrar
-	globals.Sem_Instruccion.Unlock()
-	globals.Sem_MemoriaKernel.Unlock()
+	// globals.Sem_Instruccion.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock()
 	time.Sleep(2 * time.Second)
 	//log.Printf("\nla longitud del archivo de instrucciones es: %d\n\n", len(globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones))
 
 	//log.Printf("estamos mandandole a CPU, del pid: %d la instrucion del pc: %d la cual es %s \n\n", globals.Instruction.Pid, globals.Instruction.Pc, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
-	globals.Sem_MemoriaKernel.Lock()
-	globals.Sem_Instruccion.Lock()
+	// globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_Instruccion.Lock()
 	respuestaCpu.Mensaje = globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]
-	globals.Sem_Instruccion.Unlock()
-	globals.Sem_MemoriaKernel.Unlock()
+	// globals.Sem_Instruccion.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock()
 
 	respuestaJSON, err := json.Marshal(respuestaCpu)
 
@@ -132,9 +132,9 @@ func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request)
 	log.Printf("Recibido del kernel: \n pid: %d  tam: %d  tambien recibimos un archivo con esta ruta: %s \n", (PaqueteInfoProceso).Pid, (PaqueteInfoProceso).TamProceso, (PaqueteInfoProceso.Archivo))
 
 	//el kernel quiere saber si podemos guardar eso en memoria, para eso vamos a consultar el espacio que tenemos
-	globals.Sem_Bitmap.Lock()                                           //TODO
+	// globals.Sem_Bitmap.Lock()                                           //TODO
 	DondeGuardarProceso = EntraEnMemoria(PaqueteInfoProceso.TamProceso) //devuelve menor a 0 si no entra en memoria el proceso
-	globals.Sem_Bitmap.Unlock()
+	// globals.Sem_Bitmap.Unlock()
 
 	if DondeGuardarProceso == -1 {
 		log.Printf("NO HAY ESPACIO EN MEMORIA PARA GUARDAR EL PROCESO \n")
@@ -186,9 +186,9 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_MemoriaKernel.Lock()
 	globals.PunteroBase = globals.MemoriaKernel[Paquete.DirLogica[0]].PunteroATablaDePaginas
-	globals.Sem_MemoriaKernel.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock()
 
 	var Traduccion globals.Marco = TraducirLogicaAFisica(Paquete.DirLogica, globals.PunteroBase)
 
@@ -225,12 +225,12 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	}
 	var ContenidoDireccion globals.BytePaquete
 	ContenidoDireccion.Info = make([]byte, PaqueteDireccion.Tamaño)
-	globals.Sem_Mem.Lock()
+	// globals.Sem_Mem.Lock()
 	for i := 0; i < PaqueteDireccion.Tamaño; i++ {
 
 		ContenidoDireccion.Info[i] = globals.MemoriaPrincipal[PaqueteDireccion.Direccion]
 	}
-	globals.Sem_Mem.Unlock()
+	// globals.Sem_Mem.Unlock()
 	respuestaJSON, err := json.Marshal(ContenidoDireccion)
 	if err != nil {
 		return
@@ -244,11 +244,11 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 
 	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
 
-	globals.Sem_Instruccion.Lock()
-	globals.Sem_Metricas.Lock()
+	// globals.Sem_Instruccion.Lock()
+	// globals.Sem_Metricas.Lock()
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorReadMemoria++
-	globals.Sem_Metricas.Unlock()
-	globals.Sem_Instruccion.Unlock()
+	// globals.Sem_Metricas.Unlock()
+	// globals.Sem_Instruccion.Unlock()
 
 }
 
@@ -266,12 +266,12 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 	bytardos := []byte(PaqueteInfoWrite.Contenido)
 
-	globals.Sem_Mem.Lock()
+	// globals.Sem_Mem.Lock()
 	for i := 0; i < len(PaqueteInfoWrite.Contenido); i++ {
 		//log.Printf("%b", bytardos[i])
 		globals.MemoriaPrincipal[PaqueteInfoWrite.Direccion+i] = bytardos[i]
 	}
-	globals.Sem_Mem.Unlock()
+	// globals.Sem_Mem.Unlock()
 	var rta respuestaalCPU
 	rta.Mensaje = "OK\n"
 
@@ -299,9 +299,9 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 	//registramos en metrica que funco el write
 	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
 
-	globals.Sem_Metricas.Lock()
+	// globals.Sem_Metricas.Lock()
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorWriteMemoria++
-	globals.Sem_Metricas.Unlock()
+	// globals.Sem_Metricas.Unlock()
 
 }
 
@@ -390,13 +390,13 @@ func InicializarMemoria() {
 
 func InicializarPaginasDisponibles() {
 
-	globals.Sem_Bitmap.Lock()
+	// globals.Sem_Bitmap.Lock()
 	globals.PaginasDisponibles = make([]int, (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size))
 
 	for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ {
 		globals.PaginasDisponibles[i] = 0
 	}
-	globals.Sem_Bitmap.Unlock()
+	// globals.Sem_Bitmap.Unlock()
 }
 
 /*
@@ -446,7 +446,7 @@ func ReservarMemoria(tam int, pid int) int {
 	}
 
 	var PaginasEncontradas int = 0
-	globals.Sem_Bitmap.Lock()
+	// globals.Sem_Bitmap.Lock()
 
 	if EntraEnMemoria(tam) >= 0 {
 
@@ -461,7 +461,7 @@ func ReservarMemoria(tam int, pid int) int {
 					auxiliares.ActualizarTablaSimple(frames, pid)
 
 					auxiliares.MostrarProceso(pid)
-					globals.Sem_Bitmap.Unlock()
+					// globals.Sem_Bitmap.Unlock()
 
 					return 1 //devuelvo numero positivo para indicar que fue un exito, asignamos todas las paginas al proceso
 				}
@@ -469,7 +469,7 @@ func ReservarMemoria(tam int, pid int) int {
 		}
 
 	}
-	globals.Sem_Bitmap.Unlock()
+	// globals.Sem_Bitmap.Unlock()
 
 	return -1
 }
@@ -559,11 +559,11 @@ func LeerArchivoYCargarMap(FilePath string, Pid int) {
 	auxiliares.ActualizarInstrucciones(Contenido, Pid) //esta funcion es la que hace que ande copiar el contenido en memoria
 
 	//creo una funcion para hacerlo porque sino rompeutilsMemoria
-	globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_MemoriaKernel.Lock()
 	for j := 0; j < len(globals.MemoriaKernel[Pid].Instrucciones); j++ {
 		fmt.Printf("%s", globals.MemoriaKernel[Pid].Instrucciones[j])
 	}
-	globals.Sem_MemoriaKernel.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock()
 
 }
 
@@ -581,33 +581,33 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 	//ojo aca, tengo que hacer estas maniobras porque no me deja asignarle de una un solo campo del struct al map... (ignorar)
 	//creamos un puntero que apunte a la base de la tabla de paginas del proceso (un nodo), luego inicializamos la tabla de paginas
-	globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_MemoriaKernel.Lock()
 	aux := globals.MemoriaKernel[paquete.Pid]
 	aux.PunteroATablaDePaginas = new(globals.Nodo)
 	globals.MemoriaKernel[paquete.Pid] = aux
-	globals.Sem_MemoriaKernel.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock()
 
-	globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_MemoriaKernel.Lock()
 	CrearEInicializarTablaDePaginas(globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas, 0)
-	globals.Sem_MemoriaKernel.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock()
 
 	//ahora nos queda asignarle los marcos correspondientes al proceso segun la tabla de paginas simple que ya tenemos creada
-	globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_MemoriaKernel.Lock()
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[paquete.Pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
-	globals.Sem_MemoriaKernel.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock()
 
-	globals.Sem_MemoriaKernel.Lock()
-	globals.Sem_Contador.Lock()
+	// globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_Contador.Lock()
 	globals.ContadorTabla = 0
 	AsignarValoresATablaDePaginas(paquete.Pid, 0, PunteroAux)
 	globals.ContadorTabla = 0 //lo reinicio para que cuando otro proceso quiera usarlo este bien seteado en 0 y no en algun valor tipo 14 como lo dejo el proceso anterior (es la unica varialbe global de utils)
-	globals.Sem_Contador.Unlock()
-	globals.Sem_MemoriaKernel.Unlock()
+	// globals.Sem_Contador.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock()
 
 	auxiliares.InicializarSiNoLoEstaMap(paquete.Pid)
-	globals.Sem_Metricas.Lock()
+	// globals.Sem_Metricas.Lock()
 	globals.MetricasProceso[paquete.Pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
-	globals.Sem_Metricas.Unlock()
+	// globals.Sem_Metricas.Unlock()
 
 	ActualizarPaginasDisponibles() //actualiza que paginas estan disponibles en este momento
 
@@ -735,12 +735,12 @@ func LeerPaginaCompleta(direccion int) (globals.Pagina, error) {
 		return pagina, fmt.Errorf("error")
 
 	} else {
-		globals.Sem_Mem.Lock()
+		// globals.Sem_Mem.Lock()
 		for i := 0; i < globals.ClientConfig.Page_size; i++ {
 			pagina.Info[i] = globals.MemoriaPrincipal[direccion+i] //vamos recorriendo la pagina en memoria y se la asignamos a la variable que vamos a devolver
 
 		}
-		globals.Sem_Mem.Unlock()
+		// globals.Sem_Mem.Unlock()
 		return pagina, nil
 	} //esa es la forma de go de devolver errores, no la uso en otras partes porque puedo arreglarme con valores negativos o cosas asi que siento que dejan el codigo mas expresivo, al menos para mi, devuelve dos cosas esta funcion.
 
@@ -760,12 +760,12 @@ func ActualizarPaginaCompleta(PaginaNueva globals.Pagina, direccion int) {
 		log.Printf("ERROR, LA DIRECCION RECIBIDA NO CORRESPONDE A LA DE UN INICIO DE PAGINA \n")
 
 	} else {
-		globals.Sem_Mem.Lock()
+		// globals.Sem_Mem.Lock()
 		for i := 0; i < globals.ClientConfig.Page_size; i++ {
 			globals.MemoriaPrincipal[direccion+i] = PaginaNueva.Info[i]
 
 		}
-		globals.Sem_Mem.Unlock()
+		// globals.Sem_Mem.Unlock()
 
 	}
 }
@@ -802,9 +802,9 @@ func AsignarValoresATablaDePaginas(pid int, nivel int, PunteroAux *globals.Nodo)
 }
 
 func ActualizarPaginasDisponibles() {
-	globals.Sem_Bitmap.Lock()
+	// globals.Sem_Bitmap.Lock()
 	//recorro el map de memoria kernel (donte tenemos la tabla simple de cada proceso, basicamente la posita de que proceso tiene cada pagina sale de ahi)
-	globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_MemoriaKernel.Lock()
 	for _, value := range globals.MemoriaKernel { //que hace range? es literalmente un for, en cada iteración, cambia el valor de key y value, los cuales vas a usar para laburar dentro del range tal como si fuera un for con sintaxis media rara.
 
 		for j := 0; j < len(value.TablaSimple); j++ {
@@ -813,9 +813,9 @@ func ActualizarPaginasDisponibles() {
 			}
 		}
 	}
-	globals.Sem_MemoriaKernel.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock()
 
-	globals.Sem_Bitmap.Unlock()
+	// globals.Sem_Bitmap.Unlock()
 }
 
 /*
@@ -841,44 +841,44 @@ Que hace CambiarAMenos1TodasLasTablas
 cambia a -1 toda la data relacionada a paginas del proceso, o sea, lo borras/mandas a swap, entonces tenes que llamar a esta funcion poruqe sino queda como si siguiera en memoria
 */
 func CambiarAMenos1TodasLasTablas(pid int) {
-	globals.Sem_Bitmap.Lock()        //bitmap
-	globals.Sem_MemoriaKernel.Lock() //memkernel1
+	// globals.Sem_Bitmap.Lock()        //bitmap
+	// globals.Sem_MemoriaKernel.Lock() //memkernel1
 
 	LiberarTablaSimpleYPagsDisponibles(pid)
 
 	//ActualizarPaginasDisponibles()
 
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
-	globals.Sem_MemoriaKernel.Unlock()                                               //memkernel1
+	// globals.Sem_MemoriaKernel.Unlock()                                               //memkernel1
 
-	globals.Sem_Contador.Lock()
+	// globals.Sem_Contador.Lock()
 	globals.ContadorTabla = 0
 	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
 	globals.ContadorTabla = 0
-	globals.Sem_Contador.Unlock()
+	// globals.Sem_Contador.Unlock()
 	auxiliares.InicializarSiNoLoEstaMap(pid)
 
-	globals.Sem_MemoriaKernel.Lock() //memkernel2
-	globals.Sem_Metricas.Lock()
+	// globals.Sem_MemoriaKernel.Lock() //memkernel2
+	// globals.Sem_Metricas.Lock()
 	globals.MetricasProceso[pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
-	globals.Sem_Metricas.Unlock()
-	globals.Sem_MemoriaKernel.Unlock() //memkernel2
-	globals.Sem_Bitmap.Unlock()        //bitmap
+	// globals.Sem_Metricas.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock() //memkernel2
+	// globals.Sem_Bitmap.Unlock()        //bitmap
 }
 
 func ActualizarTodasLasTablasEnBaseATablaSimple(pid int) { //no sirve para procesos que fueron quitados de MP
 	ActualizarPaginasDisponibles()
 	var PunteroAux *globals.Nodo = globals.MemoriaKernel[pid].PunteroATablaDePaginas //es necesario enviar un puntero auxiliar por parametro en esta funcion
-	globals.Sem_Contador.Lock()
+	// globals.Sem_Contador.Lock()
 	globals.ContadorTabla = 0
 	AsignarValoresATablaDePaginas(pid, 0, PunteroAux)
-	globals.Sem_Contador.Unlock()
+	// globals.Sem_Contador.Unlock()
 	globals.ContadorTabla = 0
 	auxiliares.InicializarSiNoLoEstaMap(pid)
 
-	globals.Sem_Metricas.Lock()
+	// globals.Sem_Metricas.Lock()
 	globals.MetricasProceso[pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
-	globals.Sem_Metricas.Unlock()
+	// globals.Sem_Metricas.Unlock()
 
 }
 
@@ -899,8 +899,8 @@ cambia a -1 la info del proceso a finalizar y printea las metricas del proceso
 func FinalizarProceso(pid int) {
 
 	CambiarAMenos1TodasLasTablas(pid)
-	globals.Sem_Instruccion.Lock()
-	globals.Sem_Metricas.Lock()
+	// globals.Sem_Instruccion.Lock()
+	// globals.Sem_Metricas.Lock()
 	log.Printf("## PID: <%d> - Proceso Destruido - Métricas - Acc. T. Pag: <%d>; Inst.Sol.: <%d>; SWAP:<%d>; Mem.Prin.:<%d>; Lec.Mem.: <%d>, Esc.Mem.: <%d>",
 
 		globals.Instruction.Pid,
@@ -910,8 +910,8 @@ func FinalizarProceso(pid int) {
 		globals.MetricasProceso[globals.Instruction.Pid].ContadorSubidasAMemoria,
 		globals.MetricasProceso[globals.Instruction.Pid].ContadorReadMemoria,
 		globals.MetricasProceso[globals.Instruction.Pid].ContadorWriteMemoria)
-	globals.Sem_Metricas.Unlock()
-	globals.Sem_Instruccion.Unlock()
+	// globals.Sem_Metricas.Unlock()
+	// globals.Sem_Instruccion.Unlock()
 
 	//printear metricas
 	//llamar una funcion que reinicie las metricas del proceso a 0 por si se crea un proceso con ese pid
@@ -936,7 +936,7 @@ func MemoryDump(pid int) {
 	}
 
 	buffer := make([]byte, globals.ClientConfig.Page_size) //contiene el contenido de una pagina entera
-	globals.Sem_MemoriaKernel.Lock()
+	// globals.Sem_MemoriaKernel.Lock()
 
 	for i := 0; i < len(globals.MemoriaKernel[pid].TablaSimple); i++ {
 		for j := 0; j < globals.ClientConfig.Page_size; j++ {
@@ -949,7 +949,7 @@ func MemoryDump(pid int) {
 		}
 		bytestotales += bytesEscritos
 	}
-	globals.Sem_MemoriaKernel.Unlock()
+	// globals.Sem_MemoriaKernel.Unlock()
 
 	log.Printf("%d bytes fueron escritos en el archivo gracias a la syscall de dump \n", bytestotales)
 

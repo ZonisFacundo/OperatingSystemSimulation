@@ -40,13 +40,13 @@ func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *htt
 
 	log.Printf("\n\n KERNEL SOLICITO SWAP DE MEMORIA A DISCO (suspension) (RetornoClienteKernelServidorMemoriaSwapADisco)\n\n")
 
-	globals.Sem_Swap.Lock()
+	// globals.Sem_Swap.Lock()
 
 	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
 	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		globals.Sem_Swap.Unlock()
+		// globals.Sem_Swap.Unlock()
 
 		return
 	}
@@ -60,14 +60,14 @@ func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *htt
 
 		respuestaJSON, err := json.Marshal(respuesta)
 		if err != nil {
-			globals.Sem_Swap.Unlock()
+			// globals.Sem_Swap.Unlock()
 
 			return
 		}
 
 		w.WriteHeader(http.StatusNotImplemented)
 		w.Write(respuestaJSON)
-		globals.Sem_Swap.Unlock()
+		// globals.Sem_Swap.Unlock()
 
 		return
 	} else {
@@ -76,14 +76,14 @@ func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *htt
 
 		respuestaJSON, err := json.Marshal(respuesta)
 		if err != nil {
-			globals.Sem_Swap.Unlock()
+			// globals.Sem_Swap.Unlock()
 
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
 		w.Write(respuestaJSON)
-		globals.Sem_Swap.Unlock()
+		// globals.Sem_Swap.Unlock()
 
 		return
 	}
@@ -103,8 +103,8 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 	}
 	log.Printf(" el swap tam de este proceso es: %d", globals.MemoriaKernel[paqueteDeKernel.Pid].SwapTam)
 
-	globals.Sem_Swap.Lock()
-	globals.Sem_Bitmap.Lock()
+	// globals.Sem_Swap.Lock()
+	// globals.Sem_Bitmap.Lock()
 
 	retorno := EntraEnMemoria(globals.MemoriaKernel[paqueteDeKernel.Pid].SwapTam) //se fija si entra en memoria o no
 
@@ -117,8 +117,8 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		respuestaJSON, err := json.Marshal(respuesta)
 		if err != nil {
 
-			globals.Sem_Bitmap.Unlock()
-			globals.Sem_Swap.Unlock() //ok
+			// globals.Sem_Bitmap.Unlock()
+			// globals.Sem_Swap.Unlock() //ok
 
 			return
 		}
@@ -126,8 +126,8 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		w.WriteHeader(http.StatusInsufficientStorage)
 		w.Write(respuestaJSON)
 
-		globals.Sem_Bitmap.Unlock() //ok
-		globals.Sem_Swap.Unlock()
+		// globals.Sem_Bitmap.Unlock() //ok
+		// globals.Sem_Swap.Unlock()
 
 		return
 
@@ -139,8 +139,8 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 
 			respuestaJSON, err := json.Marshal(respuesta)
 			if err != nil {
-				globals.Sem_Bitmap.Unlock() //ok
-				globals.Sem_Swap.Unlock()
+				// globals.Sem_Bitmap.Unlock() //ok
+				// globals.Sem_Swap.Unlock()
 
 				return
 			}
@@ -148,8 +148,8 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 			w.WriteHeader(http.StatusNotImplemented)
 			w.Write(respuestaJSON)
 
-			globals.Sem_Bitmap.Unlock()
-			globals.Sem_Swap.Unlock()
+			// globals.Sem_Bitmap.Unlock()
+			// globals.Sem_Swap.Unlock()
 			return
 		}
 
@@ -158,8 +158,8 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		respuestaJSON, err := json.Marshal(respuesta)
 		if err != nil {
 
-			globals.Sem_Bitmap.Unlock()
-			globals.Sem_Swap.Unlock()
+			// globals.Sem_Bitmap.Unlock()
+			// globals.Sem_Swap.Unlock()
 
 			return
 		}
@@ -172,8 +172,8 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		log.Printf("LEO PAGINA 0: \n\n\n%b\n\n\n", pagi.Info)
 		auxiliares.Mostrarmemoria()
 
-		globals.Sem_Bitmap.Unlock()
-		globals.Sem_Swap.Unlock()
+		// globals.Sem_Bitmap.Unlock()
+		// globals.Sem_Swap.Unlock()
 		return
 	}
 
@@ -229,11 +229,11 @@ func SwapADisco(pid int) int { //incompleta
 	defer file.Close()
 
 	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
-	globals.Sem_Instruccion.Lock()
-	globals.Sem_Metricas.Lock()
+	// globals.Sem_Instruccion.Lock()
+	// globals.Sem_Metricas.Lock()
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorBajadasSWAP++
-	globals.Sem_Metricas.Unlock()
-	globals.Sem_Instruccion.Unlock()
+	// globals.Sem_Metricas.Unlock()
+	// globals.Sem_Instruccion.Unlock()
 
 	log.Printf("\n\tmuestro el contenido del SWAP\t\n")
 
@@ -295,11 +295,11 @@ func SwapAMemoria(pid int) int {
 
 	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
 
-	globals.Sem_Instruccion.Lock()
-	globals.Sem_Metricas.Lock()
+	// globals.Sem_Instruccion.Lock()
+	// globals.Sem_Metricas.Lock()
 	globals.MetricasProceso[globals.Instruction.Pid].ContadorSubidasAMemoria++
-	globals.Sem_Metricas.Unlock()
-	globals.Sem_Instruccion.Unlock()
+	// globals.Sem_Metricas.Unlock()
+	// globals.Sem_Instruccion.Unlock()
 
 	//debug 13-07
 	log.Printf("\n\tmuestro el contenido del SWAP PARA DEBUGEAR MAS QUE NADA\t\n")
