@@ -29,7 +29,7 @@ func main() {
 	go func() {
 		utilsKernel.IniciarPlanifcador(tamanio, archivo)
 		//utilsKernel.CrearPCBPrueba(1, archivo)
-		log.Printf("toy pasando por aca\n")
+		//log.Printf("toy pasando por aca\n")
 		utilsKernel.PlanificadorLargoPlazo()
 	}()
 

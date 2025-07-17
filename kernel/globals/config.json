@@ -7,6 +7,6 @@
   "port_kernel": 8001,
   "port_memory": 8002,
   "ready_ingress_algorithm": "FIFO",
-  "scheduler_algorithm": "FIFO",
+  "scheduler_algorithm": "SRT",
   "suspension_time": 120000
 }
