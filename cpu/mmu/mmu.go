@@ -19,7 +19,7 @@ type MMU struct {
 func TraducirDireccion(direccionLogica int, memoryManagement MMU, pid int, nroPagina int) []int {
 
 	if memoryManagement.TamPagina == 0 {
-		log.Fatalf("## Error: TamPagina no puede ser 0. Verificá la configuración o la inicialización de la MMU.")
+		log.Fatalf("## Error: El tamaño de pagina no puede que ser 0.")
 	}
 
 	// Crear un slice para guardar las entradas de las tablas de páginas

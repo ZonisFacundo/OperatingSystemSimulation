@@ -39,10 +39,15 @@ type CPU struct {
 }
 
 type IO struct {
-	Ip           string  `json:"ip"`
-	Port         int     `json:"port"`
+	Ip           string          `json:"ip"`
+	Port         int             `json:"port"`
+	Instancia    string          `json:"instancia"`
+	Disponible   bool            `json:"disponible"`
+	ColaProcesos *ColaProcesosIO `json:"colaprocesos"`
+}
+
+type ColaProcesosIO struct {
 	Instancia    string  `json:"instancia"`
-	Disponible   bool    `json:"disponible"`
 	ColaProcesos []PCBIO `json:"colaprocesos"`
 }
 
@@ -149,6 +154,11 @@ var MutexListaExec sync.Mutex
 var MutexColaBlock sync.Mutex
 var MutexColaSuspBlock sync.Mutex
 var MutexColaSuspReady sync.Mutex
+var MutexListaIo sync.Mutex
+
+var MutexCrearPCB sync.Mutex
+var MutexExit sync.Mutex
+var MutexObtenerPCB sync.Mutex
 
 /*
 var MutexFacu sync.Mutex

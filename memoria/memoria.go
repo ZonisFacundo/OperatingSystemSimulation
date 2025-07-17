@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/sisoputnfrba/tp-golang/memoria/auxiliares"
 	"github.com/sisoputnfrba/tp-golang/memoria/globals"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsMemoria"
 )
@@ -29,7 +28,7 @@ func main() {
 			}
 		}()
 	*/
-	auxiliares.MostrarMemoriaKernel()
+	//	auxiliares.MostrarMemoriaKernel()
 	http.HandleFunc("POST /FinProceso", utilsMemoria.RetornoClienteKernelServidorMemoriaFinProceso)
 	http.HandleFunc("POST /HANDSHAKE", utilsMemoria.HandshakeACpu)
 	http.HandleFunc("POST /SWAPAMEMORIA", utilsMemoria.RetornoClienteKernelServidorMemoriaSwapAMemoria)

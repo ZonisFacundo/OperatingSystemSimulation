@@ -1,6 +1,6 @@
 {
   "cache_delay": 250,
-  "cache_entries": 3,
+  "cache_entries": 2,
   "cache_replacement": "CLOCK",
   "instance_id": "cpuX",
   "ip_cpu": "127.0.0.1",
@@ -11,6 +11,6 @@
   "port_kernel": 8001,
   "port_memory": 8002,
   "size_page": 64,
-  "tlb_entries": 3,
+  "tlb_entries": 4,
   "tlb_replacement": "FIFO"
 }

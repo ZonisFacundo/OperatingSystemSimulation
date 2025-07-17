@@ -1,6 +1,12 @@
 DUMP_MEMORY
+<<<<<<< HEAD
 INIT_PROC archi3.txt 700
 IO IO-impresora 5000
 INIT_PROC archi2.txt 500
+=======
+INIT_PROC archi2.txt 500
+IO IO-impresora 5000000000
+INIT_PROC archi2.txt 700
+>>>>>>> main
 INIT_PROC archi3.txt 500
 EXIT

@@ -37,7 +37,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		log.Printf("Error al convertir a json.\n")
+		log.Printf("## ERROR -> Error al convertir a json.")
 		return
 	}
 
@@ -48,7 +48,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
 	if err != nil {
-		log.Printf("Error al generar la peticion al server.\n")
+		log.Printf("## ERROR -> Error al generar la peticion al server.")
 		return
 	}
 
@@ -57,18 +57,18 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 	respuestaJSON, err := cliente.Do(req)
 
 	if err != nil {
-		log.Printf("Error al recibir respuesta.\n")
+		log.Printf("## ERROR -> Error al recibir respuesta.")
 		return
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
 
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		log.Printf("## ERROR -> Status de respuesta el server no fue la esperada.")
 		return
 	}
 	defer respuestaJSON.Body.Close()
 
-	log.Printf("Conexion establecida con exito.\n")
+	//log.Printf("Conexion establecida con exito.\n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -78,10 +78,10 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 	var frame utilsCPU.MarcoDeMemoria
 	err = json.Unmarshal(body, &frame)
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		log.Printf("## ERROR -> Error al decodificar el JSON.")
 	}
 
-	log.Printf("Recibido de memoria el frame: %d", frame.Frame)
+	log.Printf("## FRAME: %d", frame.Frame)
 
 	globals.ID.Frame = frame.Frame
 
@@ -93,7 +93,6 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("entro aca2")
 		return
 	}
 
@@ -102,7 +101,7 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 	globals.ID.ProcessValues.Pid = request.Pid
 	globals.ID.ProcessValues.Pc = request.Pc
 
-	log.Println("Recibido PID y PC de KERNEL:", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
+	log.Println("## PID y PC recibidos:", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
 
 	//globals.MutexNecesario.Unlock()
 
@@ -127,7 +126,7 @@ func RecibirDatosMMU(ip string, puerto int) {
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
-		log.Printf("Error al convertir a json.\n")
+		log.Printf("## ERROR -> Error al convertir a json.")
 		return
 	}
 
@@ -138,7 +137,7 @@ func RecibirDatosMMU(ip string, puerto int) {
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(PaqueteFormatoJson)) //genera peticion al server
 
 	if err != nil {
-		log.Printf("Error al generar la peticion al server.\n")
+		log.Printf("## ERROR -> Error al generar la peticion al server.")
 		return
 	}
 
@@ -147,18 +146,18 @@ func RecibirDatosMMU(ip string, puerto int) {
 	respuestaJSON, err := cliente.Do(req)
 
 	if err != nil {
-		log.Printf("Error al recibir respuesta.\n")
+		log.Printf("## ERROR -> Error al recibir respuesta.")
 		return
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
 
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		log.Printf("## ERROR -> Status de respuesta el server no fue la esperada.")
 		return
 	}
 	defer respuestaJSON.Body.Close()
 
-	log.Printf("Conexion establecida con exito.\n")
+	// log.Printf("Conexion establecida con exito.\n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -168,12 +167,12 @@ func RecibirDatosMMU(ip string, puerto int) {
 	var respuesta CPUMMU
 	err = json.Unmarshal(body, &respuesta)
 	if err != nil {
-		log.Printf("Error al decodificar el JSON.\n")
+		log.Printf("## ERROR -> Error al decodificar el JSON.")
 	}
 
 	globals.ClientConfig.Entradas = respuesta.Entradas
 	globals.ClientConfig.Page_size = respuesta.TamPag
 	globals.ClientConfig.Niveles = respuesta.Niveles
 
-	log.Printf("Conexión realizada con exito con el Kernel.")
+	// log.Printf("Conexión realizada con exito con el Kernel.")
 }
