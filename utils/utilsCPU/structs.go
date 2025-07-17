@@ -37,10 +37,12 @@ type PackageFinEjecucion struct {
 type WriteStruct struct {
 	Direccion int    `json:"adress"`
 	Contenido string `json:"content"`
+	Pid       int    `json:"pid"`
 }
 type ReadStruct struct {
 	Direccion int `json:"adress"`
 	Tamaño    int `json:"value"`
+	Pid       int `json:"pid"`
 }
 
 type HandshakeKERNEL struct {
@@ -74,4 +76,3 @@ type MarcoDeMemoria struct {
 
 var Pid int
 var Pc int
-

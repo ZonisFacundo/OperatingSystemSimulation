@@ -51,9 +51,16 @@ type DireccionFisica struct {
 	Tamaño    int `json:"value"`
 }
 
+type PaqueteRead struct {
+	Direccion int `json:"adress"`
+	Tamaño    int `json:"value"`
+	Pid       int `json:"pid"`
+}
+
 type PaqueteWrite struct {
 	Direccion int    `json:"adress"`
 	Contenido string `json:"content"`
+	Pid       int    `json:"pid"`
 }
 type DireccionLogica struct {
 	Ip        string `json:"ip"`

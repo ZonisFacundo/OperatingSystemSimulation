@@ -170,7 +170,7 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		var pagi globals.Pagina
 		pagi, _ = LeerPaginaCompleta(0 * globals.ClientConfig.Page_size) //ver semaforos adentro
 		log.Printf("LEO PAGINA 0: \n\n\n%b\n\n\n", pagi.Info)
-		auxiliares.Mostrarmemoria()
+		//	auxiliares.Mostrarmemoria()
 
 		// globals.Sem_Bitmap.Unlock()
 		// globals.Sem_Swap.Unlock()
@@ -235,9 +235,9 @@ func SwapADisco(pid int) int { //incompleta
 	// globals.Sem_Metricas.Unlock()
 	// globals.Sem_Instruccion.Unlock()
 
-	log.Printf("\n\tmuestro el contenido del SWAP\t\n")
+	//log.Printf("\n\tmuestro el contenido del SWAP\t\n")
 
-	auxiliares.MostrarArchivo(globals.ClientConfig.Swapfile_path)
+	//	auxiliares.MostrarArchivo(globals.ClientConfig.Swapfile_path)
 
 	/* DEBUG 13-07
 	for i := 0; i < globals.ClientConfig.Memory_size; i++ {
@@ -302,9 +302,9 @@ func SwapAMemoria(pid int) int {
 	// globals.Sem_Instruccion.Unlock()
 
 	//debug 13-07
-	log.Printf("\n\tmuestro el contenido del SWAP PARA DEBUGEAR MAS QUE NADA\t\n")
+	//log.Printf("\n\tmuestro el contenido del SWAP PARA DEBUGEAR MAS QUE NADA\t\n")
 
-	auxiliares.MostrarArchivo(globals.ClientConfig.Swapfile_path)
+	//	auxiliares.MostrarArchivo(globals.ClientConfig.Swapfile_path)
 
 	return 1
 }
@@ -338,7 +338,7 @@ func ReservarMemoriaSwapeado(pid int, tam int) {
 				if PaginasEncontradas == int(PaginasNecesarias) {
 					auxiliares.ActualizarTablaSimple(frames, pid) //ver semaforos
 
-					auxiliares.MostrarProceso(pid)
+					//	auxiliares.MostrarProceso(pid)
 
 					return
 				}
