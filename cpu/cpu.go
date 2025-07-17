@@ -29,7 +29,7 @@ func main() {
 
 	log.Printf("Usando config: %s para instancia: %s\n", configPath, instanceID)
 
-	procesoNuevo := make(chan struct{}, 1)
+	globals.ProcesoNuevo = make(chan struct{}, 1)
 	var mutexInterrupcion sync.Mutex
 
 	utilsCPU.ConfigurarLogger(instanceID)
@@ -50,22 +50,23 @@ func main() {
 		globals.ClientConfig.Port_cpu,
 		globals.ClientConfig.Ip_cpu,
 	)
+	http.HandleFunc("/KERNELCPU", instruction_cycle.RecibirPCyPID)
+	/*http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
+		globals.MutexNecesario.Lock()
+		instruction_cycle.RecibirPCyPID(w, r)
+		globals.MutexNecesario.Unlock()
+
+		log.Printf("Proceso recibido - PID: %d, PC: %d", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
+
+		select {
+		case procesoNuevo <- struct{}{}:
+			log.Println("## Se notifica a CPU de un proceso entrante.")
+		default:
+			log.Println("## CPU ya ejecutando. No se notifica de nuevo proceso.")
+		}
+	})*/
 
 	go func() {
-		http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
-			globals.MutexNecesario.Lock()
-			instruction_cycle.RecibirPCyPID(w, r)
-			globals.MutexNecesario.Unlock()
-
-			log.Printf("Proceso recibido - PID: %d, PC: %d", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
-			select {
-			case procesoNuevo <- struct{}{}:
-				log.Println("## Se notifica a CPU de un proceso entrante.")
-			default:
-				log.Println("## CPU ya ejecutando. No se notifica de nuevo proceso.")
-			}
-		})
-
 		http.HandleFunc("/INTERRUPCIONCPU", func(w http.ResponseWriter, r *http.Request) {
 			utilsCPU.DevolverPidYPCInterrupcion(w, r, globals.ID.ProcessValues.Pc, globals.ID.ProcessValues.Pid)
 			mutexInterrupcion.Lock()
@@ -81,7 +82,7 @@ func main() {
 	for {
 		log.Println("## Esperando ingreso de un nuevo proceso.")
 
-		<-procesoNuevo
+		<-globals.ProcesoNuevo
 
 		log.Printf("## Ejecutando proceso (PID: %d)", globals.ID.ProcessValues.Pid)
 
@@ -110,8 +111,9 @@ func main() {
 
 			instruction_cycle.Fetch(globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 			instruction_cycle.Decode(globals.ID)
-			globals.ID.ProcessValues.Pc++
+
 			instruction_cycle.Execute(globals.ID)
+			globals.ID.ProcessValues.Pc++
 		}
 	}
 }

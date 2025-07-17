@@ -155,7 +155,7 @@ var MutexColaBlock sync.Mutex
 var MutexColaSuspBlock sync.Mutex
 var MutexColaSuspReady sync.Mutex
 var MutexListaIo sync.Mutex
-
+var mutexListaCPU sync.Mutex
 var MutexCrearPCB sync.Mutex
 var MutexExit sync.Mutex
 var MutexObtenerPCB sync.Mutex

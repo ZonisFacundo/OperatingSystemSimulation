@@ -111,6 +111,7 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	globals.ProcesoNuevo <- struct{}{}
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)

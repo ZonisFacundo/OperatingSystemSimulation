@@ -86,6 +86,7 @@ var CachePaginas CacheDePaginas
 var AlgoritmoReemplazo string
 var AlgoritmoReemplazoTLB string
 var MutexNecesario sync.Mutex
+var ProcesoNuevo chan struct{}
 
 func CargarConfig(path string, instanceID string) {
 
