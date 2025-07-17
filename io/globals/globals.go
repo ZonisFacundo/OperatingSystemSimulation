@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	Ip_io       string `json:"ip_io"`
-	Port_io     int    `json:"port_io"`
+	Ip_io string `json:"ip_io"`
+
 	Ip_kernel   string `json:"ip_kernel"`
 	Port_kernel int    `json:"port_kernel"`
 	Log_level   string `json:"log_level"`
@@ -32,6 +32,6 @@ func CargarConfig(path string, instanceID string) {
 		return
 	}
 
-	ClientConfig = &configgenerica //hacemos que nuestro puntero (variable global) apunte a donde guardamos los datos
+	ClientConfig = &configgenerica          //hacemos que nuestro puntero (variable global) apunte a donde guardamos los datos
 	configgenerica.Instance_id = instanceID //BREN
 }

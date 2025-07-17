@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -27,6 +28,15 @@ func main() {
 	log.Printf("Usando config: %s para instancia: %s\n", configPath, instanceID)
 
 	//--------------
+
+	listener, err := net.Listen("tcp", ":0")
+	if err != nil {
+		log.Fatalf("No pude abrir listener dinámico: %v", err)
+	}
+	defer listener.Close()
+
+	puerto := listener.Addr().(*net.TCPAddr).Port
+
 	globals.CargarConfig(configPath, instanceID)
 	nombre := os.Args[1]
 	sigs := make(chan os.Signal, 1)
@@ -36,19 +46,21 @@ func main() {
 	done := make(chan bool, 1)
 
 	utilsIO.ConfigurarLogger(nombre) //nombre e instance_ID son lo mismo(no lo toco para no romper nada)
-	utilsIO.PeticionClienteIOServidorKERNEL(nombre, globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Ip_io, globals.ClientConfig.Port_io)
+	utilsIO.PeticionClienteIOServidorKERNEL(nombre, globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Ip_io, puerto)
 	http.HandleFunc("/KERNELIO", utilsIO.RetornoClienteKERNELServidorIO)
 
 	go func() {
 		sig := <-sigs
 		log.Printf("Señal recibida: %s", sig)
-		utilsIO.NotificarFinalizacionAlKernel(nombre, globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Ip_io, globals.ClientConfig.Port_io)
+		utilsIO.NotificarFinalizacionAlKernel(nombre, globals.ClientConfig.Ip_kernel, globals.ClientConfig.Port_kernel, globals.ClientConfig.Ip_io, puerto)
 		done <- true
 	}()
 
 	go func() {
-		//log.Printf("Servidor IO corriendo en puerto 8003.")
-		if err := http.ListenAndServe(":8003", nil); err != nil {
+		addr := listener.Addr().String()
+		log.Printf("[IO-%s] Servidor HTTP corriendo en %s", nombre, addr)
+		if err := http.Serve(listener, nil); err != nil &&
+			!strings.Contains(err.Error(), "use of closed network connection") {
 			log.Fatalf("Error al iniciar el servidor HTTP: %s", err)
 		}
 	}()

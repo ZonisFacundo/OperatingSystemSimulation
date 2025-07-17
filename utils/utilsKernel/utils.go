@@ -59,11 +59,13 @@ func FinalizarIO(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("el IO: %s se desconecto", request.Nombre)
+	log.Printf("el IO: %s Ip: %s Puerto %d se desconecto", request.Nombre, request.Ip, request.Puerto)
 
-	ioCerrada := ObtenerIO(request.Nombre)
-	enviarExitProcesosIO(ioCerrada)
-	ListaIO = removerIO(ioCerrada)
+	//ioCerrada := ObtenerIOPlus(request.Nombre, request.Ip, request.Puerto)
+	if HayUnaSola(request.Nombre) {
+		enviarExitProcesosIO(request.Nombre)
+	}
+	ListaIO = removerIO(request.Nombre, request.Ip, request.Puerto)
 
 	var respuestaIO RespuestaalIO
 	respuestaIO.Mensaje = "conexion realizada con exito"
@@ -131,15 +133,16 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	case "IO":
 		respuesta.Mensaje = "interrupcion"
 		cpuServidor.Disponible = true
+		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
 		if ExisteIO(request.Parametro2) {
 			SemCortoPlazo <- struct{}{}
-			ioServidor := ObtenerIO(request.Parametro2)
+			//ioServidor := ObtenerIODisponible(request.Parametro2)
 			go PlanificadorMedianoPlazo(PCBUtilizar)
-			AgregarColaIO(ioServidor, PCBUtilizar, request.Parametro1)
+			AgregarColaIO(request.Parametro2, PCBUtilizar, request.Parametro1)
 			PasarBlocked(PCBUtilizar)
-			log.Printf("## (<%d>) - Bloqueado por IO: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
-			MandarProcesoAIO(ioServidor)
-			log.Printf("YA LO MANDE A IO PARA PID: (<%d>) - IO SERVIDOR INSTANCIA: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
+			//log.Printf("## (<%d>) - Bloqueado por IO: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
+			MandarProcesoAIO(request.Parametro2)
+			//log.Printf("YA LO MANDE A IO PARA PID: (<%d>) - IO SERVIDOR INSTANCIA: < %s > \n", PCBUtilizar.Pid, ioServidor.Instancia)
 
 			/*if len(ioServidor.ColaProcesos) > 0 {
 				ioServidor.ColaProcesos = ioServidor.ColaProcesos[1:]
@@ -247,8 +250,8 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 			log.Printf("mira flaco, este pcb no esta ni en blocked ni en susp blocked \n")
 		}
 		ioServer.Disponible = true
-		RemoverDeColaProcesoIO(ioServer)
-		MandarProcesoAIO(ioServer)
+		//RemoverDeColaProcesoIO(ioServer)
+		MandarProcesoAIO(ioServer.Instancia)
 
 	}
 }
@@ -990,13 +993,27 @@ func FinalizarProceso(pcb *PCB) {
 */
 
 func CrearStructIO(ip string, puerto int, instancia string) {
-	ListaIO = append(ListaIO, IO{
-		Ip:           ip,
-		Port:         puerto,
-		Instancia:    instancia,
-		ColaProcesos: []PCBIO{},
-		Disponible:   true,
-	})
+	if ExisteIO(instancia) {
+		cola := ObtenerIO(instancia).ColaProcesos
+		ListaIO = append(ListaIO, IO{
+			Ip:           ip,
+			Port:         puerto,
+			Instancia:    instancia,
+			ColaProcesos: cola,
+			Disponible:   true,
+		})
+
+	} else {
+		cola := CrearColaIO(instancia)
+		ListaIO = append(ListaIO, IO{
+			Ip:           ip,
+			Port:         puerto,
+			Instancia:    instancia,
+			ColaProcesos: &cola,
+			Disponible:   true,
+		})
+	}
+
 }
 
 func ObtenerIO(instancia string) *IO {
@@ -1017,8 +1034,9 @@ func ExisteIO(instancia string) bool {
 	return false
 }
 
-func AgregarColaIO(io *IO, pcb *PCB, tiempo int) {
-	io.ColaProcesos = append(io.ColaProcesos, PCBIO{
+func AgregarColaIO(instancia string, pcb *PCB, tiempo int) {
+	io := ObtenerIO(instancia)
+	io.ColaProcesos.ColaProcesos = append(io.ColaProcesos.ColaProcesos, PCBIO{
 		Pcb:    pcb,
 		Tiempo: tiempo,
 	})
@@ -1030,11 +1048,11 @@ func AgregarColaIO(io *IO, pcb *PCB, tiempo int) {
 	}
 */
 func RemoverDeColaProcesoIO(io *IO) {
-	if len(io.ColaProcesos) == 0 {
+	if len(io.ColaProcesos.ColaProcesos) == 0 {
 		return
 	}
 	// Reconstruye la slice sin el primer elemento
-	io.ColaProcesos = io.ColaProcesos[1:]
+	io.ColaProcesos.ColaProcesos = io.ColaProcesos.ColaProcesos[1:]
 }
 
 func ObtenerPCB(pid int) *PCB {
@@ -1063,13 +1081,19 @@ func EstaEnColaBlock(pcbChequear *PCB) bool {
 	return false
 }
 
-func MandarProcesoAIO(io *IO) {
-
-	if io.Disponible && len(io.ColaProcesos) > 0 {
-		io.Disponible = false
-		go UtilizarIO(io, io.ColaProcesos[0].Pcb, io.ColaProcesos[0].Tiempo)
-
+func MandarProcesoAIO(instancia string) {
+	for i := range ListaIO {
+		if ListaIO[i].Instancia == instancia && ListaIO[i].Disponible {
+			io := &ListaIO[i]
+			if len(io.ColaProcesos.ColaProcesos) > 0 {
+				io.Disponible = false
+				log.Printf("## (<%d>) - Bloqueado por IO: < %s > \n", io.ColaProcesos.ColaProcesos[0].Pcb.Pid, io.Instancia)
+				go UtilizarIO(io, io.ColaProcesos.ColaProcesos[0].Pcb, io.ColaProcesos.ColaProcesos[0].Tiempo)
+				RemoverDeColaProcesoIO(io)
+			}
+		}
 	}
+
 }
 
 func DumpDelProceso(pcb *PCB, ip string, puerto int) {
@@ -1189,23 +1213,23 @@ func SwapDelProceso(pcb *PCB, ip string, puerto int) {
 
 }
 
-func removerIO(io *IO) []IO {
+func removerIO(instancia string, ip string, puerto int) []IO {
 	for i, item := range ListaIO {
-		if item.Instancia == io.Instancia {
+		if item.Instancia == instancia && item.Ip == ip && item.Port == puerto {
 			return append(ListaIO[:i], ListaIO[1+i:]...)
 		}
 	}
 	return ListaIO
 }
 
-func enviarExitProcesosIO(io *IO) {
-	for _, proceso := range io.ColaProcesos {
+func enviarExitProcesosIO(instancia string) {
+	io := ObtenerIO(instancia)
+	for _, proceso := range io.ColaProcesos.ColaProcesos {
 		if proceso.Pcb != nil {
 			//log.Printf("El proceso PID: %d  se pasa a EXIT por desconexion del I/O %s", proceso.Pcb.Pid, io.Instancia)
 			FinalizarProceso(proceso.Pcb)
 		}
 	}
-	removerIO(io)
 	log.Printf("Se desconecto el I/O %s", io.Instancia)
 }
 
@@ -1284,4 +1308,30 @@ func SwapInProceso(pcb *PCB) {
 			pcb.Pid, respuesta.Mensaje,
 		)
 	}
+}
+
+func CrearColaIO(instancia string) ColaProcesosIO {
+	return ColaProcesosIO{
+		Instancia:    instancia,
+		ColaProcesos: []PCBIO{},
+	}
+}
+
+func HayUnaSola(instancia string) bool {
+	contador := 0
+	for _, io := range ListaIO {
+		if io.Instancia == instancia {
+			contador++
+		}
+	}
+	return contador == 1
+}
+
+func ObtenerIOPlus(instancia string, ip string, puerto int) *IO {
+	for i := range ListaIO {
+		if ListaIO[i].Instancia == instancia && ListaIO[i].Ip == ip && ListaIO[i].Port == puerto {
+			return &ListaIO[i]
+		}
+	}
+	return nil
 }
