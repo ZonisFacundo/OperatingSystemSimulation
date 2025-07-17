@@ -367,28 +367,39 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 }
 
 func AgregarEnTLB(nroPagina int, direccion int) {
-	if globals.ClientConfig.Tlb_entries > 0 {
-		entrada := globals.Entrada{
-			PID:       globals.ID.ProcessValues.Pid, // <-- este valor es clave
-			NroPagina: nroPagina,
-			Direccion: direccion,
-			UltimoAcceso: time.Now().UnixNano(),
-		}
-		if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
-			globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
-			return
-		} else {
-
-			switch globals.ClientConfig.Tlb_replacement {
-			case "FIFO":
-				ReemplazarTLB_FIFO(entrada)
-			case "LRU":
-				ReemplazarTLB_LRU(entrada)
-			default:
-				log.Printf("Algoritmo de reemplaza incorrecto.\n")
-			}
-		}
-	} else {
+	if globals.ClientConfig.Tlb_entries <= 0 {
 		fmt.Printf("Entradas de TLB: %d. No hay TLB", globals.ClientConfig.Tlb_entries)
+		return
+	}
+
+	tlb := &globals.Tlb
+	pid := globals.ID.ProcessValues.Pid
+
+
+	for i, entrada := range tlb.Entradas {
+		if entrada.PID == pid && entrada.NroPagina == nroPagina {
+			tlb.Entradas[i].UltimoAcceso = time.Now().UnixNano()
+			return
+		}
+	}
+
+	entrada := globals.Entrada{
+		PID:          pid,
+		NroPagina:    nroPagina,
+		Direccion:    direccion,
+		UltimoAcceso: time.Now().UnixNano(),
+	}
+
+	if len(tlb.Entradas) < tlb.Tamanio {
+		tlb.Entradas = append(tlb.Entradas, entrada)
+	} else {
+		switch globals.ClientConfig.Tlb_replacement {
+		case "FIFO":
+			ReemplazarTLB_FIFO(entrada)
+		case "LRU":
+			ReemplazarTLB_LRU(entrada)
+		default:
+			log.Printf("Algoritmo de reemplazo incorrecto.")
+		}
 	}
 }

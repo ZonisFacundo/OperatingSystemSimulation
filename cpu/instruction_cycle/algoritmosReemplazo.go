@@ -42,7 +42,7 @@ func ReemplazarTLB_LRU(entrada globals.Entrada) {
 	posVictima := 0
 	minAcceso := tlb.Entradas[0].UltimoAcceso
 
-	for i := 1; i < len(tlb.Entradas); i++ {
+	for i := 1; i < tlb.Tamanio; i++ {
 		if tlb.Entradas[i].UltimoAcceso < minAcceso {
 			posVictima = i
 			minAcceso = tlb.Entradas[i].UltimoAcceso
