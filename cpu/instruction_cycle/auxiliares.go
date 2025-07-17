@@ -68,7 +68,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 	}
 	defer respuestaJSON.Body.Close()
 
-	log.Printf("Conexion establecida con exito.\n")
+	//log.Printf("Conexion establecida con exito.\n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -81,7 +81,7 @@ func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 		log.Printf("Error al decodificar el JSON.\n")
 	}
 
-	log.Printf("Recibido de memoria el frame: %d", frame.Frame)
+	log.Printf("## FRAME: %d", frame.Frame)
 
 	globals.ID.Frame = frame.Frame
 
@@ -93,7 +93,6 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&request) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		log.Printf("entro aca2")
 		return
 	}
 
@@ -102,7 +101,7 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 	globals.ID.ProcessValues.Pid = request.Pid
 	globals.ID.ProcessValues.Pc = request.Pc
 
-	log.Println("Recibido PID y PC de KERNEL:", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
+	log.Println("## PID y PC recibidos:", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
 
 	//globals.MutexNecesario.Unlock()
 
@@ -158,7 +157,7 @@ func RecibirDatosMMU(ip string, puerto int) {
 	}
 	defer respuestaJSON.Body.Close()
 
-	log.Printf("Conexion establecida con exito.\n")
+	// log.Printf("Conexion establecida con exito.\n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -175,5 +174,5 @@ func RecibirDatosMMU(ip string, puerto int) {
 	globals.ClientConfig.Page_size = respuesta.TamPag
 	globals.ClientConfig.Niveles = respuesta.Niveles
 
-	log.Printf("Conexión realizada con exito con el Kernel.")
+	// log.Printf("Conexión realizada con exito con el Kernel.")
 }

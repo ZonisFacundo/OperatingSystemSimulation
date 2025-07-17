@@ -67,7 +67,7 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 	}
 	defer respuestaJSON.Body.Close()
 
-	fmt.Printf("Conexion establecida con exito.\n")
+	//fmt.Printf("Conexion establecida con exito.\n")
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -82,7 +82,7 @@ func Fetch(pid int, pc int, ip string, puerto int) {
 		return
 	}
 
-	log.Printf("Instruccion recibida de Memoria: %s\n", respuesta.Mensaje) // Nos manda memoria la instrucción.
+	log.Printf("## Instruccion recibida -> %s\n", respuesta.Mensaje) // Nos manda memoria la instrucción.
 
 	globals.ID.InstructionType = respuesta.Mensaje
 }
@@ -151,11 +151,11 @@ func Decode(instruccion globals.Instruccion) {
 			EnvioDirLogica(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, direccionAEnviar)
 
 			if globals.ID.Frame < 0 {
-				log.Printf("ERROR: Frame inválido: %d", globals.ID.Frame)
+				log.Printf("## ERROR -> Frame inválido: %d", globals.ID.Frame)
 
 			} else {
 				globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
-				log.Printf("Direccion fisica: %d", globals.ID.DireccionFis)
+				log.Printf("## Direccion Fisica: %d", globals.ID.DireccionFis)
 			}
 		}
 
@@ -174,6 +174,6 @@ func Decode(instruccion globals.Instruccion) {
 		globals.ID.Tiempo = instruccion.Tiempo
 
 	default:
-		log.Printf("Nada que modificar, continua la ejecución.")
+		log.Printf("## Nada que modificar, continua la ejecución.")
 	}
 }

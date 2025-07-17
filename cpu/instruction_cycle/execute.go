@@ -68,12 +68,12 @@ func Execute(detalle globals.Instruccion) bool {
 				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
 			}
 
-			log.Printf("PID: %d - Acción: LEER - Dirección Física: %d - Valor: %s",
+			log.Printf("PID: %d - Accion: LEER - Direccion Física: %d - Valor: %s",
 				globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.ValorLeido)
 
 		} else {
-			fmt.Sprintln("READ inválido.")
-			detalle.Syscall = "READ inválido."
+			fmt.Sprintln("READ invalido.")
+			detalle.Syscall = "READ invalido."
 		}
 		return false
 
@@ -142,7 +142,7 @@ func Execute(detalle globals.Instruccion) bool {
 		return true
 
 	default:
-		fmt.Println("Instrucción inválida.")
+		fmt.Println("## ERROR -> Instruccion inválida.")
 		return false
 	}
 }
@@ -176,18 +176,19 @@ func Write(ip string, port int, direccion int, contenido string) {
 
 	respuestaJSON, err := cliente.Do(req)
 	if err != nil {
-		log.Printf("Error al recibir respuesta.\n")
+		log.Printf("## Error al recibir respuesta.\n")
 		return
 
 	}
 
 	if respuestaJSON.StatusCode != http.StatusOK {
-		log.Printf("Status de respuesta el server no fue la esperada.\n")
+		log.Printf("## Status de respuesta no fue la esperada.\n")
 		return
 	}
 	defer respuestaJSON.Body.Close()
 
-	fmt.Printf("Conexion establecida con exito.\n")
+	//fmt.Printf("Conexion establecida con exito.\n")
+
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -247,7 +248,8 @@ func Read(ip string, port int, direccion int, tamaño int) {
 	}
 	defer respuestaJSON.Body.Close()
 
-	fmt.Printf("Conexion establecida con exito.\n")
+	// fmt.Printf("Conexion establecida con exito.\n")
+
 	body, err := io.ReadAll(respuestaJSON.Body)
 
 	if err != nil {
@@ -324,7 +326,7 @@ func FinEjecucion(ip string, puerto int, pid int, pc int, instancia string, sysc
 		log.Printf("Error al decodificar el JSON.\n")
 	}
 
-	log.Printf("El Kernel recibió correctamente el PID y el PC.\n")
+	log.Printf("## Kernel -> Recibió correctamente el PID: %d y el PC: %d.", respuesta.Pid, respuesta.Pc)
 
 }
 
@@ -362,19 +364,18 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 	case "CLOCK-M":
 		ReemplazarConCLOCKM(entrada)
 	default:
-		log.Printf("Algoritmo de reemplazo incorrecto.\n")
+		log.Printf("## ERROR -> Algoritmo de reemplazo incorrecto.")
 	}
 }
 
 func AgregarEnTLB(nroPagina int, direccion int) {
 	if globals.ClientConfig.Tlb_entries <= 0 {
-		fmt.Printf("Entradas de TLB: %d. No hay TLB", globals.ClientConfig.Tlb_entries)
+		fmt.Printf("## ERROR -> Entradas de TLB: %d -> No hay TLB.", globals.ClientConfig.Tlb_entries)
 		return
 	}
 
 	tlb := &globals.Tlb
 	pid := globals.ID.ProcessValues.Pid
-
 
 	for i, entrada := range tlb.Entradas {
 		if entrada.PID == pid && entrada.NroPagina == nroPagina {
@@ -399,7 +400,7 @@ func AgregarEnTLB(nroPagina int, direccion int) {
 		case "LRU":
 			ReemplazarTLB_LRU(entrada)
 		default:
-			log.Printf("Algoritmo de reemplazo incorrecto.")
+			log.Printf("## ERROR -> Algoritmo de reemplazo incorrecto.")
 		}
 	}
 }
