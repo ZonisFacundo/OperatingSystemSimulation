@@ -79,8 +79,9 @@ func HandshakeACpu(w http.ResponseWriter, r *http.Request) {
 func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
 
+	var InstruccionLocal globals.Instru
 	// globals.Sem_Instruccion.Lock()
-	err := json.NewDecoder(r.Body).Decode(&globals.Instruction) //guarda en request lo que nos mando el cliente
+	err := json.NewDecoder(r.Body).Decode(&InstruccionLocal) //guarda en request lo que nos mando el cliente
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		// globals.Sem_Instruccion.Unlock()
@@ -88,13 +89,13 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	}
 	//globals.Sem_MemoriaKernel.Lock()
 	// globals.Sem_Instruccion.Lock()
-	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
-	globals.MetricasProceso[globals.Instruction.Pid].ContadorInstruccionesSolicitadas++
+	auxiliares.InicializarSiNoLoEstaMap(InstruccionLocal.Pid)
+	globals.MetricasProceso[InstruccionLocal.Pid].ContadorInstruccionesSolicitadas++
 	//globals.Sem_Instruccion.Unlock()
 	//globals.Sem_MemoriaKernel.Unlock()
 	//log.Printf("## PID: <%d> - Obtener instrucción: <%d> - Instrucción: %s\n", globals.Instruction.Pid, globals.Instruction.Pid, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
 
-	log.Printf("## PID: <%d>- Obtener instrucción: <%d> - Instrucción: %s\n", globals.Instruction.Pid, globals.Instruction.Pc, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
+	log.Printf("## PID: <%d>- Obtener instrucción: <%d> - Instrucción: %s\n", InstruccionLocal.Pid, InstruccionLocal.Pc, globals.MemoriaKernel[InstruccionLocal.Pid].Instrucciones[InstruccionLocal.Pc])
 	// globals.Sem_Instruccion.Unlock()
 
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
@@ -102,7 +103,7 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 
 	// globals.Sem_MemoriaKernel.Lock()
 	// globals.Sem_Instruccion.Lock()
-	log.Printf("%s\n", globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]) ///borrar
+	log.Printf("%s\n", globals.MemoriaKernel[InstruccionLocal.Pid].Instrucciones[InstruccionLocal.Pc]) ///borrar
 	// globals.Sem_Instruccion.Unlock()
 	// globals.Sem_MemoriaKernel.Unlock()
 	//log.Printf("\nla longitud del archivo de instrucciones es: %d\n\n", len(globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones))
@@ -110,7 +111,7 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	//log.Printf("estamos mandandole a CPU, del pid: %d la instrucion del pc: %d la cual es %s \n\n", globals.Instruction.Pid, globals.Instruction.Pc, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
 	// globals.Sem_MemoriaKernel.Lock()
 	// globals.Sem_Instruccion.Lock()
-	respuestaCpu.Mensaje = globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc]
+	respuestaCpu.Mensaje = globals.MemoriaKernel[InstruccionLocal.Pid].Instrucciones[InstruccionLocal.Pc]
 	// globals.Sem_Instruccion.Unlock()
 	// globals.Sem_MemoriaKernel.Unlock()
 
@@ -238,10 +239,16 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	if PaqueteDireccion.Tamaño < 1 {
 		log.Printf("\n\nTAM A LEER ES < 0, ERROR (HTTP Read)\n\n")
 		return
 	}
+	auxiliares.InicializarSiNoLoEstaMap(PaqueteDireccion.Pid)
+
+	// globals.Sem_Metricas.Lock()
+	globals.MetricasProceso[PaqueteDireccion.Pid].ContadorReadMemoria++
+	// globals.Sem_Metricas.Unlock()
 
 	log.Printf("## PID: %d - <Escritura/Lectura> - Dir. Física: %d  - Tamaño: %d\n", PaqueteDireccion.Pid, PaqueteDireccion.Direccion, PaqueteDireccion.Tamaño)
 
@@ -264,14 +271,6 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
-	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
-
-	// globals.Sem_Instruccion.Lock()
-	// globals.Sem_Metricas.Lock()
-	globals.MetricasProceso[globals.Instruction.Pid].ContadorReadMemoria++
-	// globals.Sem_Metricas.Unlock()
-	// globals.Sem_Instruccion.Unlock()
-
 }
 
 func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Request) {
@@ -285,6 +284,14 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	//registramos en metrica que funco el write
+	auxiliares.InicializarSiNoLoEstaMap(PaqueteInfoWrite.Pid)
+
+	// globals.Sem_Metricas.Lock()
+	globals.MetricasProceso[PaqueteInfoWrite.Pid].ContadorWriteMemoria++
+	// globals.Sem_Metricas.Unlock()
+
 	log.Printf("direccion recibida: %d\n", PaqueteInfoWrite.Direccion)
 
 	bytardos := []byte(PaqueteInfoWrite.Contenido)
@@ -320,13 +327,6 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 	*/
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
-
-	//registramos en metrica que funco el write
-	auxiliares.InicializarSiNoLoEstaMap(globals.Instruction.Pid)
-
-	// globals.Sem_Metricas.Lock()
-	globals.MetricasProceso[globals.Instruction.Pid].ContadorWriteMemoria++
-	// globals.Sem_Metricas.Unlock()
 
 }
 
@@ -631,9 +631,6 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 	// globals.Sem_MemoriaKernel.Unlock()
 
 	auxiliares.InicializarSiNoLoEstaMap(paquete.Pid)
-	// globals.Sem_Metricas.Lock()
-	globals.MetricasProceso[paquete.Pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
-	// globals.Sem_Metricas.Unlock()
 
 	ActualizarPaginasDisponibles() //actualiza que paginas estan disponibles en este momento
 
@@ -884,11 +881,6 @@ func CambiarAMenos1TodasLasTablas(pid int) {
 	// globals.Sem_Contador.Unlock()
 	auxiliares.InicializarSiNoLoEstaMap(pid)
 
-	// globals.Sem_MemoriaKernel.Lock() //memkernel2
-	// globals.Sem_Metricas.Lock()
-	globals.MetricasProceso[pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
-	// globals.Sem_Metricas.Unlock()
-	// globals.Sem_MemoriaKernel.Unlock() //memkernel2
 	// globals.Sem_Bitmap.Unlock()        //bitmap
 }
 
@@ -901,10 +893,6 @@ func ActualizarTodasLasTablasEnBaseATablaSimple(pid int) { //no sirve para proce
 	// globals.Sem_Contador.Unlock()
 	globals.ContadorTabla = 0
 	auxiliares.InicializarSiNoLoEstaMap(pid)
-
-	// globals.Sem_Metricas.Lock()
-	globals.MetricasProceso[pid].ContadorAccesosTablaPaginas++ //accede a tabla de paginas asi que le sumamos
-	// globals.Sem_Metricas.Unlock()
 
 }
 
@@ -929,13 +917,13 @@ func FinalizarProceso(pid int) {
 	// globals.Sem_Metricas.Lock()
 	log.Printf("## PID: <%d> - Proceso Destruido - Métricas - Acc. T. Pag: <%d>; Inst.Sol.: <%d>; SWAP:<%d>; Mem.Prin.:<%d>; Lec.Mem.: <%d>, Esc.Mem.: <%d>",
 
-		globals.Instruction.Pid,
-		globals.MetricasProceso[globals.Instruction.Pid].ContadorAccesosTablaPaginas,
-		globals.MetricasProceso[globals.Instruction.Pid].ContadorInstruccionesSolicitadas,
-		globals.MetricasProceso[globals.Instruction.Pid].ContadorBajadasSWAP,
-		globals.MetricasProceso[globals.Instruction.Pid].ContadorSubidasAMemoria,
-		globals.MetricasProceso[globals.Instruction.Pid].ContadorReadMemoria,
-		globals.MetricasProceso[globals.Instruction.Pid].ContadorWriteMemoria)
+		pid,
+		globals.MetricasProceso[pid].ContadorAccesosTablaPaginas,
+		globals.MetricasProceso[pid].ContadorInstruccionesSolicitadas,
+		globals.MetricasProceso[pid].ContadorBajadasSWAP,
+		globals.MetricasProceso[pid].ContadorSubidasAMemoria,
+		globals.MetricasProceso[pid].ContadorReadMemoria,
+		globals.MetricasProceso[pid].ContadorWriteMemoria)
 	// globals.Sem_Metricas.Unlock()
 	// globals.Sem_Instruccion.Unlock()
 
