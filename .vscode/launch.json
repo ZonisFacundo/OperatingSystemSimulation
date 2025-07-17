@@ -10,7 +10,7 @@
       "program": "${workspaceFolder}/kernel/kernel.go",
       "cwd": "${workspaceFolder}",
       "args": [
-        "${workspaceFolder}/MEMORIA_IO.txt",
+        "${workspaceFolder}/archi.txt",
         "90"
       ],
       "console": "integratedTerminal",

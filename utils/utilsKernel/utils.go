@@ -1010,6 +1010,7 @@ func CrearStructIO(ip string, puerto int, instancia string) {
 			ColaProcesos: cola,
 			Disponible:   true,
 		})
+		MutexListaIo.Unlock()
 		MandarProcesoAIO(instancia)
 
 	} else {
@@ -1021,8 +1022,8 @@ func CrearStructIO(ip string, puerto int, instancia string) {
 			ColaProcesos: &cola,
 			Disponible:   true,
 		})
+		MutexListaIo.Unlock()
 	}
-	MutexListaIo.Unlock()
 
 }
 
