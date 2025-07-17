@@ -213,6 +213,7 @@ func Read(ip string, port int, direccion int, tamaño int) {
 
 	paquete.Direccion = direccion
 	paquete.Tamaño = tamaño
+	paquete.Pid = globals.ID.ProcessValues.Pid
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {

@@ -1,6 +1,6 @@
 DUMP_MEMORY
 INIT_PROC archi2.txt 500
-IO IO-impresora 5000000000
+IO IO-impresora 5000
 INIT_PROC archi2.txt 700
 INIT_PROC archi3.txt 500
 EXIT
