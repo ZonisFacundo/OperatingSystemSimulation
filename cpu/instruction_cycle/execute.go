@@ -28,12 +28,15 @@ func Execute(detalle globals.Instruccion) bool {
 		if globals.ID.DireccionFis >= 0 {
 			if globals.ClientConfig.Cache_entries > 0 { //cache esta habilitada (está vacia?)
 				if mmu.EstaEnCache(globals.ID.NroPag) {
-					mmu.WriteEnCache([]byte(globals.ID.Datos))
+					mmu.WriteEnCache(globals.ID.ProcessValues.Pid, globals.ID.NroPag, globals.ID.Desplazamiento, []byte(globals.ID.Datos))
 					log.Printf("## WRITE en Cache: PID: %d, Pag: %d, Datos: %s", globals.ID.ProcessValues.Pid, globals.ID.NroPag, globals.ID.Datos)
 				} else {
 
 					// leer en memoria y traer la página a la caché
 					Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
+					pagina := make([]byte, globals.ClientConfig.Page_size)
+					copy(pagina[globals.ID.Desplazamiento:], []byte(globals.ID.Datos))
+					globals.ID.PaginaCompleta = pagina
 					AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
 					AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 					log.Printf("## PID: %d - Cache Add - Pagina: %d", globals.ID.ProcessValues.Pid, globals.ID.NroPag)
@@ -337,13 +340,22 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 	if globals.CachePaginas.Tamanio == 0 {
 		return
 	}
+	var paginaCompleta []byte
 
+	if len(globals.ID.PaginaCompleta) > 0 {
+		paginaCompleta = globals.ID.PaginaCompleta
+	} else {
+		paginaCompleta = make([]byte, globals.ClientConfig.Page_size)
+		copy(paginaCompleta, []byte(globals.ID.Datos))
+	}
+
+	if globals.ID.InstructionType == "WRITE" {
+		copy(paginaCompleta[globals.ID.Desplazamiento:], []byte(globals.ID.Datos))
+	}
 	var contenido []byte
 
 	if globals.ID.InstructionType == "READ" {
 		contenido = globals.ID.ValorLeido
-	} else if globals.ID.InstructionType == "WRITE" {
-		contenido = []byte(globals.ID.Datos)
 	}
 
 	entrada := globals.EntradaCacheDePaginas{

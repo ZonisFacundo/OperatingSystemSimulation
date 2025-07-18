@@ -20,32 +20,50 @@ func EstaEnCache(nroPagina int) bool {
 	return false
 }
 
-func WriteEnCache(datos []byte) {
+func WriteEnCache(pid int, nroPag int, despl int, datos []byte) {
 
 	time.Sleep(time.Duration(globals.ClientConfig.Cache_delay) * time.Millisecond)
 
-	pos := globals.ID.PosicionPag
-	if pos < 0 || pos >= len(globals.CachePaginas.Entradas) {
-		log.Printf("## WriteEnCache: índice de página inválido %d", pos)
-		return
+	/*
+		pos := globals.ID.PosicionPag
+		if pos < 0 || pos >= len(globals.CachePaginas.Entradas) {
+			log.Printf("## WriteEnCache: índice de página inválido %d", pos)
+			return
+		}
+
+		//globals.CachePaginas.Entradas[pos].Contenido = datos
+		//globals.CachePaginas.Entradas[pos].Modificada = true
+		//globals.CachePaginas.Entradas[pos].BitUso = true
+
+		entrada := &globals.CachePaginas.Entradas[pos]
+
+		if entrada.Desplazamiento < 0 || entrada.Desplazamiento+len(datos) > len(entrada.PaginaCompleta) {
+			log.Printf("## WriteEnCache: rango inválido para escritura (Desplazamiento: %d, Tamaño: %d, Longitud de la página: %d)", entrada.Desplazamiento, len(datos), len(entrada.PaginaCompleta))
+			return
+		}
+
+		copy(entrada.PaginaCompleta[entrada.Desplazamiento:], datos)
+
+		entrada.Modificada = true
+		entrada.BitUso = true*/
+
+		for i := range globals.CachePaginas.Entradas {
+			entrada := &globals.CachePaginas.Entradas[i]
+		
+			if entrada.PID == pid && entrada.NroPag == nroPag {
+		
+				log.Printf(">>> Escribiendo en cache: offset %d, datos %v", despl, datos)
+				copy(entrada.PaginaCompleta[despl:], datos)
+				log.Printf(">>> Página en cache luego del write: %v", entrada.PaginaCompleta)
+		
+				entrada.Modificada = true
+				entrada.BitUso = true
+				return
+			}
+		}
+
 	}
 
-	//globals.CachePaginas.Entradas[pos].Contenido = datos
-	//globals.CachePaginas.Entradas[pos].Modificada = true
-	//globals.CachePaginas.Entradas[pos].BitUso = true
-
-	entrada := &globals.CachePaginas.Entradas[pos]
-
-	if entrada.Desplazamiento < 0 || entrada.Desplazamiento+len(datos) > globals.ClientConfig.Page_size {
-		log.Printf("## WriteEnCache: rango inválido para escritura (Desplazamiento: %d, Tamaño: %d, Longitud de la página: %d)", entrada.Desplazamiento, len(datos), len(entrada.PaginaCompleta))
-		return
-	}
-
-	copy(entrada.PaginaCompleta[entrada.Desplazamiento:], datos)
-
-	entrada.Modificada = true
-	entrada.BitUso = true
-}
 
 func ReadEnCache() {
 
@@ -65,12 +83,12 @@ func ReadEnCache() {
 		log.Printf("## ReadEnCache: rango inválido para lectura (Desplazamiento: %d, Tamaño: %d, Longitud del contenido: %d)", desplazamiento, tamanio, len(pagCompleta))
 		return
 	}
-	
+
 	globals.ID.LecturaCache = pagCompleta[desplazamiento : desplazamiento+tamanio]
-	
+
 	log.Printf("## READ en cache: %v", globals.ID.LecturaCache)
 	log.Printf("## PID: %d - Accion: LEER - Direccion Física: %d - Valor: %v",
-				globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.LecturaCache)
+		globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.LecturaCache)
 
 	//lectura := contenidoCompleto[desplazamiento : desplazamiento+tamanio]
 	//log.Printf("## READ en cache: %s", lectura)
