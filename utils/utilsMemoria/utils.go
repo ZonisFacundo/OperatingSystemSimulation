@@ -250,6 +250,7 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	var ContenidoDireccion globals.BytePaquete
 	ContenidoDireccion.Info = make([]byte, PaqueteDireccion.Tamaño)
 	// globals.Sem_Mem.Lock()
+
 	for i := 0; i < PaqueteDireccion.Tamaño; i++ {
 
 		ContenidoDireccion.Info[i] = globals.MemoriaPrincipal[PaqueteDireccion.Direccion]
@@ -268,6 +269,49 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 
 }
 
+func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
+
+	var PaqueteDireccion globals.PaqueteRead
+	err := json.NewDecoder(r.Body).Decode(&PaqueteDireccion) //guarda en request lo que nos mando el cliente
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if PaqueteDireccion.Tamaño < 1 {
+		log.Printf("\n\nTAM A LEER ES < 0, ERROR (HTTP Read)\n\n")
+		return
+	}
+	auxiliares.InicializarSiNoLoEstaMap(PaqueteDireccion.Pid)
+
+	// globals.Sem_Metricas.Lock()
+	globals.MetricasProceso[PaqueteDireccion.Pid].ContadorReadMemoria++
+	// globals.Sem_Metricas.Unlock()
+
+	log.Printf("## PID: %d - <Escritura/Lectura> - Dir. Física: %d  - Tamaño: %d\n", PaqueteDireccion.Pid, PaqueteDireccion.Direccion, PaqueteDireccion.Tamaño)
+
+	var ContenidoDireccion globals.BytePaquete
+	ContenidoDireccion.Info = make([]byte, PaqueteDireccion.Tamaño)
+	// globals.Sem_Mem.Lock()
+
+	for i := 0; i < PaqueteDireccion.Tamaño; i++ {
+
+		ContenidoDireccion.Info[i] = globals.MemoriaPrincipal[PaqueteDireccion.Direccion]
+	}
+	// globals.Sem_Mem.Unlock()
+	respuestaJSON, err := json.Marshal(ContenidoDireccion)
+	if err != nil {
+		return
+	}
+
+	log.Printf("\n\nMUESTRO LO QUE LE MANDO A CPU COMO LEIDO (HTTP Read)\n\n")
+	log.Print("array de bytes: \n", ContenidoDireccion.Info)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(respuestaJSON)
+
+}
 func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
 
@@ -291,7 +335,7 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 	bytardos := []byte(PaqueteInfoWrite.Contenido)
 
-	log.Printf("## PID: %d - <Escritura> - Dir. Física: %d  - Tamaño: %d\n", PaqueteInfoWrite.Pid, PaqueteInfoWrite.Direccion, (len(PaqueteInfoWrite.Contenido) - 1))
+	log.Printf("## PID: %d - <Escritura> - Dir. Física: %d  - Tamaño: %d\n", PaqueteInfoWrite.Pid, PaqueteInfoWrite.Direccion, len(PaqueteInfoWrite.Contenido))
 
 	// globals.Sem_Mem.Lock()
 	for i := 0; i < len(PaqueteInfoWrite.Contenido); i++ {
@@ -919,7 +963,10 @@ cambia a -1 la info del proceso a finalizar y printea las metricas del proceso
 */
 func FinalizarProceso(pid int) {
 
-	CambiarAMenos1TodasLasTablas(pid)
+	if globals.MemoriaKernel[pid].TablaSimple[0] != -1 { //si esta en swap o es de tam 0 no entra al if basicamente porque no hace falta
+		CambiarAMenos1TodasLasTablas(pid)
+
+	}
 	// globals.Sem_Instruccion.Lock()
 	// globals.Sem_Metricas.Lock()
 	log.Printf("## PID: <%d> - Proceso Destruido - Métricas - Acc. T. Pag: <%d>; Inst.Sol.: <%d>; SWAP:<%d>; Mem.Prin.:<%d>; Lec.Mem.: <%d>, Esc.Mem.: <%d>",

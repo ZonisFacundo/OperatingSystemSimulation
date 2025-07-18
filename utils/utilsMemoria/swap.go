@@ -302,9 +302,12 @@ func SwapAMemoria(pid int) int {
 	// globals.Sem_Instruccion.Unlock()
 
 	//debug 13-07
-	//log.Printf("\n\tmuestro el contenido del SWAP PARA DEBUGEAR MAS QUE NADA\t\n")
+	log.Printf("\n\tmuestro el contenido del SWAP PARA DEBUGEAR MAS QUE NADA\t\n")
 
-	//	auxiliares.MostrarArchivo(globals.ClientConfig.Swapfile_path)
+	auxiliares.MostrarArchivo(globals.ClientConfig.Swapfile_path)
+
+	log.Printf("\n\n\tmuestro el contenido de la MEMORIA\n")
+	auxiliares.Mostrarmemoria()
 
 	return 1
 }

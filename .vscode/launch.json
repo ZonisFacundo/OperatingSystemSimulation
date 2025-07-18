@@ -1,18 +1,13 @@
 {
   "version": "0.2.0",
   "configurations": [
-
     {
-      "name": "Launch Kernel",
+      "name": "Launch Memory",
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/kernel/kernel.go",
+      "program": "${workspaceFolder}/memoria/memoria.go",
       "cwd": "${workspaceFolder}",
-      "args": [
-        "${workspaceFolder}/archi.txt",
-        "400"
-      ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }
