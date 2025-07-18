@@ -22,11 +22,6 @@ type CPUMMU struct {
 	TamPag   int `json:"tam"`
 }
 
-func GOTO(pcInstr int, valor int) int {
-	pcInstr--
-	return pcInstr + valor
-}
-
 func EnvioDirLogica(ip string, puerto int, dirLogica []int) {
 
 	var paquete utilsCPU.EnvioDirLogicaAMemoria
