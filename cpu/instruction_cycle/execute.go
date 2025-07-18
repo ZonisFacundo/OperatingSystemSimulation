@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
-	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
+	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
 
 // switch para ver que hace dependiendo la instruccion:
@@ -351,6 +351,7 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 		NroPag:          nroPagina,
 		PaginaCompleta:  globals.ID.PaginaCompleta,
 		Frame:           globals.ID.Frame,
+		Desplazamiento:  globals.ID.Desplazamiento,
 		Contenido:       contenido,
 		DireccionFisica: direccionFisica,
 		Modificada:      false,
@@ -415,8 +416,8 @@ func VaciarCache(pid int) {
 	for _, entrada := range globals.CachePaginas.Entradas {
 		if entrada.PID == pid {
 			if entrada.Modificada {
-				Write(globals.ClientConfig.Ip_memory,globals.ClientConfig.Port_memory,
-					entrada.Frame,string(entrada.PaginaCompleta),
+				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory,
+					entrada.Frame, string(entrada.PaginaCompleta),
 				)
 			}
 		} else {
