@@ -2,7 +2,7 @@
   "tlb_entries": 4,
   "tlb_replacement": "LRU",
   "cache_entries": 2,
-  "cache_replacement": "CLOCK-M",
+  "cache_replacement": "CLOCK-m",
   "cache_delay": 50,
   "port_cpu": 8005,
   "instance_id": "cpu2",

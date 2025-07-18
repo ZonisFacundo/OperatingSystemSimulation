@@ -348,6 +348,8 @@ func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int, cola []*PCB) {
 
 func EnviarProcesoACPU(pcb *PCB, cpu *CPU) {
 
+	log.Printf("\n\n MANDE EL PROCESO PID: %d a la CPU: %s \n\n", pcb.Pid, cpu.Instancia)
+
 	var paquete PaqueteEnviadoKERNELaCPU
 
 	paquete.PC = pcb.Pc
@@ -647,16 +649,17 @@ func PlanificadorCortoPlazo() {
 
 			} else if hayDesalojo {
 				pcbDesalojar, cpuDesalojar := RafagaMasLargaDeLosCPU()
+				//log.Printf("\n\n ## (<%d>) - %d < %d \n\n", pcbChequear.Pid, calcularRafagaEstimada(pcbChequear), CalcularTiempoRestanteEjecucion(pcbDesalojar))
 				if calcularRafagaEstimada(pcbChequear) < CalcularTiempoRestanteEjecucion(pcbDesalojar) {
-					InterrumpirCPU(cpuDesalojar)
 					log.Printf("## (<%d>) - Desalojado por algoritmo SJF/SRT \n", cpuDesalojar.Pid)
+					InterrumpirCPU(cpuDesalojar)
 					PasarReady(pcbDesalojar)
 					PasarExec(pcbChequear)
 					cpuDesalojar.Pid = pcbChequear.Pid
 					//Santi lo agrego, sin esto no mandamos otro pcb a cpu
 					//pcbChequear.Pc = pcbChequear.Pc - 1
-					log.Printf("\n\n ## (<%d>) - VAMOS A METER A EJECUTAR POST DESALOJO \n\n", pcbChequear.Pid)
 					EnviarProcesoACPU(pcbChequear, cpuDesalojar)
+					log.Printf("\n\n ## (<%d>) - YA METIMOS A EJECUTAR UN PROCESO POST DESALOJO \n\n", pcbChequear.Pid)
 				}
 			} //else {
 			//SemCortoPlazo <- struct{}{}
