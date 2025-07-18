@@ -140,7 +140,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 	//MutexObtenerPCB.Lock()
 	PCBUtilizar.Pc = request.Pc
-	PCBUtilizar.RafagaAnterior = float32(PCBUtilizar.TiempoEnvioExc.Sub(time.Now()))
+	PCBUtilizar.RafagaAnterior = float32(time.Since(PCBUtilizar.TiempoEnvioExc))
 	//MutexObtenerPCB.Unlock()
 
 	switch request.Syscall {
@@ -629,9 +629,9 @@ func PlanificadorLargoPlazo() {
 func PlanificadorCortoPlazo() {
 	for true {
 		<-SemCortoPlazo
-
+		MutexColaReady.Lock()
 		if len(ColaReady) != 0 {
-			MutexColaReady.Lock()
+
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
 			CPUDisponible, noEsVacio := TraqueoCPU()
@@ -728,7 +728,7 @@ func RafagaMasLargaDeLosCPU() (*PCB, *CPU) {
 }
 
 func CalcularTiempoRestanteEjecucion(pcb *PCB) float32 {
-	return pcb.EstimacionAnterior - float32(pcb.TiempoEnvioExc.Sub(time.Now()))
+	return pcb.EstimacionAnterior - float32(time.Since(pcb.TiempoEnvioExc))
 }
 
 func calcularRafagaEstimada(pcb *PCB) float32 {
@@ -1039,7 +1039,6 @@ func ObtenerIO(instancia string) *IO {
 }
 
 func ExisteIO(instancia string) bool {
-	log.Println("%d", len(ListaIO))
 	for _, io := range ListaIO {
 		if io.Instancia == instancia { //"IO-"+
 			return true
