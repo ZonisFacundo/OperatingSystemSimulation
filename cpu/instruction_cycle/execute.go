@@ -28,7 +28,7 @@ func Execute(detalle globals.Instruccion) bool {
 		if globals.ID.DireccionFis >= 0 {
 			if globals.ClientConfig.Cache_entries > 0 { //cache esta habilitada (está vacia?)
 				if mmu.EstaEnCache(globals.ID.NroPag) {
-					mmu.WriteEnCache(globals.ID.Datos)
+					mmu.WriteEnCache([]byte(globals.ID.Datos))
 					log.Printf("## WRITE en Cache: PID: %d, Pag: %d, Datos: %s", globals.ID.ProcessValues.Pid, globals.ID.NroPag, globals.ID.Datos)
 				} else {
 
@@ -266,9 +266,11 @@ func Read(ip string, port int, direccion int, tamaño int) {
 		return
 	}
 
-	informacion := string(respuesta.Info)
+	informacion := respuesta.Info
+	paginaCompaleta := respuesta.PaginaCompleta
 
-	globals.ID.ValorLeido = informacion //guardo el contenido que lee memoria en una variable global
+	globals.ID.ValorLeido = informacion         //guarda el valor leido en memoria en el tamanio que se paso por parametro
+	globals.ID.PaginaCompleta = paginaCompaleta //guarda pagina completa para guardar en cache
 
 }
 
@@ -338,17 +340,18 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 		return
 	}
 
-	var contenido string
+	var contenido []byte
 
 	if globals.ID.InstructionType == "READ" {
 		contenido = globals.ID.ValorLeido
 	} else if globals.ID.InstructionType == "WRITE" {
-		contenido = globals.ID.Datos
+		contenido = []byte(globals.ID.Datos)
 	}
 
 	entrada := globals.EntradaCacheDePaginas{
 		PID:             globals.ID.ProcessValues.Pid,
 		NroPag:          nroPagina,
+		PaginaCompleta:  globals.ID.PaginaCompleta,
 		Contenido:       contenido,
 		DireccionFisica: direccionFisica,
 		Modificada:      false,

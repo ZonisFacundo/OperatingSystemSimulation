@@ -20,7 +20,7 @@ func EstaEnCache(nroPagina int) bool {
 	return false
 }
 
-func WriteEnCache(datos string) {
+func WriteEnCache(datos []byte) {
 
 	time.Sleep(time.Duration(globals.ClientConfig.Cache_delay) * time.Millisecond)
 
@@ -45,17 +45,20 @@ func ReadEnCache() {
 		return
 	}
 
-	contenidoCompleto := globals.CachePaginas.Entradas[pos].Contenido
+	pagCompleta := globals.CachePaginas.Entradas[pos].PaginaCompleta
 	desplazamiento := globals.ID.Desplazamiento
 	tamanio := globals.ID.Tamaño
 
-	if desplazamiento < 0 || desplazamiento+tamanio > len(contenidoCompleto) {
-		log.Printf("## ReadEnCache: rango inválido para lectura (Desplazamiento: %d, Tamaño: %d, Longitud del contenido: %d)", desplazamiento, tamanio, len(contenidoCompleto))
+	if desplazamiento < 0 || desplazamiento+tamanio > len(pagCompleta) {
+		log.Printf("## ReadEnCache: rango inválido para lectura (Desplazamiento: %d, Tamaño: %d, Longitud del contenido: %d)", desplazamiento, tamanio, len(pagCompleta))
 		return
 	}
 
-	lectura := contenidoCompleto[desplazamiento : desplazamiento+tamanio]
-	log.Printf("## READ en cache: %s", lectura)
+	lectura := pagCompleta[desplazamiento : desplazamiento+tamanio]
+	log.Printf("## READ en cache: %s", string(lectura))
+
+	//lectura := contenidoCompleto[desplazamiento : desplazamiento+tamanio]
+	//log.Printf("## READ en cache: %s", lectura)
 
 	// Marcar uso:
 	globals.CachePaginas.Entradas[pos].BitUso = true
