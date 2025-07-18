@@ -8,7 +8,7 @@
   "ip_memory": "127.0.0.1",
   "log_level": "DEBUG",
   "port_cpu": 8004,
-  "port_kernel": 8001,
+  "port_kernel": 8008,
   "port_memory": 8002,
   "size_page": 64,
   "tlb_entries": 0,

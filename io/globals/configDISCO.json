@@ -3,5 +3,5 @@
   "ip_io": "127.0.0.1",
   "ip_kernel": "127.0.0.1",
   "log_level": "DEBUG",
-  "port_kernel": 8001
+  "port_kernel": 8008
 }

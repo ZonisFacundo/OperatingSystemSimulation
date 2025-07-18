@@ -629,9 +629,9 @@ func PlanificadorLargoPlazo() {
 func PlanificadorCortoPlazo() {
 	for true {
 		<-SemCortoPlazo
-		MutexColaReady.Lock()
-		if len(ColaReady) != 0 {
 
+		if len(ColaReady) != 0 {
+			MutexColaReady.Lock()
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
 			CPUDisponible, noEsVacio := TraqueoCPU()
