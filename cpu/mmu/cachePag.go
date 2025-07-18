@@ -36,7 +36,7 @@ func WriteEnCache(datos []byte) {
 
 	entrada := &globals.CachePaginas.Entradas[pos]
 
-	if entrada.Desplazamiento < 0 || entrada.Desplazamiento+len(datos) > len(entrada.PaginaCompleta) {
+	if entrada.Desplazamiento < 0 || entrada.Desplazamiento+len(datos) > globals.ClientConfig.Page_size {
 		log.Printf("## WriteEnCache: rango inválido para escritura (Desplazamiento: %d, Tamaño: %d, Longitud de la página: %d)", entrada.Desplazamiento, len(datos), len(entrada.PaginaCompleta))
 		return
 	}
