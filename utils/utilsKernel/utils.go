@@ -650,6 +650,10 @@ func PlanificadorCortoPlazo() {
 					PasarReady(pcbDesalojar)
 					PasarExec(pcbChequear)
 					cpuDesalojar.Pid = pcbChequear.Pid
+					//Santi lo agrego, sin esto no mandamos otro pcb a cpu
+					pcbChequear.Pc = pcbChequear.Pc - 1
+					//log.Printf("\n\n ## (<%d>) - VAMOS A METER A EJECUTAR POST DESALOJO \n\n", pcbChequear.Pid)
+					EnviarProcesoACPU(pcbChequear, cpuDesalojar)
 				}
 			} //else {
 			//SemCortoPlazo <- struct{}{}
