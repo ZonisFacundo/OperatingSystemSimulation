@@ -196,7 +196,7 @@ func SwapADisco(pid int) int { //incompleta
 		log.Printf("error al abir el archivo (SwapADisco)\n")
 	}
 
-	currentPos, err := file.Seek(0, io.SeekCurrent) //guardamos el numero de byte en el que arrancamos a escribir
+	currentPos, err := file.Seek(0, io.SeekEnd) //guardamos el numero de byte en el que arrancamos a escribir
 
 	if err != nil {
 		log.Printf("error al abrir el archivo SWAP a la hora de llevarlo a disco para pid: %d \t (SwapADisco)\n", pid)
