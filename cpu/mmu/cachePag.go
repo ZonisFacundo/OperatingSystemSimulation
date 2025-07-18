@@ -12,11 +12,11 @@ func EstaEnCache(nroPagina int) bool {
 		if entrada.PID == globals.ID.ProcessValues.Pid && entrada.NroPag == nroPagina {
 			globals.ID.PosicionPag = i
 			globals.CachePaginas.Entradas[i].BitUso = true
-			log.Printf(">> CACHE HIT -> PID: %d, Pagina: %d", entrada.PID, entrada.NroPag)
+			log.Printf("PID: %d - Cache Hit - Pagina: %d", entrada.PID, entrada.NroPag)
 			return true
 		}
 	}
-	log.Printf(">> CACHE MISS -> PID: %d, Pagina: %d", globals.ID.ProcessValues.Pid, nroPagina)
+	log.Printf("PID: %d - Cache MISS - Pagina: %d", globals.ID.ProcessValues.Pid, nroPagina)
 	return false
 }
 
@@ -51,17 +51,16 @@ func WriteEnCache(pid int, nroPag int, despl int, datos []byte) {
 			entrada := &globals.CachePaginas.Entradas[i]
 		
 			if entrada.PID == pid && entrada.NroPag == nroPag {
-		
-				log.Printf(">>> Escribiendo en cache: offset %d, datos %v", despl, datos)
+	
 				copy(entrada.PaginaCompleta[despl:], datos)
-				log.Printf(">>> Página en cache luego del write: %v", entrada.PaginaCompleta)
 		
 				entrada.Modificada = true
 				entrada.BitUso = true
 				return
 			}
 		}
-
+		log.Printf("## PID: %d - Accion: ESCRIBIR - Direccion Física: %d - Valor: %v",
+					globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.Datos)
 	}
 
 
@@ -86,7 +85,7 @@ func ReadEnCache() {
 
 	globals.ID.LecturaCache = pagCompleta[desplazamiento : desplazamiento+tamanio]
 
-	log.Printf("## READ en cache: %v", globals.ID.LecturaCache)
+	//log.Printf("## READ en cache: %v", globals.ID.LecturaCache)
 	log.Printf("## PID: %d - Accion: LEER - Direccion Física: %d - Valor: %v",
 		globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.LecturaCache)
 

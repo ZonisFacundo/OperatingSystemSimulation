@@ -97,7 +97,7 @@ func CargarConfig(path string, instanceID string) {
 
 	conjuntodebytes, err := os.ReadFile(path)
 	if err != nil {
-		log.Printf("## ERROR -> Revisa bien el path del config papulince.")
+		log.Printf("## ERROR -> Revisar path del config.")
 		return
 	}
 
@@ -114,7 +114,7 @@ func CargarConfig(path string, instanceID string) {
 
 func InitCache() {
 	if ClientConfig.Cache_entries == 0 {
-		log.Printf("## ERROR -> Cache deshabilitada.")
+		log.Printf("Cache deshabilitada.")
 	}
 	CachePaginas = CacheDePaginas{
 		Entradas:     make([]EntradaCacheDePaginas, 0, ClientConfig.Cache_entries),
@@ -125,7 +125,7 @@ func InitCache() {
 
 func InitTlb() {
 	if ClientConfig.Tlb_entries == 0 {
-		log.Printf("## ERROR -> TLB deshabilitada.")
+		log.Printf("TLB deshabilitada.")
 	}
 	Tlb = TLB{
 		Entradas:       make([]Entrada, 0, ClientConfig.Tlb_entries),

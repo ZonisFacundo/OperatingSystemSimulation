@@ -9,7 +9,7 @@ import (
 
 func EstaTraducida(nroPagina int) bool {
 	if globals.Tlb.Tamanio > 0 {
-		log.Printf("Buscando en TLB -> PID: %d, Pag: %d", globals.ID.ProcessValues.Pid, nroPagina)
+		//log.Printf("Buscando en TLB -> PID: %d, Pag: %d", globals.ID.ProcessValues.Pid, nroPagina)
 		now := time.Now().UnixNano()
 
 		for i, entrada := range globals.Tlb.Entradas {
