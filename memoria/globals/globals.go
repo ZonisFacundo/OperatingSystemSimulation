@@ -70,7 +70,8 @@ type DireccionLogica struct {
 }
 
 type BytePaquete struct {
-	Info []byte `json:"info"`
+	Info           []byte `json:"info"`
+	PaginaCompleta []byte `json:"pag"`
 }
 
 type Instru struct {

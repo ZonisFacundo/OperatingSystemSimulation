@@ -167,9 +167,6 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 		w.WriteHeader(http.StatusOK)
 		w.Write(respuestaJSON)
 
-		var pagi globals.Pagina
-		pagi, _ = LeerPaginaCompleta(0 * globals.ClientConfig.Page_size) //ver semaforos adentro
-		log.Printf("LEO PAGINA 0: \n\n\n%b\n\n\n", pagi.Info)
 		//	auxiliares.Mostrarmemoria()
 
 		// globals.Sem_Bitmap.Unlock()

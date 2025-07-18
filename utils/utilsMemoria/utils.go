@@ -218,7 +218,6 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 	}
 
 	log.Printf("MARCO:  %d: \n", Traduccion.Frame)
-
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
@@ -251,49 +250,7 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	ContenidoDireccion.Info = make([]byte, PaqueteDireccion.Tamaño)
 	// globals.Sem_Mem.Lock()
 
-	for i := 0; i < PaqueteDireccion.Tamaño; i++ {
-
-		ContenidoDireccion.Info[i] = globals.MemoriaPrincipal[PaqueteDireccion.Direccion]
-	}
-	// globals.Sem_Mem.Unlock()
-	respuestaJSON, err := json.Marshal(ContenidoDireccion)
-	if err != nil {
-		return
-	}
-
-	log.Printf("\n\nMUESTRO LO QUE LE MANDO A CPU COMO LEIDO (HTTP Read)\n\n")
-	log.Print("array de bytes: \n", ContenidoDireccion.Info)
-
-	w.WriteHeader(http.StatusOK)
-	w.Write(respuestaJSON)
-
-}
-
-func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request) {
-	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
-
-	var PaqueteDireccion globals.PaqueteRead
-	err := json.NewDecoder(r.Body).Decode(&PaqueteDireccion) //guarda en request lo que nos mando el cliente
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if PaqueteDireccion.Tamaño < 1 {
-		log.Printf("\n\nTAM A LEER ES < 0, ERROR (HTTP Read)\n\n")
-		return
-	}
-	auxiliares.InicializarSiNoLoEstaMap(PaqueteDireccion.Pid)
-
-	// globals.Sem_Metricas.Lock()
-	globals.MetricasProceso[PaqueteDireccion.Pid].ContadorReadMemoria++
-	// globals.Sem_Metricas.Unlock()
-
-	log.Printf("## PID: %d - <Escritura/Lectura> - Dir. Física: %d  - Tamaño: %d\n", PaqueteDireccion.Pid, PaqueteDireccion.Direccion, PaqueteDireccion.Tamaño)
-
-	var ContenidoDireccion globals.BytePaquete
-	ContenidoDireccion.Info = make([]byte, PaqueteDireccion.Tamaño)
-	// globals.Sem_Mem.Lock()
+	ContenidoDireccion.PaginaCompleta, _ = LeerPaginaCompleta(int(math.Floor(float64(PaqueteDireccion.Direccion / globals.ClientConfig.Page_size))))
 
 	for i := 0; i < PaqueteDireccion.Tamaño; i++ {
 
@@ -312,6 +269,7 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	w.Write(respuestaJSON)
 
 }
+
 func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
 
@@ -364,6 +322,8 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 		//var PunteritoAux *globals.Nodo = globals.MemoriaKernel[0].PunteroATablaDePaginas
 		//MostrarTablaMultinivel(0, 0, PunteritoAux)
 	*/
+	auxiliares.Mostrarmemoria()
+
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
@@ -796,11 +756,11 @@ Se escribirá la página completa a partir del byte 0 que igual será enviado co
 que hace LeerPaginaCompleta?
 recibe una direccion fisica (tiene que ser una donde inicie una pagina) y devuelve el contenido de esa pagina en un slice de bytes
 */
-func LeerPaginaCompleta(direccion int) (globals.Pagina, error) {
+func LeerPaginaCompleta(direccion int) ([]byte, error) {
 
-	var pagina globals.Pagina
+	var pagina []byte
 
-	pagina.Info = make([]byte, globals.ClientConfig.Page_size)
+	pagina = make([]byte, globals.ClientConfig.Page_size)
 
 	//reviso varias posibilidades... si el usuario envia una direccion distinta a un inicio de pagina es el obvio pero tambien reviso si de casualidad nos pusieron un tam de memoria no divisible por page size, tambien controlo que no nos envien la ultima direccion de la memoria
 	if direccion%globals.ClientConfig.Page_size != 0 || direccion+globals.ClientConfig.Page_size >= globals.ClientConfig.Memory_size {
@@ -811,7 +771,7 @@ func LeerPaginaCompleta(direccion int) (globals.Pagina, error) {
 	} else {
 		// globals.Sem_Mem.Lock()
 		for i := 0; i < globals.ClientConfig.Page_size; i++ {
-			pagina.Info[i] = globals.MemoriaPrincipal[direccion+i] //vamos recorriendo la pagina en memoria y se la asignamos a la variable que vamos a devolver
+			pagina[i] = globals.MemoriaPrincipal[direccion+i] //vamos recorriendo la pagina en memoria y se la asignamos a la variable que vamos a devolver
 
 		}
 		// globals.Sem_Mem.Unlock()
