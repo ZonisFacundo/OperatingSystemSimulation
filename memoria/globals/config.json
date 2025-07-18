@@ -5,9 +5,9 @@
   "log_level": "DEBUG",
   "memory_delay": 500,
   "memory_size": 512,
-  "number_of_levels": 3,
-  "page_size": 4,
+  "number_of_levels": 1,
+  "page_size": 32,
   "port_memory": 8002,
-  "swap_delay": 5000,
+  "swap_delay": 2500,
   "swapfile_path": "/home/utnso/swapfile.bin"
 }
