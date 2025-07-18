@@ -48,8 +48,10 @@ func ConfigurarLogger(ioId string) {
 }
 
 func NotificarFinalizacionAlKernel(nombre string, ipKernel string, puertoKernel int, ipIO string, puertoIO int) {
-	var paquete HandshakepaqueteFin
+	var paquete Handshakepaquete
 	paquete.Nombre = nombre
+	paquete.Ip = ipIO
+	paquete.Puerto = puertoIO
 
 	PaqueteFormatoJson, err := json.Marshal(paquete)
 	if err != nil {
