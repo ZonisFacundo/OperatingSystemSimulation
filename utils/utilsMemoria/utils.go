@@ -101,11 +101,6 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	//	respuesta del server al cliente, no hace falta en este modulo pero en el que estas trabajando seguro que si
 	var respuestaCpu respuestaalCPU
 
-	// globals.Sem_MemoriaKernel.Lock()
-	// globals.Sem_Instruccion.Lock()
-	log.Printf("%s\n", globals.MemoriaKernel[InstruccionLocal.Pid].Instrucciones[InstruccionLocal.Pc]) ///borrar
-	// globals.Sem_Instruccion.Unlock()
-	// globals.Sem_MemoriaKernel.Unlock()
 	//log.Printf("\nla longitud del archivo de instrucciones es: %d\n\n", len(globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones))
 
 	//log.Printf("estamos mandandole a CPU, del pid: %d la instrucion del pc: %d la cual es %s \n\n", globals.Instruction.Pid, globals.Instruction.Pc, globals.MemoriaKernel[globals.Instruction.Pid].Instrucciones[globals.Instruction.Pc])
@@ -353,6 +348,18 @@ func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r 
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
+
+	//para testear
+	log.Printf("\n----------------MUESTRO TODO ASI DEBUGGEAS---------------------\n\n")
+	log.Printf("\n----------------MUESTRO MEMORIA---------------------\n\n")
+
+	auxiliares.Mostrarmemoria()
+
+	log.Printf("\n\n-------------ahora muestro el swap------------------\n\n")
+	auxiliares.MostrarArchivo(globals.ClientConfig.Swapfile_path)
+
+	log.Printf("\n\n-------------ahora muestro el dump------------------\n\n")
+	auxiliares.MostrarArchivo(fmt.Sprintf("%s", globals.ClientConfig.Dump_path))
 
 }
 func RetornoClienteKernelServidorMemoriaFinProceso(w http.ResponseWriter, r *http.Request) {
