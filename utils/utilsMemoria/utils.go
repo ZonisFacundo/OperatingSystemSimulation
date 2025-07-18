@@ -923,7 +923,7 @@ cambia a -1 la info del proceso a finalizar y printea las metricas del proceso
 */
 func FinalizarProceso(pid int) {
 
-	if globals.MemoriaKernel[pid].TablaSimple[0] != -1 { //si esta en swap o es de tam 0 no entra al if basicamente porque no hace falta
+	if len(globals.MemoriaKernel[pid].TablaSimple) > 0 && globals.MemoriaKernel[pid].TablaSimple[0] != -1 { //si esta en swap o es de tam 0 no entra al if basicamente porque no hace falta
 		CambiarAMenos1TodasLasTablas(pid)
 
 	}

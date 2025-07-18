@@ -1,6 +1,4 @@
 {
-  "scheduler_algorithm": "FIFO",
-  "ready_ingress_algorithm": "FIFO",
   "alpha": 1,
   "initial_estimate": 1000,
   "suspension_time": 120000,
@@ -8,5 +6,7 @@
   "ip_memory": "127.0.0.1",
   "log_level": "DEBUG",
   "port_kernel": 8008,
-  "port_memory": 8002
+  "port_memory": 8002,
+  "ready_ingress_algorithm": "FIFO",
+  "scheduler_algorithm": "SRT"
 }
