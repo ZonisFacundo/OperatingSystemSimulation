@@ -68,6 +68,7 @@ type EntradaCacheDePaginas struct {
 	NroPag          int
 	PaginaCompleta  []byte
 	Frame           int
+	Desplazamiento  int
 	Contenido       []byte
 	DireccionFisica int
 	Modificada      bool

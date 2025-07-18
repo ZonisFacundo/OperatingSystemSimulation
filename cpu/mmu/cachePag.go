@@ -30,9 +30,21 @@ func WriteEnCache(datos []byte) {
 		return
 	}
 
-	globals.CachePaginas.Entradas[pos].Contenido = datos
-	globals.CachePaginas.Entradas[pos].Modificada = true
-	globals.CachePaginas.Entradas[pos].BitUso = true
+	//globals.CachePaginas.Entradas[pos].Contenido = datos
+	//globals.CachePaginas.Entradas[pos].Modificada = true
+	//globals.CachePaginas.Entradas[pos].BitUso = true
+
+	entrada := &globals.CachePaginas.Entradas[pos]
+
+	if entrada.Desplazamiento < 0 || entrada.Desplazamiento+len(datos) > len(entrada.PaginaCompleta) {
+		log.Printf("## WriteEnCache: rango inválido para escritura (Desplazamiento: %d, Tamaño: %d, Longitud de la página: %d)", entrada.Desplazamiento, len(datos), len(entrada.PaginaCompleta))
+		return
+	}
+
+	copy(entrada.PaginaCompleta[entrada.Desplazamiento:], datos)
+
+	entrada.Modificada = true
+	entrada.BitUso = true
 }
 
 func ReadEnCache() {
