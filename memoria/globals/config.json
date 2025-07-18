@@ -4,10 +4,10 @@
   "ip_memory": "127.0.0.1",
   "log_level": "DEBUG",
   "memory_delay": 500,
-  "memory_size": 4096,
+  "memory_size": 256,
   "number_of_levels": 2,
-  "page_size": 64,
+  "page_size": 16,
   "port_memory": 8002,
-  "swap_delay": 15000,
+  "swap_delay": 3000,
   "swapfile_path": "/home/utnso/swapfile.bin"
 }
