@@ -80,7 +80,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "GOTO":
 
-		pcInstrNew := GOTO(detalle.ProcessValues.Pc, detalle.Valor)
+		pcInstrNew := detalle.Valor
 
 		fmt.Println("## EJECUCIÓN -> GOTO - PC actualizado en: ", pcInstrNew)
 		detalle.Syscall = fmt.Sprintf("## PC actualizado en: %d ", pcInstrNew)

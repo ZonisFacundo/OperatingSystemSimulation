@@ -52,11 +52,11 @@ func MostrarMemoriaKernel() {
 }
 
 func ActualizarInstrucciones(x globals.ProcesoEnMemoria, pid int) { //hay que hacer esto porque no te deja actualizarle solo un miembro del struct directamente al de globals por algun motivo
-	////globals.Sem_MemoriaKernel.Lock()
+	globals.Sem_MemoriaKernel.Lock()
 	auxi := globals.MemoriaKernel[pid]
 	auxi.Instrucciones = x.Instrucciones
 	globals.MemoriaKernel[pid] = auxi
-	////globals.Sem_MemoriaKernel.Unlock()
+	globals.Sem_MemoriaKernel.Unlock()
 
 }
 
@@ -65,22 +65,22 @@ recibe posicion en donde se comenzo a guardar el proceso en swap y tamao de este
 */
 
 func ActualizarSwapInfo(posicion int64, tam int, pid int) { //hay que hacer esto porque no te deja actualizarle solo un miembro del struct directamente al de globals por algun motivo
-	////globals.Sem_MemoriaKernel.Lock()
+	globals.Sem_MemoriaKernel.Lock()
 	auxi := globals.MemoriaKernel[pid]
 	auxi.SwapStart = posicion
 	auxi.SwapTam = tam
 	globals.MemoriaKernel[pid] = auxi
-	////	globals.Sem_MemoriaKernel.Unlock()
+	globals.Sem_MemoriaKernel.Unlock()
 
 }
 
 func ActualizarTablaSimple(x globals.ProcesoEnMemoria, pid int) { ///hay que hacer esto porque no te deja actualizarle solo un miembro del struct directamente al de globals por algun motivo
 	//
-	//	globals.Sem_MemoriaKernel.Lock()
+	globals.Sem_MemoriaKernel.Lock()
 	auxi := globals.MemoriaKernel[pid]
 	auxi.TablaSimple = x.TablaSimple
 	globals.MemoriaKernel[pid] = auxi
-	// globals.Sem_MemoriaKernel.Unlock()
+	globals.Sem_MemoriaKernel.Unlock()
 }
 
 func MostrarProceso(pid int) {
@@ -122,13 +122,13 @@ reservando memoria para un struct de metricas
 */
 func InicializarSiNoLoEstaMap(pid int) {
 	//globals.Sem_Instruccion.Lock()//
-	//globals.Sem_Metricas.Lock()
+	globals.Sem_Metricas.Lock()
 	if globals.MetricasProceso[pid] == nil {
 		var punteroaux *globals.Metricas = new(globals.Metricas)
 
 		globals.MetricasProceso[pid] = punteroaux
 
 	}
-	//globals.Sem_Metricas.Unlock()
+	globals.Sem_Metricas.Unlock()
 	//globals.Sem_Instruccion.Unlock()
 }

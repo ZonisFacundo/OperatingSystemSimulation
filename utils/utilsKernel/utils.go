@@ -254,7 +254,7 @@ func UtilizarIO(ioServer *IO, pcb *PCB, tiempo int) {
 
 		//log.Printf("La respuesta del I/O %s fue: %s\n", ioServer.Instancia, respuesta.Mensaje)
 
-		log.Printf("## (<%d>) finalizó IO y pasa a READY \n", pcb.Pid)
+		log.Printf("## (<%d>) finalizó IO\n", pcb.Pid)
 
 		if pcb.EstadoActual == "BLOCKED" {
 			//log.Printf("pasa de blocked a ready el pid %d\n", pcb.Pid)
@@ -603,15 +603,18 @@ func PlanificadorLargoPlazo() {
 
 		<-SemLargoPlazo
 		//log.Printf("pase el semaforo")
-		if len(ColaSuspReady) != 0 {
+		if len(ColaSuspReady) > 0 {
 			//log.Printf("hay procesos en susp ready")
-			MutexColaNew.Lock()
+			MutexColaSuspReady.Lock()
+			log.Printf("la len de la suredy e: %d, \n", len(ColaSuspReady))
 			pcbChequear := CriterioColaNew(ColaSuspReady)
-			MutexColaNew.Unlock()
+			log.Printf("<%d> soy nachooo scocco, \n", pcbChequear.Pid)
+
+			MutexColaSuspReady.Unlock()
 
 			SwapInProceso(pcbChequear)
 
-		} else if len(ColaNew) != 0 {
+		} else if len(ColaNew) > 0 {
 			MutexColaNew.Lock()
 			pcbChequear := CriterioColaNew(ColaNew)
 			MutexColaNew.Unlock()
@@ -630,7 +633,7 @@ func PlanificadorCortoPlazo() {
 	for true {
 		<-SemCortoPlazo
 
-		if len(ColaReady) != 0 {
+		if len(ColaReady) > 0 {
 			MutexColaReady.Lock()
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
@@ -651,8 +654,8 @@ func PlanificadorCortoPlazo() {
 					PasarExec(pcbChequear)
 					cpuDesalojar.Pid = pcbChequear.Pid
 					//Santi lo agrego, sin esto no mandamos otro pcb a cpu
-					pcbChequear.Pc = pcbChequear.Pc - 1
-					//log.Printf("\n\n ## (<%d>) - VAMOS A METER A EJECUTAR POST DESALOJO \n\n", pcbChequear.Pid)
+					//pcbChequear.Pc = pcbChequear.Pc - 1
+					log.Printf("\n\n ## (<%d>) - VAMOS A METER A EJECUTAR POST DESALOJO \n\n", pcbChequear.Pid)
 					EnviarProcesoACPU(pcbChequear, cpuDesalojar)
 				}
 			} //else {
@@ -1272,6 +1275,7 @@ ARMO HTTP PARA DESWAPEAR
 // ATENCION, SI LE VAN A CAMBIAR EL NOMBRE, TIENEN QUE IR A CAMBIARLO TAMBIEN EN SU INVOCACION (PLANI LARGO PLAZO)
 // <<< NUEVO >>> Trae un proceso swappeado devuelta a memoria
 func SwapInProceso(pcb *PCB) {
+	log.Printf("el pid: %d QUIERE SWAP INNNNN \n", pcb.Pid)
 	if pcb == nil {
 		log.Printf("SwapInProceso recibió pcb == nil")
 		return
