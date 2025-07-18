@@ -66,8 +66,8 @@ func ReemplazarConCLOCK(entradaNueva globals.EntradaCacheDePaginas) {
 		if !candidato.BitUso {
 
 			if candidato.Modificada {
-				frameBase := candidato.NroPag * globals.ClientConfig.Page_size
-				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, string(candidato.Contenido))
+				frameBase := candidato.Frame * globals.ClientConfig.Page_size
+				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, string(candidato.PaginaCompleta))
 				log.Printf("## PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, frameBase)
 			}
 
@@ -109,8 +109,8 @@ func ReemplazarConCLOCKM(entradaNueva globals.EntradaCacheDePaginas) {
 			candidato := &cache.Entradas[pos]
 
 			if !candidato.BitUso && candidato.Modificada {
-				frameBase := candidato.NroPag * globals.ClientConfig.Page_size
-				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, string(candidato.Contenido))
+				frameBase := globals.ID.Frame * globals.ClientConfig.Page_size
+				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, string(candidato.PaginaCompleta))
 				log.Printf("## PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, frameBase)
 
 				*candidato = entradaNueva
@@ -122,5 +122,5 @@ func ReemplazarConCLOCKM(entradaNueva globals.EntradaCacheDePaginas) {
 		for i := 0; i < tamanio; i++ {
 			cache.Entradas[i].BitUso = false
 		}
-	}
+	} 
 }

@@ -47,6 +47,7 @@ type Instruccion struct { // instruccion obtenida de memoria
 	PosicionPag     int                   `json:"pos_number"`
 	ValorLeido      []byte                `json:"read_value"`
 	PaginaCompleta  []byte                `json:"complete_page"`
+	LecturaCache    []byte                `json:"read_cache"`
 }
 
 type TLB struct {
@@ -66,6 +67,7 @@ type EntradaCacheDePaginas struct {
 	PID             int
 	NroPag          int
 	PaginaCompleta  []byte
+	Frame           int
 	Contenido       []byte
 	DireccionFisica int
 	Modificada      bool

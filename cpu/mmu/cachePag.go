@@ -53,9 +53,12 @@ func ReadEnCache() {
 		log.Printf("## ReadEnCache: rango inválido para lectura (Desplazamiento: %d, Tamaño: %d, Longitud del contenido: %d)", desplazamiento, tamanio, len(pagCompleta))
 		return
 	}
-
-	lectura := pagCompleta[desplazamiento : desplazamiento+tamanio]
-	log.Printf("## READ en cache: %s", string(lectura))
+	
+	globals.ID.LecturaCache = pagCompleta[desplazamiento : desplazamiento+tamanio]
+	
+	log.Printf("## READ en cache: %v", globals.ID.LecturaCache)
+	log.Printf("## PID: %d - Accion: LEER - Direccion Física: %d - Valor: %v",
+				globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.LecturaCache)
 
 	//lectura := contenidoCompleto[desplazamiento : desplazamiento+tamanio]
 	//log.Printf("## READ en cache: %s", lectura)

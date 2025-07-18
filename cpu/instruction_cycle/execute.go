@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
-	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
+	"github.com/sisoputnfrba/tp-golang/cpu/mmu"
 )
 
 // switch para ver que hace dependiendo la instruccion:
@@ -62,14 +62,15 @@ func Execute(detalle globals.Instruccion) bool {
 					AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
 					AgregarEnCache(globals.ID.NroPag, globals.ID.DireccionFis)
 					log.Printf("## PID: %d - Cache Add - Pagina: %d", globals.ID.ProcessValues.Pid, globals.ID.NroPag)
+					log.Printf("## PID: %d - Accion: LEER - Direccion Física: %d - Valor: %v",
+						globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.ValorLeido)
 				}
 			} else {
 				Read(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Tamaño)
 				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
+				log.Printf("## PID: %d - Accion: LEER - Direccion Física: %d - Valor: %v",
+					globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.ValorLeido)
 			}
-
-			log.Printf("## PID: %d - Accion: LEER - Direccion Física: %d - Valor: %s",
-				globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.ValorLeido)
 
 		} else {
 			fmt.Sprintln("## ERROR -> READ invalido.")
@@ -266,11 +267,8 @@ func Read(ip string, port int, direccion int, tamaño int) {
 		return
 	}
 
-	informacion := respuesta.Info
-	paginaCompaleta := respuesta.PaginaCompleta
-
-	globals.ID.ValorLeido = informacion         //guarda el valor leido en memoria en el tamanio que se paso por parametro
-	globals.ID.PaginaCompleta = paginaCompaleta //guarda pagina completa para guardar en cache
+	globals.ID.ValorLeido = respuesta.Info               //guarda el valor leido en memoria en el tamanio que se paso por parametro
+	globals.ID.PaginaCompleta = respuesta.PaginaCompleta //guarda pagina completa para guardar en cache
 
 }
 
@@ -352,6 +350,7 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 		PID:             globals.ID.ProcessValues.Pid,
 		NroPag:          nroPagina,
 		PaginaCompleta:  globals.ID.PaginaCompleta,
+		Frame:           globals.ID.Frame,
 		Contenido:       contenido,
 		DireccionFisica: direccionFisica,
 		Modificada:      false,
@@ -408,4 +407,23 @@ func AgregarEnTLB(nroPagina int, direccion int) {
 			log.Printf("## ERROR -> Algoritmo de reemplazo incorrecto.")
 		}
 	}
+}
+
+func VaciarCache(pid int) {
+	var nuevasEntradas []globals.EntradaCacheDePaginas
+
+	for _, entrada := range globals.CachePaginas.Entradas {
+		if entrada.PID == pid {
+			if entrada.Modificada {
+				Write(globals.ClientConfig.Ip_memory,globals.ClientConfig.Port_memory,
+					entrada.Frame,string(entrada.PaginaCompleta),
+				)
+			}
+		} else {
+			nuevasEntradas = append(nuevasEntradas, entrada)
+		}
+	}
+
+	globals.CachePaginas.Entradas = nuevasEntradas
+	log.Printf("## Proceso PID: %d desalojado correctamente", pid) //lo que interpreto es que se eliminan las entradas del proceso desalojado no TODAS(de todos los procesos)
 }
