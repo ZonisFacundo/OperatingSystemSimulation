@@ -19,11 +19,11 @@ func EstaTraducida(nroPagina int) bool {
 
 				globals.Tlb.Entradas[i].UltimoAcceso = now
 
-				log.Printf(">> TLB HIT -> PID: %d, Pagina: %d -> DirFis: %d", entrada.PID, entrada.NroPagina, entrada.Direccion)
+				log.Printf("PID: %d - TLB HIT - Pagina: %d", entrada.PID, entrada.NroPagina) //OBLIGATORIO
 				return true
 			}
 		}
-		log.Printf(">> TLB MISS -> PID: %d, Pagina: %d", globals.ID.ProcessValues.Pid, nroPagina)
+		log.Printf("PID: %d - TLB MISS - Pagina: %d", globals.ID.ProcessValues.Pid, nroPagina) //OBLIGATORIO
 		return false
 	}
 	return false

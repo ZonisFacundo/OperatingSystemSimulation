@@ -323,7 +323,7 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 		//var PunteritoAux *globals.Nodo = globals.MemoriaKernel[0].PunteroATablaDePaginas
 		//MostrarTablaMultinivel(0, 0, PunteritoAux)
 	*/
-	auxiliares.Mostrarmemoria()
+	//auxiliares.Mostrarmemoria()
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
@@ -646,7 +646,7 @@ func CrearProceso(paquete PaqueteRecibidoMemoriadeKernel) {
 
 	ActualizarPaginasDisponibles() //actualiza que paginas estan disponibles en este momento
 
-	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d  (CrearProceso) \n", paquete.Pid, paquete.TamProceso)
+	log.Printf("## PID: %d - Proceso Creado - Tamaño: %d \n", paquete.Pid, paquete.TamProceso)
 }
 
 func CrearEInicializarTablaDePaginas(PunteroANodo *globals.Nodo, nivel int) {
@@ -985,7 +985,7 @@ func MemoryDump(pid int) {
 	globals.Sem_MemoriaKernel.Unlock()
 
 	log.Printf("%d bytes fueron escritos en el archivo gracias a la syscall de dump \n", bytestotales)
-	auxiliares.MostrarArchivo(fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid))
+	//auxiliares.MostrarArchivo(fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid))
 	//auxiliares.MostrarArchivo(path)
 	defer file.Close()
 }

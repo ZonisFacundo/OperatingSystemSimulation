@@ -24,7 +24,7 @@ type PaqueteRecibidoWRITE struct {
 }
 type PaqueteRecibidoREAD struct {
 	Info           []byte `json:"info"`
-    PaginaCompleta []byte `json:"pag"`
+	PaginaCompleta []byte `json:"pag"`
 }
 
 func Fetch(pid int, pc int, ip string, puerto int) {
@@ -104,7 +104,7 @@ func Decode(instruccion globals.Instruccion) {
 
 	globals.ID.InstructionType = instruccion.InstructionType
 
-	log.Printf("## PID: <%d> - FETCH - Program Counter: <%d>.", instruccion.ProcessValues.Pid, instruccion.ProcessValues.Pc)
+	log.Printf("## PID: <%d> - FETCH - Program Counter: <%d>.", instruccion.ProcessValues.Pid, instruccion.ProcessValues.Pc) //OBLIGATORIO
 
 	// Instruccion ¿tipo?
 	switch instruccion.InstructionType {
@@ -156,7 +156,7 @@ func Decode(instruccion globals.Instruccion) {
 
 			} else {
 				globals.ID.DireccionFis = (globals.ID.Frame * globals.ClientConfig.Page_size) + globals.ID.Desplazamiento
-				log.Printf("## Direccion Fisica: %d", globals.ID.DireccionFis)
+				// log.Printf("## Direccion Fisica: %d", globals.ID.DireccionFis)
 			}
 		}
 

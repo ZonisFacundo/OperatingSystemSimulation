@@ -104,8 +104,6 @@ func DevolverPidYPCInterrupcion(w http.ResponseWriter, r *http.Request, pc int, 
 		return
 	}
 
-
-
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 }

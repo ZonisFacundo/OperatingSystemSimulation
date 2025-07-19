@@ -11,7 +11,7 @@ func ReemplazarTLB_FIFO(entrada globals.Entrada) {
 	//tlb := &globals.Tlb
 
 	if globals.Tlb.Tamanio == 0 {
-		log.Printf("ERROR: Algoritmo FIFO invocado con TLB de tamaño 0")
+		log.Printf("ERROR -> Algoritmo FIFO invocado con TLB de tamaño 0")
 		return
 	}
 
@@ -27,7 +27,7 @@ func ReemplazarTLB_FIFO(entrada globals.Entrada) {
 func ReemplazarTLB_LRU(entrada globals.Entrada) {
 
 	if globals.Tlb.Tamanio == 0 {
-		log.Printf("Algoritmo LRU invocado con TLB de tamaño 0")
+		log.Printf("## ERROR -> Algoritmo LRU invocado con TLB de tamaño 0")
 		return
 	}
 
@@ -56,7 +56,7 @@ func ReemplazarTLB_LRU(entrada globals.Entrada) {
 
 func ReemplazarConCLOCK(entradaNueva globals.EntradaCacheDePaginas) {
 	if globals.CachePaginas.Tamanio == 0 || len(globals.CachePaginas.Entradas) == 0 {
-		log.Printf("Algoritmo CLOCK invocado -> Caché deshabilitada")
+		log.Printf("## Algoritmo CLOCK invocado -> Caché deshabilitada.")
 		return
 	}
 	cache := &globals.CachePaginas
@@ -70,7 +70,7 @@ func ReemplazarConCLOCK(entradaNueva globals.EntradaCacheDePaginas) {
 			if candidato.Modificada {
 				frameBase := candidato.Frame * globals.ClientConfig.Page_size
 				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, string(candidato.PaginaCompleta))
-				log.Printf("PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, candidato.Frame)
+				log.Printf("PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, candidato.Frame) // OBLIGATORIO
 			}
 
 			*candidato = entradaNueva
@@ -87,7 +87,7 @@ func ReemplazarConCLOCK(entradaNueva globals.EntradaCacheDePaginas) {
 
 func ReemplazarConCLOCKM(entradaNueva globals.EntradaCacheDePaginas) {
 	if globals.CachePaginas.Tamanio == 0 || len(globals.CachePaginas.Entradas) == 0 {
-		log.Printf("Algoritmo CLOCK-M -> Caché deshabilitada.")
+		log.Printf("## Algoritmo CLOCK-M -> Caché deshabilitada.")
 		return
 	}
 	cache := &globals.CachePaginas
@@ -113,7 +113,7 @@ func ReemplazarConCLOCKM(entradaNueva globals.EntradaCacheDePaginas) {
 			if !candidato.BitUso && candidato.Modificada {
 				frameBase := candidato.Frame * globals.ClientConfig.Page_size
 				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, string(candidato.PaginaCompleta))
-				log.Printf("## PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, candidato.Frame)
+				log.Printf("PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, candidato.Frame) //OBLIGATORIO
 
 				*candidato = entradaNueva
 				candidato.BitUso = true

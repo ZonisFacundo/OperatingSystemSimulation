@@ -12,11 +12,11 @@ func EstaEnCache(nroPagina int) bool {
 		if entrada.PID == globals.ID.ProcessValues.Pid && entrada.NroPag == nroPagina {
 			globals.ID.PosicionPag = i
 			globals.CachePaginas.Entradas[i].BitUso = true
-			log.Printf("PID: %d - Cache Hit - Pagina: %d", entrada.PID, entrada.NroPag)
+			log.Printf("PID: %d - Cache Hit - Pagina: %d", entrada.PID, entrada.NroPag) //OBLIGATORIO
 			return true
 		}
 	}
-	log.Printf("PID: %d - Cache MISS - Pagina: %d", globals.ID.ProcessValues.Pid, nroPagina)
+	log.Printf("PID: %d - Cache Miss - Pagina: %d", globals.ID.ProcessValues.Pid, nroPagina) //OBLIGATORIO
 	return false
 }
 
@@ -47,24 +47,23 @@ func WriteEnCache(pid int, nroPag int, despl int, datos []byte) {
 		entrada.Modificada = true
 		entrada.BitUso = true*/
 
-		for i := range globals.CachePaginas.Entradas {
-			entrada := &globals.CachePaginas.Entradas[i]
-		
-			if entrada.PID == pid && entrada.NroPag == nroPag {
-	
-				copy(entrada.PaginaCompleta[despl:], datos)
-		
-				entrada.Modificada = true
-				entrada.BitUso = true
+	for i := range globals.CachePaginas.Entradas {
+		entrada := &globals.CachePaginas.Entradas[i]
 
-				log.Printf("## PID: %d - Accion: ESCRIBIR - Direccion Física: %d - Valor: %v",
-					globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.Datos)
-				return
-			}
+		if entrada.PID == pid && entrada.NroPag == nroPag {
+
+			copy(entrada.PaginaCompleta[despl:], datos)
+
+			entrada.Modificada = true
+			entrada.BitUso = true
+
+			log.Printf("## PID: %d - Accion: ESCRIBIR - Direccion Física: %d - Valor: %s",
+				globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, string(globals.ID.Datos)) //OBLIGATORIO
+			return
 		}
-		
 	}
 
+}
 
 func ReadEnCache() {
 
@@ -87,9 +86,8 @@ func ReadEnCache() {
 
 	globals.ID.LecturaCache = pagCompleta[desplazamiento : desplazamiento+tamanio]
 
-	//log.Printf("## READ en cache: %v", globals.ID.LecturaCache)
-	log.Printf("## PID: %d - Accion: LEER - Direccion Física: %d - Valor: %v",
-		globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.LecturaCache)
+	log.Printf("## PID: %d - Accion: LEER - Direccion Física: %d - Valor: %s",
+		globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, string(globals.ID.LecturaCache)) //OBLIGATORIO
 
 	//lectura := contenidoCompleto[desplazamiento : desplazamiento+tamanio]
 	//log.Printf("## READ en cache: %s", lectura)

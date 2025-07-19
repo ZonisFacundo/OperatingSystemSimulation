@@ -51,20 +51,6 @@ func main() {
 		globals.ClientConfig.Ip_cpu,
 	)
 	http.HandleFunc("/KERNELCPU", instruction_cycle.RecibirPCyPID)
-	/*http.HandleFunc("/KERNELCPU", func(w http.ResponseWriter, r *http.Request) {
-		globals.MutexNecesario.Lock()
-		instruction_cycle.RecibirPCyPID(w, r)
-		globals.MutexNecesario.Unlock()
-
-		log.Printf("Proceso recibido - PID: %d, PC: %d", globals.ID.ProcessValues.Pid, globals.ID.ProcessValues.Pc)
-
-		select {
-		case procesoNuevo <- struct{}{}:
-			log.Println("## Se notifica a CPU de un proceso entrante.")
-		default:
-			log.Println("## CPU ya ejecutando. No se notifica de nuevo proceso.")
-		}
-	})*/
 
 	go func() {
 		http.HandleFunc("/INTERRUPCIONCPU", func(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +58,7 @@ func main() {
 			mutexInterrupcion.Lock()
 			globals.Interruption = true
 			mutexInterrupcion.Unlock()
-			log.Println("## Llega interrupción al puerto Interrupt.")
+			log.Println("## Llega interrupción al puerto Interrupt.") //OBLIGATORIO
 		})
 
 		log.Printf("Servidor HTTP activo en puerto %d.", globals.ClientConfig.Port_cpu)
@@ -80,11 +66,10 @@ func main() {
 	}()
 
 	for {
+
 		log.Println("## Esperando ingreso de un nuevo proceso.")
 
 		<-globals.ProcesoNuevo
-
-		log.Printf("## Ejecutando proceso (PID: %d)", globals.ID.ProcessValues.Pid)
 
 	ejecucion:
 		for {
@@ -98,10 +83,11 @@ func main() {
 			mutexInterrupcion.Unlock()
 
 			if interrumpido {
+
 				log.Printf("## Interrupcion recibida -> Deteniendo proceso con PID: %d", globals.ID.ProcessValues.Pid)
 				instruction_cycle.VaciarCache(globals.ID.ProcessValues.Pid)
-				log.Printf("CHUPETE EN EL ORTO INSIDE")
 				break ejecucion
+
 			}
 
 			globals.MutexNecesario.Lock()
@@ -119,16 +105,3 @@ func main() {
 		}
 	}
 }
-
-/*
-LOGS FALTANTES POR PONER:
-
-Lectura/Escritura Memoria: “PID: <PID> - Acción: <LEER / ESCRIBIR> - Dirección Física: <DIRECCION_FISICA> - Valor: <VALOR LEIDO / ESCRITO>”.
-Obtener Marco: “PID: <PID> - OBTENER MARCO - Página: <NUMERO_PAGINA> - Marco: <NUMERO_MARCO>”.
-TLB Hit: “PID: <PID> - TLB HIT - Pagina: <NUMERO_PAGINA>”
-TLB Miss: “PID: <PID> - TLB MISS - Pagina: <NUMERO_PAGINA>”
-Página encontrada en Caché: “PID: <PID> - Cache Hit - Pagina: <NUMERO_PAGINA>”
-Página faltante en Caché: “PID: <PID> - Cache Miss - Pagina: <NUMERO_PAGINA>”
-Página ingresada en Caché: “PID: <PID> - Cache Add - Pagina: <NUMERO_PAGINA>”
-Página Actualizada de Caché a Memoria: “PID: <PID> - Memory Update - Página: <NUMERO_PAGINA> - Frame: <FRAME_EN_MEMORIA_PRINCIPAL>”
-*/
