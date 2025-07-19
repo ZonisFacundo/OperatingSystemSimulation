@@ -56,11 +56,13 @@ func WriteEnCache(pid int, nroPag int, despl int, datos []byte) {
 		
 				entrada.Modificada = true
 				entrada.BitUso = true
+
+				log.Printf("## PID: %d - Accion: ESCRIBIR - Direccion Física: %d - Valor: %v",
+					globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.Datos)
 				return
 			}
 		}
-		log.Printf("## PID: %d - Accion: ESCRIBIR - Direccion Física: %d - Valor: %v",
-					globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.Datos)
+		
 	}
 
 
