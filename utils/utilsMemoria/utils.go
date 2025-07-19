@@ -959,7 +959,7 @@ func MemoryDump(pid int) {
 	var path string = fmt.Sprintf("%s%d-%d-%s.dmp", globals.ClientConfig.Dump_path, pid, contador, timestamp)
 	log.Printf("\n%s\n", path)
 	file, err := os.Create(path) //crea archivo para el dump
-	contador = 0
+	contador++
 	if err != nil {
 		log.Printf("error al crear el archivo para el dump de pid %d \n", pid)
 	}
