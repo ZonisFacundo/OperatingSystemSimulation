@@ -21,6 +21,7 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "NOOP":
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s ", detalle.ProcessValues.Pid, detalle.InstructionType)
+		//time.Sleep(45 * time.Millisecond)
 		return false
 
 	case "WRITE":
@@ -47,7 +48,7 @@ func Execute(detalle globals.Instruccion) bool {
 				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, globals.ID.DireccionFis, globals.ID.Datos)
 				AgregarEnTLB(globals.ID.NroPag, globals.ID.DireccionFis)
 				log.Printf("## PID: %d - Accion: ESCRIBIR - Direccion Física: %d - Valor: %v",
-						globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.Datos)
+					globals.ID.ProcessValues.Pid, globals.ID.DireccionFis, globals.ID.Datos)
 			}
 
 		} else {
@@ -431,9 +432,7 @@ func VaciarCache(pid int) {
 	for _, entrada := range globals.CachePaginas.Entradas {
 		if entrada.PID == pid {
 			if entrada.Modificada {
-				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory,
-					entrada.Frame, string(entrada.PaginaCompleta),
-				)
+				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, entrada.DireccionFisica, string(entrada.PaginaCompleta))
 			}
 		} else {
 			nuevasEntradas = append(nuevasEntradas, entrada)
@@ -441,5 +440,5 @@ func VaciarCache(pid int) {
 	}
 
 	globals.CachePaginas.Entradas = nuevasEntradas
-	log.Printf("## Proceso PID: %d desalojado correctamente", pid) //lo que interpreto es que se eliminan las entradas del proceso desalojado no TODAS(de todos los procesos)
+	log.Printf("## Proceso PID: %d desalojado correctamente - VACIO CACHE.", pid) //lo que interpreto es que se eliminan las entradas del proceso desalojado no TODAS(de todos los procesos)
 }

@@ -93,7 +93,7 @@ func DevolverPidYPCInterrupcion(w http.ResponseWriter, r *http.Request, pc int, 
 		return
 	}
 
-	log.Printf("El kernel nos interrumpio.")
+	log.Printf("\n \n \n \n \n El kernel nos interrumpio. \n \n \n \n \n")
 
 	var respuesta RespuestaKernel
 	respuesta.Pc = pc
@@ -103,6 +103,8 @@ func DevolverPidYPCInterrupcion(w http.ResponseWriter, r *http.Request, pc int, 
 	if err != nil {
 		return
 	}
+
+
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)

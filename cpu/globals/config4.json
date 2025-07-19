@@ -1,9 +1,9 @@
 {
   "tlb_entries": 0,
   "tlb_replacement": "FIFO",
-  "cache_delay": 250,
   "cache_entries": 0,
   "cache_replacement": "CLOCK",
+  "cache_delay": 0,
   "port_cpu": 8007,
   "instance_id": "cpu4",
   "ip_cpu": "127.0.0.1",

@@ -1,6 +1,6 @@
 {
     "tlb_entries": 4,
-    "tlb_replacement": "LRU",
+    "tlb_replacement": "FIFO",
     "cache_entries": 2,
     "cache_replacement": "CLOCK",
     "cache_delay": 50,

@@ -146,7 +146,11 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 	switch request.Syscall {
 	case "IO":
 		respuesta.Mensaje = "interrupcion"
+		MutexListaCPU.Lock()
 		cpuServidor.Disponible = true
+		log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
+		MutexListaCPU.Unlock()
+
 		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
 		if ExisteIO(request.Parametro2) {
 			//SemCortoPlazo <- struct{}{}
@@ -169,30 +173,39 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 	case "EXIT":
 		log.Printf("## (<%d>) - Solicitó syscall: <EXIT> \n", PCBUtilizar.Pid)
-		respuesta.Mensaje = "interrupcion" //ACA ESTA EL PROBLEMA, puede ser....
+		respuesta.Mensaje = "interrupcion"
+		MutexListaCPU.Lock()
 		cpuServidor.Disponible = true
+		log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
+		MutexListaCPU.Unlock()
+
 		//log.Printf("\n\n\n este pid quiero matarse %d \n\n\n", PCBUtilizar.Pid)
 		FinalizarProceso(PCBUtilizar)
 
 	case "DUMP_MEMORY":
 		log.Printf("## (<%d>) - Solicitó syscall: <DUMP_MEMORY> \n", PCBUtilizar.Pid)
 		respuesta.Mensaje = "interrupcion"
+
+		MutexListaCPU.Lock()
 		cpuServidor.Disponible = true
+		log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
+		MutexListaCPU.Unlock()
+
 		//SemCortoPlazo <- struct{}{}
 		DumpDelProceso(PCBUtilizar, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
 
 	case "INIT_PROC":
 		log.Printf("## (<%d>) - Solicitó syscall: <INIT_PROC> \n", PCBUtilizar.Pid)
 		respuesta.Mensaje = "NO INTERRUMPAS GIL"
-		//santi los puso para probar
 		MutexCrearPCB.Lock()
 		CrearPCB(request.Parametro1, request.Parametro2)
 		MutexCrearPCB.Unlock()
-		cpuServidor.Disponible = false
-		//santi los puso para probar
-		//EnviarProcesoACPU(PCBUtilizar, cpuServidor)
-		w.WriteHeader(http.StatusOK)
 
+		MutexListaCPU.Lock()
+		cpuServidor.Disponible = false
+		MutexListaCPU.Unlock()
+
+		w.WriteHeader(http.StatusOK)
 		w.Write(respuestaJSON)
 		return
 	}
@@ -640,14 +653,18 @@ func PlanificadorCortoPlazo() {
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
 			CPUDisponible, noEsVacio := TraqueoCPU()
+
 			if noEsVacio {
 				//log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid)
 				PasarExec(pcbChequear)
+				MutexListaCPU.Lock()
 				CPUDisponible.Disponible = false
+				MutexListaCPU.Unlock()
 				CPUDisponible.Pid = pcbChequear.Pid
 				EnviarProcesoACPU(pcbChequear, CPUDisponible)
 
 			} else if hayDesalojo {
+				//log.Printf("\n\n\n HAY DESALOJO Y ENTRA AL PRIMER IF \n\n\n")
 				pcbDesalojar, cpuDesalojar := RafagaMasLargaDeLosCPU()
 				//log.Printf("\n\n ## (<%d>) - %d < %d \n\n", pcbChequear.Pid, calcularRafagaEstimada(pcbChequear), CalcularTiempoRestanteEjecucion(pcbDesalojar))
 				if calcularRafagaEstimada(pcbChequear) < CalcularTiempoRestanteEjecucion(pcbDesalojar) {
@@ -719,6 +736,7 @@ func Sjf() *PCB {
 			pcbEstimacionMinima = pcb
 		}
 	}
+
 	pcbEstimacionMinima.EstimacionAnterior = calcularRafagaEstimada(pcbEstimacionMinima)
 	return pcbEstimacionMinima
 }
@@ -903,23 +921,28 @@ func CriterioColaReady() (*PCB, bool) {
 }
 
 func TraqueoCPU() (*CPU, bool) {
+
+	//	MutexListaCPU.Lock()
+	//	defer MutexListaCPU.Unlock()
 	for i := range ListaCPU {
+		//log.Printf("\n\n De ESTA CPU %s se sabe %b \n\n", ListaCPU[i].Instancia, ListaCPU[i].Disponible)
 		if ListaCPU[i].Disponible {
 			return &ListaCPU[i], true
 		}
 	}
 	return nil, false
+
 }
 
 func crearStructCPU(ip string, puerto int, instancia string) {
-	//mutexListaCPU.Lock()
+	//MutexListaCPU.Lock()
 	ListaCPU = append(ListaCPU, CPU{
 		Ip:         ip,
 		Port:       puerto,
 		Disponible: true,
 		Instancia:  instancia,
 	})
-	//mutexListaCPU.Lock()
+	//MutexListaCPU.Lock()
 }
 
 func CrearStructCPU2(ip string, puerto int, instancia string) CPU {
@@ -933,8 +956,8 @@ func CrearStructCPU2(ip string, puerto int, instancia string) CPU {
 }
 
 func ObtenerCpu(instancia string) *CPU {
-	mutexListaCPU.Lock()
-	defer mutexListaCPU.Unlock()
+	MutexListaCPU.Lock()
+	defer MutexListaCPU.Unlock()
 	for i := range ListaCPU {
 		if ListaCPU[i].Instancia == instancia {
 			return &ListaCPU[i]
@@ -946,8 +969,8 @@ func ObtenerCpu(instancia string) *CPU {
 }
 
 func ObtenerCpuEnFuncionDelPid(pid int) *CPU {
-	mutexListaCPU.Lock()
-	defer mutexListaCPU.Unlock()
+	MutexListaCPU.Lock()
+	defer MutexListaCPU.Unlock()
 	for i := range ListaCPU {
 		if ListaCPU[i].Pid == pid {
 			return &ListaCPU[i]

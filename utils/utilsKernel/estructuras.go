@@ -155,12 +155,18 @@ var MutexColaBlock sync.Mutex
 var MutexColaSuspBlock sync.Mutex
 var MutexColaSuspReady sync.Mutex
 var MutexListaIo sync.Mutex
-var mutexListaCPU sync.Mutex
+var MutexListaCPU sync.Mutex
 var MutexCrearPCB sync.Mutex
 var MutexExit sync.Mutex
 var MutexObtenerPCB sync.Mutex
 
 //var MutexCPU sync.Mutex
+
+type CPUResultado struct {
+	CPUDisponible *CPU
+	NoEsVacio     bool
+}
+
 
 /*
 var MutexFacu sync.Mutex
