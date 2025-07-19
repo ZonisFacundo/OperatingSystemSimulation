@@ -946,6 +946,7 @@ func FinalizarProceso(pid int) {
 Que hace MemoryDump?
 copia el contenido de todas las paginas del proceso y las pega en un archivo
 */
+var contador int = 0
 
 func MemoryDump(pid int) {
 
@@ -955,10 +956,10 @@ func MemoryDump(pid int) {
 
 	//var path string = fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid)
 	timestamp := time.Now().Format("2006-01-02-15-04")
-	var path string = fmt.Sprintf("%s%d-%s.dmp", globals.ClientConfig.Dump_path, pid, timestamp)
+	var path string = fmt.Sprintf("%s%d-%d-%s.dmp", globals.ClientConfig.Dump_path, pid, contador, timestamp)
 	log.Printf("\n%s\n", path)
 	file, err := os.Create(path) //crea archivo para el dump
-
+	contador = 0
 	if err != nil {
 		log.Printf("error al crear el archivo para el dump de pid %d \n", pid)
 	}
