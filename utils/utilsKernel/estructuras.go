@@ -146,7 +146,7 @@ var ColaSuspBlock []*PCB
 var ColaSuspReady []*PCB
 var ColaExit []*PCB
 var ContadorPCB int = 0
-var ListaCPU []CPU
+var ListaCPU []*CPU
 var ListaIO []*IO
 var MutexColaNew sync.Mutex
 var MutexColaReady sync.Mutex
@@ -162,11 +162,12 @@ var MutexObtenerPCB sync.Mutex
 
 //var MutexCPU sync.Mutex
 
-type CPUResultado struct {
+type ResultadoCPU struct {
 	CPUDisponible *CPU
 	NoEsVacio     bool
 }
 
+var ListaCPULibres []*CPU
 
 /*
 var MutexFacu sync.Mutex

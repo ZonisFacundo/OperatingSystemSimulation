@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 
+	"time"
+
 	"github.com/sisoputnfrba/tp-golang/cpu/globals"
 	"github.com/sisoputnfrba/tp-golang/utils/utilsCPU"
 )
@@ -109,6 +111,8 @@ func RecibirPCyPID(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
+
+	time.Sleep(1 * time.Second)
 
 }
 

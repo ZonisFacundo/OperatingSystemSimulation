@@ -25,10 +25,12 @@ func ReemplazarTLB_FIFO(entrada globals.Entrada) {
 }
 
 func ReemplazarTLB_LRU(entrada globals.Entrada) {
+
 	/*if globals.Tlb.Tamanio == 0 {
 		log.Printf("Algoritmo LRU invocado con TLB de tamaño 0")
 		return
 	}*/
+
 	tlb := &globals.Tlb
 	now := time.Now().UnixNano()
 

@@ -21,7 +21,6 @@ func Execute(detalle globals.Instruccion) bool {
 
 	case "NOOP":
 		log.Printf("## PID: %d - Ejecutando -> INSTRUCCION: %s ", detalle.ProcessValues.Pid, detalle.InstructionType)
-		//time.Sleep(45 * time.Millisecond)
 		return false
 
 	case "WRITE":

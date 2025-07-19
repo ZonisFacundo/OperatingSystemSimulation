@@ -148,6 +148,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		respuesta.Mensaje = "interrupcion"
 		MutexListaCPU.Lock()
 		cpuServidor.Disponible = true
+		ListaCPULibres = append(ListaCPULibres, cpuServidor)
 		log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
 		MutexListaCPU.Unlock()
 
@@ -176,6 +177,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		respuesta.Mensaje = "interrupcion"
 		MutexListaCPU.Lock()
 		cpuServidor.Disponible = true
+		ListaCPULibres = append(ListaCPULibres, cpuServidor)
 		log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
 		MutexListaCPU.Unlock()
 
@@ -188,6 +190,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 		MutexListaCPU.Lock()
 		cpuServidor.Disponible = true
+		ListaCPULibres = append(ListaCPULibres, cpuServidor)
 		log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
 		MutexListaCPU.Unlock()
 
@@ -203,6 +206,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 
 		MutexListaCPU.Lock()
 		cpuServidor.Disponible = false
+		ListaCPULibres = removerCPULibres(ListaCPULibres, cpuServidor)
 		MutexListaCPU.Unlock()
 
 		w.WriteHeader(http.StatusOK)
@@ -652,13 +656,25 @@ func PlanificadorCortoPlazo() {
 			MutexColaReady.Lock()
 			pcbChequear, hayDesalojo := CriterioColaReady()
 			MutexColaReady.Unlock()
-			CPUDisponible, noEsVacio := TraqueoCPU()
+			CPUDisponible, noEsVacio := TraqueoCPU2()
+
+			/*
+				resultadoChan := make(chan ResultadoCPU)
+				go BuscarCPUDisponibleAsync(resultadoChan)
+
+				// Podés seguir haciendo otras cosas mientras se busca...
+
+				resultado := <-resultadoChan
+				CPUDisponible := resultado.CPUDisponible
+				noEsVacio := resultado.NoEsVacio
+			*/
 
 			if noEsVacio {
 				//log.Printf("se pasa el proceso PID: %d a EXECUTE", pcbChequear.Pid)
 				PasarExec(pcbChequear)
 				MutexListaCPU.Lock()
 				CPUDisponible.Disponible = false
+				ListaCPULibres = removerCPULibres(ListaCPULibres, CPUDisponible)
 				MutexListaCPU.Unlock()
 				CPUDisponible.Pid = pcbChequear.Pid
 				EnviarProcesoACPU(pcbChequear, CPUDisponible)
@@ -687,6 +703,11 @@ func PlanificadorCortoPlazo() {
 		//time.Sleep(1 * time.Second)
 
 	}
+}
+
+func BuscarCPUDisponibleAsync(resultadoChan chan ResultadoCPU) {
+	cpu, disponible := TraqueoCPU()
+	resultadoChan <- ResultadoCPU{CPUDisponible: cpu, NoEsVacio: disponible}
 }
 
 func PlanificadorMedianoPlazo(pcb *PCB) {
@@ -927,21 +948,49 @@ func TraqueoCPU() (*CPU, bool) {
 	for i := range ListaCPU {
 		//log.Printf("\n\n De ESTA CPU %s se sabe %b \n\n", ListaCPU[i].Instancia, ListaCPU[i].Disponible)
 		if ListaCPU[i].Disponible {
-			return &ListaCPU[i], true
+			return ListaCPU[i], true
 		}
 	}
 	return nil, false
 
 }
 
+func TraqueoCPU2() (*CPU, bool) {
+
+	//	MutexListaCPU.Lock()
+	//	defer MutexListaCPU.Unlock()
+	for i := range ListaCPULibres {
+		//log.Printf("\n\n De ESTA CPU %s se sabe %b \n\n", ListaCPU[i].Instancia, ListaCPU[i].Disponible)
+		if ListaCPULibres[i].Disponible {
+			return ListaCPULibres[i], true
+		}
+	}
+	return nil, false
+
+}
+
+func removerCPULibres(cola []*CPU, cpu *CPU) []*CPU {
+	for i, item := range cola {
+		if item.Instancia == cpu.Instancia {
+			return append(cola[:i], cola[1+i:]...)
+		}
+	}
+	return cola
+}
+
 func crearStructCPU(ip string, puerto int, instancia string) {
 	//MutexListaCPU.Lock()
-	ListaCPU = append(ListaCPU, CPU{
+
+	cpuNuevo := CPU{
 		Ip:         ip,
 		Port:       puerto,
 		Disponible: true,
 		Instancia:  instancia,
-	})
+	}
+
+	ListaCPU = append(ListaCPU, &cpuNuevo)
+
+	ListaCPULibres = append(ListaCPULibres, &cpuNuevo)
 	//MutexListaCPU.Lock()
 }
 
@@ -960,7 +1009,7 @@ func ObtenerCpu(instancia string) *CPU {
 	defer MutexListaCPU.Unlock()
 	for i := range ListaCPU {
 		if ListaCPU[i].Instancia == instancia {
-			return &ListaCPU[i]
+			return ListaCPU[i]
 
 		}
 	}
@@ -973,7 +1022,7 @@ func ObtenerCpuEnFuncionDelPid(pid int) *CPU {
 	defer MutexListaCPU.Unlock()
 	for i := range ListaCPU {
 		if ListaCPU[i].Pid == pid {
-			return &ListaCPU[i]
+			return ListaCPU[i]
 		}
 	}
 	return nil
