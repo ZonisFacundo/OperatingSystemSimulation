@@ -123,7 +123,6 @@ func RetornoClienteCPUServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 func RetornoClienteKernelServidorMEMORIA(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
 
-	time.Sleep(time.Duration(globals.ClientConfig.Memory_delay) * time.Millisecond)
 	var DondeGuardarProceso int
 	var respuestaKernel respuestaalKernel
 	var PaqueteInfoProceso PaqueteRecibidoMemoriadeKernel //variable global donde guardo lo que me mande el kernel (info del proceso)
