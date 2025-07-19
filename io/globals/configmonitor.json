@@ -2,7 +2,7 @@
     "instance_id": "IO-monitor",
     "ip_io": "127.0.0.1",
     "ip_kernel": "127.0.0.1",
-    "log_level": "DEBUG",
+    "log_level": "INFO",
     "port_io": 8007,
     "port_kernel": 8001
   }

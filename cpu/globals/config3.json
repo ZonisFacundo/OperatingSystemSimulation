@@ -9,7 +9,7 @@
     "ip_cpu": "127.0.0.1",
     "ip_kernel": "127.0.0.1",
     "ip_memory": "127.0.0.1",
-    "log_level": "DEBUG",
+    "log_level": "INFO",
     "port_kernel": 8008,
     "port_memory": 8002,
     "size_page": 64
