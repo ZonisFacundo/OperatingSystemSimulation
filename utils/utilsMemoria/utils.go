@@ -769,12 +769,10 @@ func LeerPaginaCompleta(direccion int) ([]byte, error) {
 		return pagina, fmt.Errorf("error")
 
 	} else {
-		globals.Sem_Mem.Lock()
 		for i := 0; i < globals.ClientConfig.Page_size; i++ {
 			pagina[i] = globals.MemoriaPrincipal[direccion+i] //vamos recorriendo la pagina en memoria y se la asignamos a la variable que vamos a devolver
 
 		}
-		globals.Sem_Mem.Unlock()
 		return pagina, nil
 	} //esa es la forma de go de devolver errores, no la uso en otras partes porque puedo arreglarme con valores negativos o cosas asi que siento que dejan el codigo mas expresivo, al menos para mi, devuelve dos cosas esta funcion.
 
