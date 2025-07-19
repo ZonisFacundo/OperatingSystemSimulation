@@ -217,7 +217,7 @@ func RetornoClienteCPUServidorMEMORIATraduccionLogicaAFisica(w http.ResponseWrit
 		return
 	}
 
-	log.Printf("MARCO:  %d: \n", Traduccion.Frame)
+	log.Printf("MARCO:  %d \n", Traduccion.Frame)
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
 
@@ -262,8 +262,8 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	log.Printf("\n\nMUESTRO LO QUE LE MANDO A CPU COMO LEIDO (HTTP Read)\n\n")
-	log.Print("array de bytes: \n", ContenidoDireccion.Info)
+	//log.Printf("\n\nMUESTRO LO QUE LE MANDO A CPU COMO LEIDO (HTTP Read)\n\n")
+	//log.Print("array de bytes: \n", ContenidoDireccion.Info)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)
@@ -736,7 +736,7 @@ Para aumentar expresividad en el codigo (no estar agregando i - 1 en los loops p
 func AccedeAEntrada(DireccionLogica []int, nivel int, PunteroNodo *globals.Nodo) int {
 
 	if nivel == globals.ClientConfig.Number_of_levels-1 { //significa que ya estamos parados en el nivel que contiene los marcos
-		log.Printf("\n este es el valor que returneo: %d\n", (*PunteroNodo).Marco[DireccionLogica[nivel+1]])
+		//log.Printf("\n este es el valor que returneo: %d\n", (*PunteroNodo).Marco[DireccionLogica[nivel+1]])
 		return ((*PunteroNodo).Marco[DireccionLogica[nivel+1]])
 
 	} else {
