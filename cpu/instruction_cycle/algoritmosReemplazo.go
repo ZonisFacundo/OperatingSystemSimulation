@@ -9,11 +9,11 @@ import (
 
 func ReemplazarTLB_FIFO(entrada globals.Entrada) {
 	//tlb := &globals.Tlb
-	/*
-		if globals.Tlb.Tamanio == 0 {
-			log.Printf("ERROR: Algoritmo FIFO invocado con TLB de tamaño 0")
-			return
-		}*/
+
+	if globals.Tlb.Tamanio == 0 {
+		log.Printf("ERROR: Algoritmo FIFO invocado con TLB de tamaño 0")
+		return
+	}
 
 	if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
 		globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
@@ -26,10 +26,10 @@ func ReemplazarTLB_FIFO(entrada globals.Entrada) {
 
 func ReemplazarTLB_LRU(entrada globals.Entrada) {
 
-	/*if globals.Tlb.Tamanio == 0 {
+	if globals.Tlb.Tamanio == 0 {
 		log.Printf("Algoritmo LRU invocado con TLB de tamaño 0")
 		return
-	}*/
+	}
 
 	tlb := &globals.Tlb
 	now := time.Now().UnixNano()
