@@ -245,7 +245,7 @@ func RetornoClienteCPUServidorMEMORIARead(w http.ResponseWriter, r *http.Request
 	globals.MetricasProceso[PaqueteDireccion.Pid].ContadorReadMemoria++
 	globals.Sem_Metricas.Unlock()
 
-	log.Printf("## PID: %d - <Escritura/Lectura> - Dir. Física: %d  - Tamaño: %d\n", PaqueteDireccion.Pid, PaqueteDireccion.Direccion, PaqueteDireccion.Tamaño)
+	log.Printf("## PID: %d - Lectura - Dir. Física: %d  - Tamaño: %d\n", PaqueteDireccion.Pid, PaqueteDireccion.Direccion, PaqueteDireccion.Tamaño)
 
 	var ContenidoDireccion globals.BytePaquete
 	ContenidoDireccion.Info = make([]byte, PaqueteDireccion.Tamaño)
@@ -294,7 +294,7 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 
 	bytardos := []byte(PaqueteInfoWrite.Contenido)
 
-	log.Printf("## PID: %d - <Escritura> - Dir. Física: %d  - Tamaño: %d\n", PaqueteInfoWrite.Pid, PaqueteInfoWrite.Direccion, len(PaqueteInfoWrite.Contenido))
+	log.Printf("## PID: %d - Escritura - Dir. Física: %d  - Tamaño: %d\n", PaqueteInfoWrite.Pid, PaqueteInfoWrite.Direccion, len(PaqueteInfoWrite.Contenido))
 
 	globals.Sem_Mem.Lock()
 	for i := 0; i < len(PaqueteInfoWrite.Contenido); i++ {
@@ -355,15 +355,15 @@ func RetornoClienteKernelServidorMemoriaDumpDelProceso(w http.ResponseWriter, r 
 	w.Write(respuestaJSON)
 
 	//para testear
-	log.Printf("\n----------------MUESTRO TODO ASI DEBUGGEAS---------------------\n\n")
-	log.Printf("\n----------------MUESTRO MEMORIA---------------------\n\n")
+	//log.Printf("\n----------------MUESTRO TODO ASI DEBUGGEAS---------------------\n\n")
+	//log.Printf("\n----------------MUESTRO MEMORIA---------------------\n\n")
 
 	// auxiliares.Mostrarmemoria()
 
-	log.Printf("\n\n-------------ahora muestro el swap------------------\n\n")
+	//log.Printf("\n\n-------------ahora muestro el swap------------------\n\n")
 	// auxiliares.MostrarArchivo(globals.ClientConfig.Swapfile_path)
 
-	log.Printf("\n\n-------------ahora muestro el dump------------------\n\n")
+	//log.Printf("\n\n-------------ahora muestro el dump------------------\n\n")
 	// auxiliares.MostrarArchivo(fmt.Sprintf("%s", globals.ClientConfig.Dump_path))
 
 }
@@ -553,7 +553,7 @@ func EntraEnMemoria(tam int) int {
 		return 1
 	}
 	var PaginasNecesarias float64 = math.Ceil(float64(tam) / float64(globals.ClientConfig.Page_size)) //redondea para arriba para saber cuantas paginas ocupa
-	log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos	(EntraEnMemoria) \n", PaginasNecesarias)
+	//log.Printf("necesitamos %f paginas para guardar este proceso, dejame ver si tenemos	(EntraEnMemoria) \n", PaginasNecesarias)
 
 	var PaginasEncontradas int = 0
 
@@ -953,10 +953,13 @@ copia el contenido de todas las paginas del proceso y las pega en un archivo
 func MemoryDump(pid int) {
 
 	var bytestotales int = 0
-	log.Printf("\n\n INICIANDO MEMORY DUMP (memorydump) \n\n")
+	//log.Printf("\n\n INICIANDO MEMORY DUMP (memorydump) \n\n")
 	//time stamp ---> timestamp := time.Now().Unix() // Ej: 1686835231     ?????
 
-	var path string = fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid)
+	//var path string = fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid)
+	timestamp := time.Now().Format("2006-01-02-15-04")
+	var path string = fmt.Sprintf("%s%d-%s.dmp", globals.ClientConfig.Dump_path, pid, timestamp)
+	log.Printf("\n%s\n", path)
 	file, err := os.Create(path) //crea archivo para el dump
 
 	if err != nil {
@@ -975,12 +978,14 @@ func MemoryDump(pid int) {
 		if err != nil {
 			log.Printf("error al escribir en el archivo\n")
 		}
-		bytestotales += bytesEscritos
+		bytestotales +=
+			bytesEscritos
 	}
+
 	globals.Sem_MemoriaKernel.Unlock()
 
 	log.Printf("%d bytes fueron escritos en el archivo gracias a la syscall de dump \n", bytestotales)
-
+	auxiliares.MostrarArchivo(fmt.Sprintf("%s%d-<TIMESTAMP>.dmp", globals.ClientConfig.Dump_path, pid))
 	//auxiliares.MostrarArchivo(path)
 	defer file.Close()
 }

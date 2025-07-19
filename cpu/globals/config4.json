@@ -2,7 +2,7 @@
   "tlb_entries": 0,
   "tlb_replacement": "FIFO",
   "cache_delay": 250,
-  "cache_entries": 1,
+  "cache_entries": 0,
   "cache_replacement": "CLOCK",
   "port_cpu": 8007,
   "instance_id": "cpu4",

@@ -675,7 +675,7 @@ func PlanificadorCortoPlazo() {
 func PlanificadorMedianoPlazo(pcb *PCB) {
 	pcb.TiempoEnvioBlock = time.Now()
 	for true {
-		time.Sleep(time.Duration(50 * time.Millisecond))
+		//	time.Sleep(time.Duration(50 * time.Millisecond))
 
 		if pcb.EstadoActual == "BLOCKED" {
 			if time.Since(pcb.TiempoEnvioBlock) >= time.Duration(globals.ClientConfig.Suspension_time)*time.Millisecond {

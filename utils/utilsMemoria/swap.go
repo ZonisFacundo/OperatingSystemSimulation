@@ -41,7 +41,6 @@ func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *htt
 	log.Printf("\n\n KERNEL SOLICITO SWAP DE MEMORIA A DISCO (suspension) (RetornoClienteKernelServidorMemoriaSwapADisco)\n\n")
 
 	//globals.Sem_Swap.Lock()
-	log.Printf("\n\n yo al lock no lo paso ni de onda (suspension) (RetornoClienteKernelServidorMemoriaSwapADisco)\n\n")
 
 	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
 	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
@@ -93,7 +92,7 @@ func RetornoClienteKernelServidorMemoriaSwapADisco(w http.ResponseWriter, r *htt
 func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *http.Request) {
 
 	time.Sleep(time.Duration(globals.ClientConfig.Swap_delay) * (time.Millisecond))
-	log.Printf("\n\n\n\n\n\n\n\n KERNEL SOLICITO SWAP DE DISCO A MEMORIA (des - suspension) (RetornoClienteKernelServidorMemoriaSwapAMemoria)\n\n\n\n\n\n\n\n")
+	log.Printf(" KERNEL SOLICITO SWAP DE DISCO A MEMORIA (des - suspension) (RetornoClienteKernelServidorMemoriaSwapAMemoria)\n")
 	var paqueteDeKernel PaqueteRecibidoMemoriadeKernel2
 	err := json.NewDecoder(r.Body).Decode(&paqueteDeKernel) //guarda en request lo que nos mando el cliente
 	if err != nil {
@@ -101,9 +100,8 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 
 		return
 	}
-	log.Printf("\n\n\n\n\n\n\n\n %d  (des - suspension) (RetornoClienteKernelServidorMemoriaSwapAMemoria)\n\n\n\n\n\n\n\n", paqueteDeKernel.Pid)
 
-	log.Printf(" el swap tam de este proceso es: %d", globals.MemoriaKernel[paqueteDeKernel.Pid].SwapTam)
+	//	log.Printf(" el swap tam de este proceso es: %d", globals.MemoriaKernel[paqueteDeKernel.Pid].SwapTam)
 
 	// globals.Sem_Swap.Lock()
 	globals.Sem_Bitmap.Lock()
@@ -146,7 +144,7 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 
 				return
 			}
-			log.Printf("MANDE TODO PIOLA CREOOOO TERMINOOO SWAP IN \n")
+			log.Printf("MANDE TODO bien TERMINOOO SWAP IN \n")
 
 			w.WriteHeader(http.StatusNotImplemented)
 			w.Write(respuestaJSON)
@@ -167,14 +165,10 @@ func RetornoClienteKernelServidorMemoriaSwapAMemoria(w http.ResponseWriter, r *h
 			return
 		}
 
-		log.Printf("\n\n\n\n\n\n\n\n %d  (LLEGO SCOCOOOOOO)\n\n\n\n\n\n\n\n", paqueteDeKernel.Pid)
-
 		globals.Sem_Bitmap.Unlock()
-		log.Printf("\n\n\n\n\n\n\n\n %d  (AHORA SI, PASO EL SEMAFORO (RetornoClienteKernelServidorMemoriaSwapAMemoria)\n\n\n\n\n\n\n\n", paqueteDeKernel.Pid)
 
 		w.WriteHeader(http.StatusOK)
 		w.Write(respuestaJSON)
-		log.Printf("\n\n\n\n\n\n\n\n %d  LO MANDO (RetornoClienteKernelServidorMemoriaSwapAMemoria)\n\n\n\n\n\n\n\n", paqueteDeKernel.Pid)
 
 		//	auxiliares.Mostrarmemoria()
 
@@ -223,7 +217,7 @@ func SwapADisco(pid int) int { //incompleta
 
 		bytesEscritos += bytesEscritosRecien
 	}
-	log.Printf("%d fueron escritos en disco \t(SwapADisco)\n", bytesEscritos)
+	//log.Printf("%d fueron escritos en disco \t(SwapADisco)\n", bytesEscritos)
 	//ya fueron escritas las paginas en el swap... ahora tenemos que implementar logica para guardar los bytes exactos donde esta cada pag
 	// TO DO: IMPLEMENTAR DONDE SE VAN A GUARDAR LAS PAGINAS, SI HAY ESPACIO INFINITO O NO
 
@@ -296,7 +290,7 @@ func SwapAMemoria(pid int) int {
 		bytestotales += bytesleidos
 	}
 	defer file.Close()
-	log.Printf("bytes leidos de disco y copiados en memoria: %d 	(SwapAMemoria)\n", bytestotales)
+	//log.Printf("bytes leidos de disco y copiados en memoria: %d 	(SwapAMemoria)\n", bytestotales)
 
 	auxiliares.InicializarSiNoLoEstaMap(pid)
 
@@ -333,10 +327,10 @@ func ReservarMemoriaSwapeado(pid int, tam int) {
 	var PaginasEncontradas int = 0
 
 	if EntraEnMemoria(tam) >= 0 {
-		log.Printf("printeo tabla de paginas disponibles\n")
+		//log.Printf("printeo tabla de paginas disponibles\n")
 
 		for i := 0; i < (globals.ClientConfig.Memory_size / globals.ClientConfig.Page_size); i++ { //recorremos array de paginas disponibles a ver si encontramos la cantidad que necesitamos contiguas en memoria
-			log.Printf("%d\n", globals.PaginasDisponibles[i])
+			//log.Printf("%d\n", globals.PaginasDisponibles[i])
 
 			if globals.PaginasDisponibles[i] == 0 {
 				PaginasEncontradas++

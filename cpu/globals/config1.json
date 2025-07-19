@@ -3,7 +3,7 @@
     "tlb_replacement": "LRU",
     "cache_entries": 2,
     "cache_replacement": "CLOCK",
-    "cache_delay": 250,
+    "cache_delay": 50,
     "port_cpu": 8004,
     "instance_id": "cpu1",
     "ip_cpu": "127.0.0.1",
