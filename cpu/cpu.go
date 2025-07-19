@@ -100,7 +100,7 @@ func main() {
 			if interrumpido {
 				log.Printf("## Interrupcion recibida -> Deteniendo proceso con PID: %d", globals.ID.ProcessValues.Pid)
 				instruction_cycle.VaciarCache(globals.ID.ProcessValues.Pid)
-				log.Printf("hola xd")
+				log.Printf("CHUPETE EN EL ORTO INSIDE")
 				break ejecucion
 			}
 

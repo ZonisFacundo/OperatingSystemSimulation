@@ -149,7 +149,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		MutexListaCPU.Lock()
 		cpuServidor.Disponible = true
 		ListaCPULibres = append(ListaCPULibres, cpuServidor)
-		log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
+		//log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
 		MutexListaCPU.Unlock()
 
 		log.Printf("## (<%d>) - Solicitó syscall: <IO> \n", PCBUtilizar.Pid)
@@ -168,7 +168,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 				ioServidor.ColaProcesos = ioServidor.ColaProcesos[1:]
 			}*/
 		} else {
-			log.Printf("\n NO EXISTE LA IO Q SOLICITE, ALTO PETE, PID: %d \n", PCBUtilizar.Pid)
+			//log.Printf("\n NO EXISTE LA IO Q SOLICITE, ALTO PETE, PID: %d \n", PCBUtilizar.Pid)
 			FinalizarProceso(PCBUtilizar)
 		}
 
@@ -178,7 +178,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		MutexListaCPU.Lock()
 		cpuServidor.Disponible = true
 		ListaCPULibres = append(ListaCPULibres, cpuServidor)
-		log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
+		//log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
 		MutexListaCPU.Unlock()
 
 		//log.Printf("\n\n\n este pid quiero matarse %d \n\n\n", PCBUtilizar.Pid)
@@ -191,7 +191,7 @@ func RecibirProceso(w http.ResponseWriter, r *http.Request) {
 		MutexListaCPU.Lock()
 		cpuServidor.Disponible = true
 		ListaCPULibres = append(ListaCPULibres, cpuServidor)
-		log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
+		//log.Printf("Este CPU %s se acaba de liberar", cpuServidor.Instancia)
 		MutexListaCPU.Unlock()
 
 		//SemCortoPlazo <- struct{}{}
@@ -357,7 +357,7 @@ func ConsultarProcesoConMemoria(pcb *PCB, ip string, puerto int, cola []*PCB) {
 		log.Printf("Se pasa el proceso PID: %d a READY", pcb.Pid)
 		PasarReady(pcb)
 	} else {
-		log.Printf("no se puede pasar a ready al PID: %d porque memoria basicamnete nos dijo que hay quilombo", pcb.Pid)
+		log.Printf("no se puede pasar a ready al PID: %d ", pcb.Pid)
 
 	}
 
@@ -692,7 +692,7 @@ func PlanificadorCortoPlazo() {
 					//Santi lo agrego, sin esto no mandamos otro pcb a cpu
 					//pcbChequear.Pc = pcbChequear.Pc - 1
 					EnviarProcesoACPU(pcbChequear, cpuDesalojar)
-					log.Printf("\n\n ## (<%d>) - YA METIMOS A EJECUTAR UN PROCESO POST DESALOJO \n\n", pcbChequear.Pid)
+					//log.Printf("\n\n ## (<%d>) - YA METIMOS A EJECUTAR UN PROCESO POST DESALOJO \n\n", pcbChequear.Pid)
 				}
 			} //else {
 			//SemCortoPlazo <- struct{}{}
@@ -712,18 +712,11 @@ func BuscarCPUDisponibleAsync(resultadoChan chan ResultadoCPU) {
 
 func PlanificadorMedianoPlazo(pcb *PCB) {
 	pcb.TiempoEnvioBlock = time.Now()
-	for true {
-		//	time.Sleep(time.Duration(50 * time.Millisecond))
-
-		if pcb.EstadoActual == "BLOCKED" {
-			if time.Since(pcb.TiempoEnvioBlock) >= time.Duration(globals.ClientConfig.Suspension_time)*time.Millisecond {
-				PasarSuspBlock(pcb)
-				break
-			}
-		} else {
-			break
-		}
+	time.Sleep(time.Duration(time.Duration(globals.ClientConfig.Suspension_time) * time.Millisecond))
+	if pcb.EstadoActual == "BLOCKED" {
+		PasarSuspBlock(pcb)
 	}
+
 }
 
 func FIFO(cola []*PCB) *PCB {
@@ -849,29 +842,9 @@ func PasarBlocked(pcb *PCB) {
 
 }
 
-//CODIGO PREVIO A TOQUETEO FACU
-
-/*
-func PasarSuspBlock(pcb *PCB) {
-	log.Printf("## (<%d>) Pasa del estado %s al estado SUSP.BLOCKED \n", pcb.Pid, pcb.EstadoActual)
-	SwapDelProceso(pcb, globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory)
-	MutexColaSuspBlock.Lock()
-	ColaSuspBlock = append(ColaSuspBlock, pcb)
-	MutexColaSuspBlock.Unlock()
-	MutexColaBlock.Lock()
-	ColaBlock = removerPCB(ColaBlock, pcb)
-	MutexColaBlock.Unlock()
-	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
-	pcb.EstadoActual = "SUSP.BLOCKED"
-	pcb.MetricaEstados["SUSP.BLOCKED"]++
-	pcb.TiempoLlegada["SUSP.BLOCKED"] = time.Now()
-}
-*/
-
 func PasarSuspBlock(pcb *PCB) {
 	log.Printf("## (<%d>) Pasa del estado %s al estado SUSP.BLOCKED \n", pcb.Pid, pcb.EstadoActual)
 
-	// <<< CAMBIO: añadir a ColaSuspBlock, no a ColaBlock
 	//log.Printf("\n \n\n## (<%d>) ESTOY ARRIBA DEL MUTEX \n", pcb.Pid)
 	MutexColaSuspBlock.Lock()
 	//log.Printf("\n \n\n## (<%d>) ESTOY MUY ABAJO DEL MUTEX \n", pcb.Pid)
@@ -879,12 +852,10 @@ func PasarSuspBlock(pcb *PCB) {
 	//log.Printf("\n\n ## (<%d>) ESTOY EN SUSPENDE BLOCK FORRO \n\n", pcb.Pid)
 	MutexColaSuspBlock.Unlock()
 
-	// quitar de la cola BLOCK normal
 	MutexColaBlock.Lock()
 	ColaBlock = removerPCB(ColaBlock, pcb)
 	MutexColaBlock.Unlock()
 
-	// actualizar métricas y estado
 	pcb.TiempoEstados[pcb.EstadoActual] = +time.Since(pcb.TiempoLlegada[pcb.EstadoActual]).Milliseconds()
 	pcb.EstadoActual = "SUSP.BLOCKED"
 	pcb.MetricaEstados["SUSP.BLOCKED"]++
@@ -1160,15 +1131,6 @@ func ObtenerPCB(pid int) *PCB {
 			return pcb
 		}
 	}
-	//FACU Facu facu
-	//si llega aca es porque no encontro en la listaEXECUTE a dicho pid (ocurre en EXIT que lo saca de esa lista antes de ejecutar esto, entonces rompe todo cuando se quiere acceder a un PCB nulo como el que devuelven)
-	//dejo esto como esta y voy a finalizar proceso, saco el acceso a EXIT a ese PCB y lo muevo a justo antes de que se lo quite de la lista execute
-	/*
-		for i := 0; i < 20; i++ {
-			log.Printf("voy a devolver uno nulo pibeeeeee dice el proceso de pid: %d\n", pid)
-			time.Sleep(100 * time.Second)
-		}
-	*/
 	return &PCB{}
 }
 
@@ -1352,7 +1314,7 @@ ARMO HTTP PARA DESWAPEAR
 // ATENCION, SI LE VAN A CAMBIAR EL NOMBRE, TIENEN QUE IR A CAMBIARLO TAMBIEN EN SU INVOCACION (PLANI LARGO PLAZO)
 // <<< NUEVO >>> Trae un proceso swappeado devuelta a memoria
 func SwapInProceso(pcb *PCB) {
-	log.Printf("el pid: %d QUIERE SWAP INNNNN \n", pcb.Pid)
+	//log.Printf("el pid: %d QUIERE SWAP INNNNN \n", pcb.Pid)
 	if pcb == nil {
 		log.Printf("SwapInProceso recibió pcb == nil")
 		return
