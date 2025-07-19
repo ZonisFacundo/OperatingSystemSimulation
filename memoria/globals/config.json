@@ -1,6 +1,6 @@
 {
-  "memory_size": 4096,
-  "page_size": 32,
+  "memory_size": 512,
+  "page_size": 8,
   "number_of_levels": 3,
   "dump_path": "/home/utnso/dump_files/",
   "entries_per_page": 8,

@@ -9,11 +9,11 @@ import (
 
 func ReemplazarTLB_FIFO(entrada globals.Entrada) {
 	//tlb := &globals.Tlb
-/*
-	if globals.Tlb.Tamanio == 0 {
-		log.Printf("ERROR: Algoritmo FIFO invocado con TLB de tamaño 0")
-		return
-	}*/
+	/*
+		if globals.Tlb.Tamanio == 0 {
+			log.Printf("ERROR: Algoritmo FIFO invocado con TLB de tamaño 0")
+			return
+		}*/
 
 	if len(globals.Tlb.Entradas) < globals.Tlb.Tamanio {
 		globals.Tlb.Entradas = append(globals.Tlb.Entradas, entrada)
@@ -108,7 +108,7 @@ func ReemplazarConCLOCKM(entradaNueva globals.EntradaCacheDePaginas) {
 			pos := (cache.PosReemplazo + i) % tamanio
 			candidato := &cache.Entradas[pos]
 
-			if !candidato.BitUso && candidato.Modificada{
+			if !candidato.BitUso && candidato.Modificada {
 				frameBase := candidato.Frame * globals.ClientConfig.Page_size
 				Write(globals.ClientConfig.Ip_memory, globals.ClientConfig.Port_memory, frameBase, string(candidato.PaginaCompleta))
 				log.Printf("## PID: %d - Memory Update - Página: %d - Frame: %d", candidato.PID, candidato.NroPag, candidato.Frame)
@@ -122,5 +122,5 @@ func ReemplazarConCLOCKM(entradaNueva globals.EntradaCacheDePaginas) {
 		for i := 0; i < tamanio; i++ {
 			cache.Entradas[i].BitUso = false
 		}
-	} 
+	}
 }

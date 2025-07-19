@@ -323,7 +323,7 @@ func RetornoClienteCPUServidorMEMORIAWrite(w http.ResponseWriter, r *http.Reques
 		//var PunteritoAux *globals.Nodo = globals.MemoriaKernel[0].PunteroATablaDePaginas
 		//MostrarTablaMultinivel(0, 0, PunteritoAux)
 	*/
-	// auxiliares.Mostrarmemoria()
+	auxiliares.Mostrarmemoria()
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(respuestaJSON)

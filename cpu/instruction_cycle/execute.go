@@ -29,7 +29,8 @@ func Execute(detalle globals.Instruccion) bool {
 		if globals.ID.DireccionFis >= 0 {
 			if globals.ClientConfig.Cache_entries > 0 { //cache esta habilitada (está vacia?)
 				if mmu.EstaEnCache(globals.ID.NroPag) {
-					mmu.WriteEnCache(globals.ID.ProcessValues.Pid, globals.ID.NroPag, globals.ID.Desplazamiento, []byte(globals.ID.Datos))
+					desplazamientoCache := globals.ID.DireccionLog % globals.ClientConfig.Page_size
+					mmu.WriteEnCache(globals.ID.ProcessValues.Pid, globals.ID.NroPag, desplazamientoCache, []byte(globals.ID.Datos))
 					//log.Printf("## WRITE en Cache: PID: %d, Pag: %d, Datos: %s", globals.ID.ProcessValues.Pid, globals.ID.NroPag, globals.ID.Datos)
 				} else {
 
@@ -345,27 +346,35 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 		return
 	}
 	var paginaCompleta []byte
-
-	if len(globals.ID.PaginaCompleta) > 0 {
-		paginaCompleta = globals.ID.PaginaCompleta
-	} else {
-		paginaCompleta = make([]byte, globals.ClientConfig.Page_size)
-		copy(paginaCompleta, []byte(globals.ID.Datos))
-	}
-
-	if globals.ID.InstructionType == "WRITE" {
-		copy(paginaCompleta[globals.ID.Desplazamiento:], []byte(globals.ID.Datos))
-	}
 	var contenido []byte
 
 	if globals.ID.InstructionType == "READ" {
+		paginaCompleta = globals.ID.PaginaCompleta
 		contenido = globals.ID.ValorLeido
+
+	} else if globals.ID.InstructionType == "WRITE" { // basicamente se fija se tiene una paginaCompleta cargada (si el nroPag esta en cache)
+		yaEnCache := false
+
+		for _, entrada := range globals.CachePaginas.Entradas {
+			if entrada.PID == globals.ID.ProcessValues.Pid && entrada.NroPag == nroPagina {
+				paginaCompleta = make([]byte, globals.ClientConfig.Page_size)
+				copy(paginaCompleta, entrada.PaginaCompleta) // si esta copio lo que tenia basicamente
+				yaEnCache = true
+				break
+			}
+		}
+
+		if !yaEnCache { // si no esta cargada, crea una [0 0 0 0 0 0 ...]
+			paginaCompleta = make([]byte, globals.ClientConfig.Page_size)
+		}
+
+		copy(paginaCompleta[globals.ID.Desplazamiento:], []byte(globals.ID.Datos)) // y aca desde el desplazamiento escribo los datos
 	}
 
 	entrada := globals.EntradaCacheDePaginas{
 		PID:             globals.ID.ProcessValues.Pid,
 		NroPag:          nroPagina,
-		PaginaCompleta:  globals.ID.PaginaCompleta,
+		PaginaCompleta:  paginaCompleta,
 		Frame:           globals.ID.Frame,
 		Desplazamiento:  globals.ID.Desplazamiento,
 		Contenido:       contenido,
@@ -390,10 +399,10 @@ func AgregarEnCache(nroPagina int, direccionFisica int) {
 }
 
 func AgregarEnTLB(nroPagina int, direccion int) {
-	/*if globals.ClientConfig.Tlb_entries <= 0 {
+	if globals.ClientConfig.Tlb_entries <= 0 {
 		fmt.Printf("## ERROR -> Entradas de TLB: %d -> No hay TLB.", globals.ClientConfig.Tlb_entries)
 		return
-	}*/
+	}
 
 	tlb := &globals.Tlb
 	pid := globals.ID.ProcessValues.Pid
