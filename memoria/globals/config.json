@@ -1,5 +1,6 @@
 {
   "dump_path": "/home/utnso/dump_files/",
+<<<<<<< HEAD
   "entries_per_page": 32,
   "ip_memory": "127.0.0.1",
   "log_level": "DEBUG",
@@ -7,6 +8,15 @@
   "memory_size": 512,
   "number_of_levels": 1,
   "page_size": 32,
+=======
+  "entries_per_page": 8,
+  "ip_memory": "127.0.0.1",
+  "log_level": "DEBUG",
+  "memory_delay": 100,
+  "memory_size": 4096,
+  "number_of_levels": 3,
+  "page_size": 64,
+>>>>>>> main
   "port_memory": 8002,
   "swap_delay": 2500,
   "swapfile_path": "/home/utnso/swapfile.bin"

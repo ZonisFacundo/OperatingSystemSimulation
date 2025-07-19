@@ -147,7 +147,7 @@ var ColaSuspReady []*PCB
 var ColaExit []*PCB
 var ContadorPCB int = 0
 var ListaCPU []CPU
-var ListaIO []IO
+var ListaIO []*IO
 var MutexColaNew sync.Mutex
 var MutexColaReady sync.Mutex
 var MutexListaExec sync.Mutex
@@ -155,10 +155,12 @@ var MutexColaBlock sync.Mutex
 var MutexColaSuspBlock sync.Mutex
 var MutexColaSuspReady sync.Mutex
 var MutexListaIo sync.Mutex
-
+var mutexListaCPU sync.Mutex
 var MutexCrearPCB sync.Mutex
 var MutexExit sync.Mutex
 var MutexObtenerPCB sync.Mutex
+
+//var MutexCPU sync.Mutex
 
 /*
 var MutexFacu sync.Mutex

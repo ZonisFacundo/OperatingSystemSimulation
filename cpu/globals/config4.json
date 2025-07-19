@@ -1,0 +1,23 @@
+{
+  "tlb_entries": 0,
+  "tlb_replacement": "FIFO",
+  "cache_delay": 250,
+  "cache_entries": 0,
+  "cache_replacement": "CLOCK",
+  "port_cpu": 8007,
+  "instance_id": "cpu4",
+  "ip_cpu": "127.0.0.1",
+  "ip_kernel": "127.0.0.1",
+  "ip_memory": "127.0.0.1",
+  "log_level": "DEBUG",
+  "port_kernel": 8008,
+  "port_memory": 8002,
+<<<<<<< HEAD:cpu/globals/configX.json
+  "size_page": 64,
+  "tlb_entries": 0,
+  "tlb_replacement": "FIFO"
+} 
+=======
+  "size_page": 64
+} 
+>>>>>>> main:cpu/globals/config4.json

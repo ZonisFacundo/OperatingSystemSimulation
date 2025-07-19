@@ -1,12 +1,23 @@
 {
+<<<<<<< HEAD
   "alpha": 1,
   "initial_estimate": 10000,
+=======
+  "alpha": 0.75,
+  "initial_estimate": 100,
+  "suspension_time": 3000,
+>>>>>>> main
   "ip_kernel": "127.0.0.1",
   "ip_memory": "127.0.0.1",
   "log_level": "DEBUG",
   "port_kernel": 8008,
   "port_memory": 8002,
+<<<<<<< HEAD
   "ready_ingress_algorithm": "FIFO",
   "scheduler_algorithm": "FIFO",
   "suspension_time": 1000
+=======
+  "ready_ingress_algorithm": "PMCP",
+  "scheduler_algorithm": "SRT"
+>>>>>>> main
 }

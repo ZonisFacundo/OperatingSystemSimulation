@@ -23,7 +23,8 @@ type PaqueteRecibidoWRITE struct {
 	Mensaje string `json:"message"`
 }
 type PaqueteRecibidoREAD struct {
-	Info []byte `json:"info"`
+	Info           []byte `json:"info"`
+    PaginaCompleta []byte `json:"pag"`
 }
 
 func Fetch(pid int, pc int, ip string, puerto int) {
