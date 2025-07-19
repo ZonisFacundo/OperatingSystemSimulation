@@ -1148,7 +1148,7 @@ func SwapInProceso(pcb *PCB) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Printf("Error en SWAP_IN del PID %d: %v", pcb.Pid, err)
+		//log.Printf("Error en SWAP_IN del PID %d: %v", pcb.Pid, err)
 		return
 	}
 
@@ -1166,14 +1166,13 @@ func SwapInProceso(pcb *PCB) {
 		return
 	}
 
-	log.Printf("La respuesta del server memoria fue: %s\n", respuesta.Mensaje)
 	if resp.StatusCode == http.StatusOK {
 		PasarReady(pcb)
-	} else {
-		log.Printf("No se puede pasar a READY al PID %d: %s",
-			pcb.Pid, respuesta.Mensaje,
-		)
-	}
+	} // else {
+	//log.Printf("No se puede pasar a READY al PID %d: %s",
+	//	pcb.Pid, respuesta.Mensaje,
+	//)
+	//}
 }
 
 func CrearColaIO(instancia string) ColaProcesosIO {
